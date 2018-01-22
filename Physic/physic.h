@@ -23,9 +23,9 @@ struct system
   float timelapse, delta_time;
 };
 
-struct item new_item(float mass, float size, float size);
+struct item *new_item(float mass, float size, float size);
 
-struct system new_system(size_t nb_dimension);
+struct system *new_system(size_t nb_dimension);
 
 void free_item(struct item *item);
 
