@@ -1,5 +1,5 @@
-IFNDEF PHYSIC_STARDWARF
-DEFINE PHYSIC_STARDWARF
+# ifndef PHYSIC_STARDWARF
+# define PHYSIC_STARDWARF
 
 # include <stdlib.h>
 # include "libvector.h"
@@ -11,14 +11,13 @@ struct item
   char label[16];
   char color[3];
   struct vector position, velocity, force;
-  size_t nb_user_force;
-  vector *user_force;
+  struct list user_force;                       //VECTOR LIST (sentinel)
+  struct list list;                             //ITEM LIST (pointer to next)
 };
 
 struct system
 {
-  size_t nb_item;
-  struct item *items;
+  struct list items;                            //ITEM LIST (sentinel)
   size_t nb_dimension;
   float timelapse, delta_time;
 };
@@ -33,6 +32,6 @@ void free_system(struct system *system);
 
 void update_item(struct item *item, float delta_time);
 
-void update_system(struct system *system
+void update_system(struct system *system);
 
-ENDIF
+# endif

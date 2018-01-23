@@ -1,0 +1,25 @@
+test(1)				EXECUTABLE
+NAME
+	test - test function in physic folder
+
+SYNOPSIS
+	make test; ./test [v]
+
+DESCRIPTION
+
+	Prints test of the different funciton used in this part of the project.
+	Use it as often as you can ! (best is to use it everytime you modify
+	something)
+
+	You can specify wich test you want by adding arguments :
+	
+	v	test libvector.c
+
+	some will be added in the futur
+
+	when no argmuent is given, test will consider that every arguments are given.
+
+	Don't forget to "make clean" after using it!
+
+EXAMPLE
+	make test; ./test v
