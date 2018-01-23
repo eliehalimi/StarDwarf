@@ -1,6 +1,6 @@
 # include "libvector.h"
 
-struct vector *newvector(const size_t size, const float *values)
+struct vector *new_vector(const size_t size, const float *values)
 {
   struct vector *res = malloc(sizeof(struct vector));
   res->size = size;
@@ -11,7 +11,7 @@ struct vector *newvector(const size_t size, const float *values)
   return res;
 }
 
-void freevector(struct vector *vect)
+void free_vector(struct vector *vect)
 {
   free(vect->values);
   free(vect);

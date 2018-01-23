@@ -9,8 +9,8 @@ struct vector
   float *values;
 };
 
-struct vector *newvector(size_t size, float *values);
+struct vector *new_vector(size_t size, float *values);
 
-void freevector(struct vector *vect);
+void free_vector(struct vector *vect);
 
 ENDIF
