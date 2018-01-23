@@ -16,3 +16,8 @@ void free_vector(struct vector *vect)
   free(vect->values);
   free(vect);
 }
+
+struct vector *clone_vector(struct vector *vect)
+{
+  return new_vector(vect->size, vect->values);
+}

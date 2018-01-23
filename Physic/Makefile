@@ -9,7 +9,7 @@ CFLAGS= -Werror -Wall -Wextra -std=c99 -pedantic -O3
 LDFLAGS=
 LDLIBS=`pkg-config --libs sdl` -lSDL_image
  
-SRC = libvector.c 
+SRC = libvector.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
  
@@ -24,6 +24,7 @@ test : ${OBJ}
 clean:
 	rm -f ${OBJ} ${DEP}
 	rm -f physic test
+	rm -f test.d test.o
 	rm -f \#*\#
 	rm -f *~
  
