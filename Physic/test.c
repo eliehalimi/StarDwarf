@@ -36,8 +36,11 @@ void test_libvector(void)
       printf("\t\t\tValue is : %f : (%lu expected) : ", v2->values[i], i);
       printOK(v2->values[i] == (float) i);
     }
+  printf("\tlist of vectors :\n\t\tLinking the two vectors :\n");
+  v1->list.next = &v2->list;
+  printf("\t\tRetrieving the vector : %p (%p expected) : ", (void *)CONTAINER_OF_(struct vector, list, v1->list.next), (void *) v2);
+  printOK(v2 == CONTAINER_OF_(struct vector, list, v1->list.next));
   printf("\n");
-
   free_vector(v1);
   free_vector(v2);
 }
@@ -58,8 +61,6 @@ int main(int argc, char *argv[])
 
   if(test_vector)
     test_libvector();
-  
-  
   
   return 0;
 }
