@@ -22,7 +22,7 @@ struct system
   float timelapse, delta_time;
 };
 
-struct item *new_item(struct vector *postion);
+struct item *new_item(const struct vector *postion);
 
 struct system *new_system(size_t nb_dimension);
 
