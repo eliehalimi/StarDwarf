@@ -3,7 +3,7 @@
 
 struct vector *new_vector(const size_t size, const float *values)
 {
-  struct vector *res = malloc(sizeof(struct vector));
+  struct vector *res = calloc(sizeof(struct vector), 1);
   res->size = size;
   res->values = calloc(sizeof(float), size);
   if(values != NULL)
