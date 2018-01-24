@@ -27,6 +27,25 @@ void free_system(struct system *system)
   free(system);
 }
 
-void update_item(struct item *item, float delta_time);
+void update_item(struct item *item, float delta_time)
+{
+  assert(delta_time > 0);
+  assert(item != NULL);
+  assert(item->nb_dimension == item->position.size);
+  assert(item->nb_dimension == item->velocity.size);
+  assert(item->nb_dimension == item->force.size);
+  assert(item->position.values != NULL);
+  assert(item->velocity.values != NULL);
+  assert(item->force.values != NULL);
+
+  struct vector *totalForce = clone_vector(&item->force);
+  for(struct list l = item->user_force.next; l != NULL; l = l->next)
+    add_vector(CONTAINER_OF_(struct vector, list, l), totalForce);
+  scalar_product_vector(delta_time, totalForce);
+  add_vector(totalForce, &item->velocity);
+  struct vector *totalVelocity = clone_vector(&item->velocity);
+  scalar_product_vector(delta_time, totalVelocity);
+  add_vector(totalVelocity, &item->position);
+}
 
 void update_system(struct system *system);

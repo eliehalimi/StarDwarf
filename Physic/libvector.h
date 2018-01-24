@@ -24,6 +24,10 @@ struct vector *new_vector(size_t size, const float *values);
 
 void free_vector(struct vector *vect);
 
-struct vector *clone_vector(struct vector *vect);
+struct vector*scalar_product_vector(float scalar, struct vector *out);
+
+struct vector *add_vector(const struct vector *in, struct vector *out);
+
+struct vector *clone_vector(const struct vector *vect);
 
 # endif
