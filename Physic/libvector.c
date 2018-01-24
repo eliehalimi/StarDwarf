@@ -1,3 +1,4 @@
+# include <assert.h>
 # include "libvector.h"
 
 struct vector *new_vector(const size_t size, const float *values)
@@ -13,11 +14,39 @@ struct vector *new_vector(const size_t size, const float *values)
 
 void free_vector(struct vector *vect)
 {
+  assert(vect != NULL);
+  assert(vect->values != NULL);
+  
   free(vect->values);
   free(vect);
 }
 
-struct vector *clone_vector(struct vector *vect)
+struct vector * add_vector(const struct vector *in, struct vector *out)
+{
+  assert(in != NULL);
+  assert(out != NULL);
+  assert(in->values != NULL);
+  assert(out->values != NULL);
+  assert(in->size == out->size);
+  
+  for(size_t i = 0; i < in->size; ++i)
+    out->values[i] += in->values[i];
+  
+  return out;
+}
+
+struct vector *scalar_product_vector(float scalar, struct vector *out)
+{
+  assert(out != NULL);
+  assert(out->values != NULL);
+
+  for(size_t i = 0; i < out->size; ++i)
+    out->values[i] *= scalar;
+
+  return out;
+}
+
+struct vector *clone_vector(const struct vector *vect)
 {
   return new_vector(vect->size, vect->values);
 }
