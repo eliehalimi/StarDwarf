@@ -5,7 +5,7 @@
 # include "math.h"
 float distance(struct item *i1, struct item *i2)
 {
-  struct vector *sum = add_vector(&(i2->position),clone_vector(&(i1->position)));
+  struct vector *sum = sub_vector(&(i2->position),clone_vector(&(i1->position)));
   float d =  magnitude_vector(sum);
   free_vector(sum);
   return d;
@@ -24,7 +24,7 @@ struct vector* gra_force(struct item *i1, struct item *i2)
   float m1 = i1->mass, m2 = i2->size;
   float r = distance(i1,i2);
   float F_magnitude = (G*m1*m2)/powl(r,2);
-  struct vector *F = add_vector(&(i2->position), clone_vector(&(i1->position))); 
+  struct vector *F = sub_vector(&(i2->position), clone_vector(&(i1->position))); 
   F = scalar_product_vector(1/r,F); //finding vector unit
   F = scalar_product_vector(F_magnitude, F);
   return F; 
