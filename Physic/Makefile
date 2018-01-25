@@ -7,9 +7,10 @@ CC=gcc -fsanitize=address
 CPPFLAGS= `pkg-config --cflags sdl` -MMD
 CFLAGS= -Werror -Wall -Wextra -pedantic -std=c99 -O0 -g
 LDFLAGS=
+LDLIBS = -lm
 # LDLIBS=`pkg-config --libs sdl` -lSDL_image
  
-SRC = libvector.c physic.c
+SRC = libvector.c physic.c forces.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
  

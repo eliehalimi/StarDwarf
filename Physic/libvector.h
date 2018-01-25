@@ -30,4 +30,7 @@ struct vector *add_vector(const struct vector *in, struct vector *out);
 
 struct vector *clone_vector(const struct vector *vect);
 
+struct vector *sub_vector(const struct vector *in, struct vector *out);
+
+float magnitude_vector(struct vector *v1);
 # endif
