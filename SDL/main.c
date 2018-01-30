@@ -5,7 +5,7 @@
 int main()
 {
 	// I am creating images here (pointers to SDL_Surface)
-	//SDL_Surface *Hello = NULL;
+	SDL_Surface *Hello = NULL;
 	SDL_Surface *Screen = NULL;
 
 	//Starts SDL library I guess
@@ -21,21 +21,20 @@ int main()
 
 	//Loads Image apparently
 	// IF I had a bmp image it would be like that:
-	// Hello = SDL_LoadBMP("hello.bmp")
-
+	Hello = SDL_LoadBMP("../resources/circle.bmp");
 
 	//To apply the image I would do
-	SDL_BlitSurface(NULL, NULL, Screen, NULL);
+	SDL_BlitSurface(Hello, NULL, Screen, NULL);
 
 	//UPDATE SCREEN
 	SDL_Flip(Screen);
 
 	// To free loaded image
-	// SDL_FreeSurface( Hello);
+	SDL_FreeSurface( Hello);
 
 	//Creates a delay to make the windows visible for n milliseconds
 	//till I learn a better way to make the windows stay in place 
-	SDL_Delay(2000);
+	SDL_Delay(20000);
 
 	//QUITS SDL 
 	SDL_Quit();

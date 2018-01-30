@@ -8,15 +8,18 @@ CFLAGS= -fsanitize=address -Wall -Wextra -Werror -Wpedantic -std=c99 -O0 -g
 LDFLAGS=
 LDLIBS= -fsanitize=address `pkg-config --libs sdl` -lSDL_image
 
-OBJ= main.o
+SRC= main.o
+OBJ= ${SRC:.c=.o}
 DEP= ${SRC:.o=.d}
 
 all: main
 
-main: ${OBJ}
+#main: ${OBJ}
 
 clean:
-	${RM} ${OBJ} ${DEP} *~
+	${RM} ${OBJ} 
+	${RM} ${DEP} 
+	${RM} *~
 	${RM} main
 
 -include ${DEP}
