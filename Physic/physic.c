@@ -2,9 +2,13 @@
 # include <string.h>
 # include <assert.h>
 # include "physic.h"
+# include "forces.h"
 
 struct item *new_item(const struct vector *position)
 {
+  assert(position != NULL);
+  assert(position->size > 0);
+
   struct item *i = calloc(sizeof(struct item), 1);
   i->nb_dimension = position->size;
   i->position.values = malloc(sizeof(float) * i->nb_dimension);
@@ -21,6 +25,8 @@ struct item *new_item(const struct vector *position)
 
 struct system *new_system(size_t nb_dimension)
 {
+  assert(nb_dimension > 0);
+  
   struct system *s = calloc(sizeof(struct system), 1);
   s->nb_dimension = nb_dimension;
   return s;
@@ -45,6 +51,8 @@ void free_item(struct item *item)
 
 void free_system(struct system *system)
 {
+  assert(system != NULL);
+  
   for(struct list *l = system->items.next; l != NULL;)
     {
       struct list *next = l->next;
@@ -66,7 +74,7 @@ void update_item(struct item *item, float delta_time)
   assert(item->position.values != NULL);
   assert(item->velocity.values != NULL);
   assert(item->force.values != NULL);
-
+  
   struct vector *totalForce = clone_vector(&item->force);
   for(struct list *l = item->user_force.next; l != NULL; l = l->next)
     add_vector(CONTAINER_OF_(struct vector, list, l), totalForce);
@@ -79,4 +87,57 @@ void update_item(struct item *item, float delta_time)
   free_vector(totalVelocity);
 }
 
-void update_system(struct system *system);
+void update_system(struct system *system)
+{
+  assert(system != NULL);
+  assert(system->delta_time > 0.0f);
+  assert(system->nb_dimension > 0);
+
+  //UPDATE ITEMS
+  for(struct list *l = system->items.next; l != NULL; l = l->next)
+    update_item(CONTAINER_OF_(struct item, list, l), system->delta_time);
+  
+  //RESET FORCE APPLIED BY SYSTEM
+  for(struct list *l = system->items.next; l != NULL; l = l->next)
+    for(size_t i = 0; i < system->nb_dimension; ++i)
+      CONTAINER_OF_(struct item, list, l)->force.values[i] = 0.0f;
+  
+  //APPLY GRAVITY
+  for(struct list *l1 = system->items.next; l1 != NULL; l1 = l1->next)
+    {
+      for(struct list *l2 = system->items.next; l2 != NULL; l2 = l2->next)
+	{
+	  struct item *i1 = CONTAINER_OF_(struct item, list, l1);
+	  struct item *i2 = CONTAINER_OF_(struct item, list, l2);
+
+	  struct vector *g = gra_force(i1, i2);
+	  add_vector(g, &i1->force);
+	}
+    }
+}
+
+void push_item(struct system *system, struct item *item)
+{
+  assert(system != NULL);
+  assert(item != NULL);
+  
+  item->list.next = system->list.next;
+  system->list.next = item;
+}
+
+struct item *remove_item(struct system *system, struct item *item)
+{
+  assert(system != NULL);
+  assert(item != NULL);
+
+  struct item *curr = NULL;
+  for(struct list *l = &system->items; l != NULL; l = l->next)
+    {
+      if(CONTAINER_OF_(struct list, list, l->next) == item)
+	{
+	  
+	}
+    }
+
+  return NULL
+}

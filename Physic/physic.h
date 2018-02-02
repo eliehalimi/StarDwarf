@@ -30,8 +30,18 @@ void free_item(struct item *item);
 
 void free_system(struct system *system);
 
+// Update the velocity and position vector of the object
+// Based on the force it is set with
 void update_item(struct item *item, float delta_time);
 
+// Update every item of the system, then update the forces
+// they apply to one another
 void update_system(struct system *system);
+
+// Add an item to the system
+void push_item(struct system *system, struct item *item);
+
+// Remove an item to the system
+struct item *remove_item(struct system *system, struct item *item);
 
 # endif

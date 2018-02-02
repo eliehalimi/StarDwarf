@@ -14,10 +14,8 @@ SRC = libvector.c physic.c forces.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
  
-all: physic
- 
-physic: ${OBJ}
- 
+all: test
+
 test : ${OBJ}
  
 -include ${DEP}

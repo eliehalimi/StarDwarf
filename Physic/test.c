@@ -101,7 +101,7 @@ void test_Physic(void)
     {
       printf("\t\t\tValue is : %f : (%f expected) : ", item->position.values[i], check[i]);
       printOK(item->position.values[i] == check[i]);
-    }
+    }  
   free_vector(p);
   free_item(item);
   printf("\n");

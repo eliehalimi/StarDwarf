@@ -68,7 +68,7 @@ struct vector *clone_vector(const struct vector *vect)
   return new_vector(vect->size, vect->values);
 }
 
-float magnitude_vector (struct vector *vect)
+float magnitude_vector (const struct vector *vect)
 {
   float sum; // = sqrt(x^2 + y^2 + z^2+....)
   for (size_t i = 0; i < vect->size; ++i)
