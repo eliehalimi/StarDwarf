@@ -112,6 +112,7 @@ void update_system(struct system *system)
 
 	  struct vector *g = gra_force(i1, i2);
 	  add_vector(g, &i1->force);
+	  free_vector(g);
 	}
     }
 }
@@ -121,23 +122,26 @@ void push_item(struct system *system, struct item *item)
   assert(system != NULL);
   assert(item != NULL);
   
-  item->list.next = system->list.next;
-  system->list.next = item;
+  item->list.next = system->items.next;
+  system->items.next = &item->list;
 }
 
 struct item *remove_item(struct system *system, struct item *item)
 {
   assert(system != NULL);
   assert(item != NULL);
-
-  struct item *curr = NULL;
+  
   for(struct list *l = &system->items; l != NULL; l = l->next)
     {
-      if(CONTAINER_OF_(struct list, list, l->next) == item)
+      if(CONTAINER_OF_(struct item, list, l->next) == item)
 	{
-	  
+	  struct item *i = CONTAINER_OF_(struct item, list, l->next);
+	  struct list *u = i->list.next;
+	  i->list.next = NULL;
+	  l->next = u;
+	  return i;
 	}
     }
 
-  return NULL
+  return NULL;
 }
