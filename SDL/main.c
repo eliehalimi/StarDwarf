@@ -7,8 +7,9 @@ int main()
 	// I am creating images here (pointers to SDL_Surface)
 	SDL_Surface *Hello = NULL;
 	SDL_Surface *Screen = NULL;
+	SDL_Surface *Message = NULL;
 
-	//Starts SDL library I guess
+	// Starts SDL library I guess
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	// sets up screen config
@@ -17,26 +18,35 @@ int main()
 	 * 32 is the number of bits per pixel. I'll change that to 64 someday.
 	 * SDL_SWSURFACE sets surface in sofware memory
 	 */
-	Screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
+	Screen = SDL_SetVideoMode(1280, 720, 32, SDL_SWSURFACE);
 
-	//Loads Image apparently
+	// Loads Image apparently
 	// IF I had a bmp image it would be like that:
 	Hello = SDL_LoadBMP("../resources/circle.bmp");
+	
+	// Initializing the event structure
+	SDL_Event event;
+
+	// Initializing the font that is going to be used.
+	TTF_Font *font = NULL;
+
+	// Setting up the color of the font
+	SDL_Color textColor = {255, 255, 255};	
 
 	//To apply the image I would do
 	SDL_BlitSurface(Hello, NULL, Screen, NULL);
 
-	//UPDATE SCREEN
+	// UPDATE SCREEN
 	SDL_Flip(Screen);
 
 	// To free loaded image
 	SDL_FreeSurface( Hello);
 
-	//Creates a delay to make the windows visible for n milliseconds
-	//till I learn a better way to make the windows stay in place 
+	// Creates a delay to make the windows visible for n milliseconds
+	// till I learn a better way to make the windows stay in place 
 	SDL_Delay(20000);
 
-	//QUITS SDL 
+	// QUITS SDL 
 	SDL_Quit();
 
 	return 0;
