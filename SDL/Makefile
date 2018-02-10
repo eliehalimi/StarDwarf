@@ -3,10 +3,10 @@
 
 CC=gcc
 
-CPPFLAGS= `pkg-config --cflags sdl` -MMD
-CFLAGS= -fsanitize=address -Wall -Wextra -Werror -Wpedantic -std=c99 -O0 -g
+CPPFLAGS= `pkg-config --cflags sdl2` -MMD
+CFLAGS= -fsanitize=address -std=c99#-Wall -Wextra -Werror -std=c99 -O0 -g
 LDFLAGS=
-LDLIBS= -fsanitize=address `pkg-config --libs sdl` -lSDL_image
+LDLIBS= -fsanitize=address -lm `pkg-config --libs sdl2` -lSDL_image #-lSDL_gfx -lSDL_ttf
 
 SRC= main.o
 OBJ= ${SRC:.c=.o}
