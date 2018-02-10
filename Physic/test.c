@@ -2,7 +2,8 @@
 # include <stdio.h>
 # include "libvector.h"
 # include "physic.h"
-
+# include <math.h>
+# include "forces.h"
 void printOK(int bool)
 {
   if(bool)
@@ -107,6 +108,59 @@ void test_Physic(void)
   printf("\n");
 }
 
+//#######################
+//## TESTING FORCES ##
+//#######################
+
+void test_forces(void)
+{
+  float tab1[] = {5,4,-4,4,4};
+  float tab2[] = {1,1,1,-1,-1};
+  struct vector *v1 = new_vector(5, tab1);
+  struct vector *v2 = new_vector(5, tab2);
+  struct item *i1 = new_item(v1);
+  struct item *i2 = new_item(v2);
+  i1->mass = 5*powf(10,7);
+  i2->mass = 1*powf(10,7);
+  struct vector *f1 = gra_force(i1,i2);// i2 acts on i1
+  struct vector *f2 = gra_force(i2,i1);//i1 acts on i2
+  size_t k = 0;
+  while (k < f1->size && f1->values[k] == -1*(f2->values[k]))
+    ++k;
+
+  printf("\nTESTING GRAVITATIONAL FORCE : ");
+  printOK(k==f1->size);
+  printf("\tCreate new item 1 at position : \n");
+  printf("\t\t");
+  for(size_t i = 0;  i < v1->size; ++i)
+    {
+      printf(" %f ", v1->values[i]);
+    }
+  printf("\n\tCreate new item 2 at position : \n");
+  printf("\t\t");
+  for(size_t i = 0;  i < v2->size; ++i)
+    {
+      printf(" %f ", v2->values[i]);
+    }
+  printf("\n\tF1 (i2 acts on i1) : \n");
+  printf("\t\t");
+  for(size_t i = 0;  i < f1->size; ++i)
+    {
+      printf(" %f  ", f1->values[i]);
+    } 
+  printf("\n\tF2 (i1 acts on i2) : \n");
+  printf("\t\t");
+  for(size_t i = 0;  i < f2->size; ++i)
+    {
+      printf(" %f ", f2->values[i]);
+    } 
+  free_vector(v1);
+  free_vector(v2);
+  free_item(i1);
+  free_item(i2);
+  free_vector(f1);
+  free_vector(f2);
+}
 
 
 //##########
@@ -118,10 +172,12 @@ int main(int argc, char *argv[])
 {
   int test_vector = 0;
   int test_physic = 0;
+  int test_force = 0;
   if(argc == 1)
     {
       test_vector = 1;
       test_physic = 1;
+      test_force = 1;
     }
 
   for(size_t i = 1; i < (size_t)argc; ++i)
@@ -136,6 +192,12 @@ int main(int argc, char *argv[])
 	  test_physic = 1;
 	  continue;
 	}
+      if(*argv[i] == 'f')
+	{
+	  test_force = 1;
+	  continue;
+	}
+      
       printf("%c : Unknown letter\n", *argv[i]);
     }
 
@@ -145,5 +207,7 @@ int main(int argc, char *argv[])
   if(test_physic)
     test_Physic();
   
+  if(test_force)
+    test_forces();
   return 0;
 }

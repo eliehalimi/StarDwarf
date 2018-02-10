@@ -1,7 +1,6 @@
 # include <assert.h>
 # include <math.h>
 # include "libvector.h"
-
 struct vector *new_vector(const size_t size, const float *values)
 {
   struct vector *res = calloc(sizeof(struct vector), 1);
@@ -72,6 +71,8 @@ float magnitude_vector (const struct vector *vect)
 {
   float sum; // = sqrt(x^2 + y^2 + z^2+....)
   for (size_t i = 0; i < vect->size; ++i)
-    sum += vect->values[i] * vect->values[i];
+    {
+      sum += powl(vect->values[i],2);
+    }
   return sqrt(sum);
 }
