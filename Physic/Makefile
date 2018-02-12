@@ -10,7 +10,7 @@ LDFLAGS=
 LDLIBS = -lm
 # LDLIBS=`pkg-config --libs sdl` -lSDL_image
  
-SRC = libvector.c physic.c forces.c
+SRC = libvector.c physic.c forces.c collision.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
  
