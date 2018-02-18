@@ -30,14 +30,26 @@ int main ()
         	{
            		if ( event.type == SDL_QUIT )
             		{
-                		is_running = 0;
+				if (is_running == 1)
+					is_running = 2;
+				else
+					is_running = 0;
             		}   
        	 	}	
-        
-		SDL_RenderClear ( renderer );
-		DrawCircle( renderer, SCR_CEN_X, SCR_CEN_Y, 200);
-		SDL_SetRenderDrawColor ( renderer, 0, 0, 0, 255 );
-        	SDL_RenderPresent ( renderer );
+        	if (is_running == 1)
+		{
+			SDL_RenderClear ( renderer );
+			DrawCircle( renderer, SCR_CEN_X, SCR_CEN_Y, 200);
+			SDL_SetRenderDrawColor ( renderer, 0, 0, 0, 255 );
+        		SDL_RenderPresent ( renderer );
+		}
+		else if (is_running == 2)
+		{
+			SDL_RenderClear (renderer);
+			DrawCircle( renderer, 250, SCR_CEN_Y, 200);
+			SDL_SetRenderDrawColor (renderer, 0, 0, 0, 255);
+			SDL_RenderPresent ( renderer );
+		}
 	}
     	SDL_Quit ();
 	return 0;
