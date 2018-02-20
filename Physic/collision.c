@@ -22,7 +22,7 @@ void collide(struct item *i1, struct item *i2)
 	{
 	  //m1v1 + m2v2 = (m1+m2)v1'
 	  printf("%f \n", ratio);
-	  i1->velocity =*(clone_vector(add_vector(scalar_product_vector(m1/(m1+m2), &(i1->velocity)), scalar_product_vector(m2/(m1+m2), &(i2->velocity)))));
+	  i1->velocity =*add_vector(scalar_product_vector(m1/(m1+m2), &(i1->velocity)), scalar_product_vector(m2/(m1+m2), &(i2->velocity)));
 	  i1->mass += i2->mass;
 	  free_item(i2);
 	}
