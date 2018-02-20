@@ -15,13 +15,13 @@ float distance(struct item *i1, struct item *i2)
 //calcutate gravitational force of i2 acts on i1 (i2 -> i1)
 struct vector* gra_force(struct item *i1, struct item *i2)
 {
-  /* F= (G*m1*m2)/(r*r)           : N
+  /* F= (G*m1*m2)/(r*r)           : nonillion (10^30) N
      G = 6.67 * 10^(-11)
-     m1,m2: mass of i1,i2         : kg
+     m1,m2: mass of i1,i2         : quadrillion (10^15) kg
      r: distance bwt m1 and m2    : m
    */
   float G = 6.672 * powf(10,-11);
-  float m1 = i1->mass, m2 = i2->size;
+  float m1 = i1->mass, m2 = i2->mass;
   float r = distance(i1,i2);
   float F_magnitude = (G*m1*m2)/powf(r,2);
   struct vector *F = sub_vector(&(i2->position), clone_vector(&(i1->position))); 
