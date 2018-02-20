@@ -229,7 +229,7 @@ void test_collision(void)
 
   
   struct vector *v1 = new_vector(3, tab1);
-  memcpy(&i1->velocity.values, &v1->values, sizeof(float) * 3);
+  memcpy(i1->velocity.values, &v1->values, sizeof(float) * 3);
   free_vector(v1);
 
   /*
