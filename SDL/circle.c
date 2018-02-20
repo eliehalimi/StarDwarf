@@ -88,16 +88,14 @@ int init_circle(int radius)
 	MoveCircle(renderer, 0+radius, 0, SCR_WDT, SCR_HGT, radius, background, &texr);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(renderer);
-	
 	while (is_running)
-	{
-		if ( SDL_PollEvent( &event ))
-        	{
-           		if ( event.type == SDL_QUIT )
-            		{
-				is_running = 0;
-            		}   
-       	 	}	
+	  {
+	    SDL_WaitEvent(&event);	
+	    if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN)) // close by click x button or push enter
+	      {
+		is_running = 0;
+	      }
+	      		
         	/*
 		// Clears Screen
 		SDL_RenderClear ( renderer );
@@ -120,7 +118,7 @@ int init_circle(int radius)
 	SDL_DestroyRenderer(renderer);
     	SDL_DestroyWindow(window);
 	
-	SDL_Quit ();
+	//SDL_Quit ();
 	return 0;
 }
 

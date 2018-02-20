@@ -44,8 +44,10 @@ int main()
 	    quit = 1;
 	
 	  if (new_button->active)
-	    quit = 1;
-
+	    {
+	      init_circle(50);
+	      new_button->active = 0;
+	    }
 	}
       if (!draw) continue;
       SDL_RenderClear(renderer);
@@ -58,14 +60,10 @@ int main()
       SDL_RenderPresent(renderer);
       draw = 0;
     }
-  if (new_button->active)
-	  init_circle(50);
-  else{
   clean();  
   free(startmenu_w);
   free(new_button);
   free(load_button);
   free(quit_button);
-  }
   return 0;
 }

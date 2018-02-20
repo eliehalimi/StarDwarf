@@ -108,5 +108,4 @@ void clean()
   SDL_Quit();
 
   SDL_RenderClear(renderer);
-  free(renderer);
 }
