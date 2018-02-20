@@ -59,7 +59,7 @@ int main()
       draw = 0;
     }
   if (new_button->active)
-	  init_circle(200);
+	  init_circle(50);
   else{
   clean();  
   free(startmenu_w);
