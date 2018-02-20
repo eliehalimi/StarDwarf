@@ -15,6 +15,12 @@ DESCRIPTION
 	
 	v	test libvector.c
 
+	f	test force.c
+
+	p	test physic.c
+
+	c	test collision.c
+
 	some will be added in the futur
 
 	when no argmuent is given, test will consider that every arguments are given.

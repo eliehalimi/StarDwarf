@@ -76,13 +76,17 @@ void update_item(struct item *item, float delta_time)
   assert(item->force.values != NULL);
   
   struct vector *totalForce = clone_vector(&item->force);
+  
   for(struct list *l = item->user_force.next; l != NULL; l = l->next)
     add_vector(CONTAINER_OF_(struct vector, list, l), totalForce);
+
   scalar_product_vector(delta_time, totalForce);
   add_vector(totalForce, &item->velocity);
+
   struct vector *totalVelocity = clone_vector(&item->velocity);
   scalar_product_vector(delta_time, totalVelocity);
   add_vector(totalVelocity, &item->position);
+  
   free_vector(totalForce);
   free_vector(totalVelocity);
 }
@@ -101,7 +105,7 @@ void update_system(struct system *system)
   for(struct list *l = system->items.next; l != NULL; l = l->next)
     for(size_t i = 0; i < system->nb_dimension; ++i)
       CONTAINER_OF_(struct item, list, l)->force.values[i] = 0.0f;
-  
+      
   //APPLY GRAVITY
   for(struct list *l1 = system->items.next; l1 != NULL; l1 = l1->next)
     {
@@ -110,7 +114,11 @@ void update_system(struct system *system)
 	  struct item *i1 = CONTAINER_OF_(struct item, list, l1);
 	  struct item *i2 = CONTAINER_OF_(struct item, list, l2);
 
+	  if(i1 == i2)
+	    continue;
+	  
 	  struct vector *g = gra_force(i1, i2);
+	  scalar_product_vector(1/i1->mass, g);
 	  add_vector(g, &i1->force);
 	  free_vector(g);
 	}

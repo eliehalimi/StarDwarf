@@ -95,23 +95,23 @@ void test_Physic(void)
   struct item *item2 = new_item(p);
   
   item->mass = 10.0f;
-  item2->mass = 100.0f;
-  item->position.values[2] = -10.0f;
+  item2->mass = 6 * pow(10.0f, 24.0f);
+  item2->position.values[2] = -6371.0f;
   
   push_item(s, item);
   push_item(s, item2);
 
   update_system(s);
   update_system(s);
-
+  
   printf("\t\tItem 1 :\n");
   //float checkp[] = {0.0f, -10.0f, 0.0f};
   printf("\t\t\tNew force values are : \n");
   for(size_t i = 0;  i < item->nb_dimension; ++i)
     {
-      printf("\t\t\t\tValue is : %f\n", item->velocity.values[i]);
+      printf("\t\t\t\tValue is : %f\n", item->force.values[i]);
       //printOK(item->velocity.values[i] == check[i]);
-    }
+    } 
   printf("\t\t\tNew velocity values are : \n");
   for(size_t i = 0;  i < item->nb_dimension; ++i)
     {
@@ -130,7 +130,7 @@ void test_Physic(void)
   printf("\t\t\tNew force values are : \n");
   for(size_t i = 0;  i < item2->nb_dimension; ++i)
     {
-      printf("\t\t\t\tValue is : %f\n", item2->velocity.values[i]);
+      printf("\t\t\t\tValue is : %f\n", item2->force.values[i]);
       //printOK(item->velocity.values[i] == check[i]);
     }
   printf("\t\t\tNew velocity values are : \n");
