@@ -84,26 +84,70 @@ void test_libvector(void)
 void test_Physic(void)
 {
   printf("\nTESTING PHYSIC :\n");
-  printf("\tSingle update on an object falling at -10 Newton, with no initial velocity, in 3D : \n");
+  printf("\tSystem performing two updates on two objects at a distance of 10, and with mass of 10 and 100, in 3D : \n");
+  struct system *s = new_system(3);
+  s->delta_time = 1.0f;
   struct vector *p = new_vector(3, NULL);
   struct item *item = new_item(p);
-  item->force.values[1] = - 10.0f;
-  update_item(item, 1.0f);
-  float check[] = {0.0f, -10.0f, 0.0f};
-  printf("\t\tNew velocity values are : \n");
+  struct item *item2 = new_item(p);
+  
+  item->mass = 10.0f;
+  item2->mass = 100.0f;
+  item->position.values[2] = -10.0f;
+  
+  push_item(s, item);
+  push_item(s, item2);
+
+  update_system(s);
+  update_system(s);
+
+  printf("\t\tItem 1 :\n");
+  //float checkp[] = {0.0f, -10.0f, 0.0f};
+  printf("\t\t\tNew force values are : \n");
   for(size_t i = 0;  i < item->nb_dimension; ++i)
     {
-      printf("\t\t\tValue is : %f : (%f expected) : ", item->velocity.values[i], check[i]);
-      printOK(item->velocity.values[i] == check[i]);
+      printf("\t\t\t\tValue is : %f\n", item->velocity.values[i]);
+      //printOK(item->velocity.values[i] == check[i]);
     }
-  printf("\n\t\tNew position values are : \n");
+  printf("\t\t\tNew velocity values are : \n");
   for(size_t i = 0;  i < item->nb_dimension; ++i)
     {
-      printf("\t\t\tValue is : %f : (%f expected) : ", item->position.values[i], check[i]);
-      printOK(item->position.values[i] == check[i]);
-    }  
+      printf("\t\t\t\tValue is : %f\n", item->velocity.values[i]);
+      //printOK(item->velocity.values[i] == check[i]);
+    }
+  printf("\n\t\t\tNew position values are : \n");
+  for(size_t i = 0;  i < item->nb_dimension; ++i)
+    {
+      printf("\t\t\t\tValue is : %f\n", item->position.values[i]);
+      //printOK(item->position.values[i] == check[i]);
+    }
+
+  printf("\t\tItem 2 :\n");
+
+  printf("\t\t\tNew force values are : \n");
+  for(size_t i = 0;  i < item2->nb_dimension; ++i)
+    {
+      printf("\t\t\t\tValue is : %f\n", item2->velocity.values[i]);
+      //printOK(item->velocity.values[i] == check[i]);
+    }
+  printf("\t\t\tNew velocity values are : \n");
+  for(size_t i = 0;  i < item2->nb_dimension; ++i)
+    {
+      printf("\t\t\t\tValue is : %f\n", item2->velocity.values[i]);
+      //printOK(item->velocity.values[i] == check[i]);
+    }
+  printf("\n\t\t\tNew position values are : \n");
+  for(size_t i = 0;  i < item2->nb_dimension; ++i)
+    {
+      printf("\t\t\t\tValue is : %f\n", item2->position.values[i]);
+      //printOK(item->position.values[i] == check[i]);
+    }
+  
+  
   free_vector(p);
-  free_item(item);
+  free_item(remove_item(s, item));
+  free_item(remove_item(s, item2));
+  free_system(s);
   printf("\n");
 }
 
