@@ -174,8 +174,11 @@ void test_forces(void)
   while (k < f1->size && f1->values[k] == -1*(f2->values[k]))
     ++k;
 
-  printf("\nTESTING GRAVITATIONAL FORCE : ");
-  printOK(k==f1->size);
+  printf("\nTESTING GRAVITATIONAL FORCE : \n");
+  printf("\t F = Gm1m2/r^2 \n");
+  printf("\t G = 6.67*10^(-11)\n\n");
+  
+  printf("\t m1 = 5*10^7 and m2 = 10^7 \n");
   printf("\tCreate new item 1 at position : \n");
   printf("\t\t");
   for(size_t i = 0;  i < v1->size; ++i)
@@ -188,18 +191,26 @@ void test_forces(void)
     {
       printf(" %4.0f ", v2->values[i]);
     }
-  printf("\n\tF1 (i2 acts on i1) : \n");
+  printf("\n\tDistance: %4.1f ", distance(i1,i2));
+
+  printf("\n\n\tF1 (i2 acts on i1) : \n");
   printf("\t\t");
   for(size_t i = 0;  i < f1->size; ++i)
     {
-      printf(" %4.0f  ", f1->values[i]);
-    } 
+      printf(" %4.1f  ", f1->values[i]);
+    }
+  
+  printf("\n\tMagnitude of F1: %4.1f\n", magnitude_vector(f1));
+  
   printf("\n\tF2 (i1 acts on i2) : \n");
   printf("\t\t");
   for(size_t i = 0;  i < f2->size; ++i)
     {
-      printf(" %4.0f ", f2->values[i]);
+      printf(" %4.1f ", f2->values[i]);
     } 
+  
+  printf("\n\tMagnitude of F2: %4.1f\n", magnitude_vector(f2));
+ 
   free_vector(v1);
   free_vector(v2);
   free_item(i1);
@@ -216,29 +227,34 @@ void test_collision(void)
 {
 
   
-  float tab1[] = {1,2,3}; //tab2[] = {4,5,6};  
+  float tab1[] = {1,2,3}, tab2[] = {4,5,6};  
   float tabpos1[] = {1,1,1}, tabpos2[] = {1,1,1}, tabpos3[] = {1,1,1}, tabpos4[] ={1,1,1};
   struct vector *p1 = new_vector(3, tabpos1);
   struct vector *p2 = new_vector(3, tabpos2);
   struct vector *p3 = new_vector(3, tabpos3);
   struct vector *p4 = new_vector(3, tabpos4);
+
   struct item *i1 = new_item(p1);
   struct item *i2 = new_item(p2);
   struct item *i3 = new_item(p3);
   struct item *i4 = new_item(p4);
-
   
   struct vector *v1 = new_vector(3, tab1);
-  memcpy(i1->velocity.values, &v1->values, sizeof(float) * 3);
+  struct vector *v2 = new_vector(3, tab2);
+  
+  memcpy(i1->velocity.values, v1->values, sizeof(float) * 3);
+  memcpy(i2->velocity.values, v2->values, sizeof(float) * 3);
+  memcpy(i3->velocity.values, v1->values, sizeof(float) * 3);
+  memcpy(i4->velocity.values, v2->values, sizeof(float) * 3);
+  
   free_vector(v1);
+  free_vector(v2);
 
-  /*
   i1->mass = 150*powf(10,7);
   i2->mass = 1*powf(10,7);
   printf("\nTESTING COLLISION :\n");
-  printf("\tCollision between a planet and a asteroid: \n");
-  printf("\t\t m1: planet ; m2 : asteriod and m1=150m2\n");
-  printf("\t\t\t velocity of m1 before colliding with m2: ");
+  printf("\tCollision between a planet and a asteroid (m1=150m2): \n");
+  printf("\t\tBefore collision, v1: ");
   for(size_t i = 0;  i < i1->velocity.size; ++i)
     {
       printf(" %2.0f ", i1->velocity.values[i]);
@@ -247,46 +263,42 @@ void test_collision(void)
   
   collide(i1,i2);
   
-  printf("\t\t\t velocity of m1 after colliding with m2 (m2 is destroyed and  merged with m1): ");
+  printf("\t\tAfter collision, v1': ");
   for(size_t i = 0;  i < i1->velocity.size; ++i)
     {
       printf(" %2.0f ", i1->velocity.values[i]);
     }
-
-
+  printf("\n\n");
   i3->mass = 2*powf(10,7);
   i4->mass = 1*powf(10,7);
-  
-  printf("\tCollision between 2 planets or 2 asteroid : \n");
-  printf("\t\t After colliding each other, m1v1' = m2v2, m2v2' = m1v1 \n");
-  printf("\t\t Assume m1 = 2m2, v1' = v2/2 and v2' = 2v1\n");
-  printf("\t\t\t velocity of m1 before colliding with m2: ");
+  printf("\tCollision between 2 planets or 2 asteroid (m1 = 2m2): \n");
+  printf("\t\t m1v1'=m2v2 and m2v2'=m1v1\n\t\t v1' = v2/2 and v2'= 2v1\n\n");
+  printf("\t\tBefore collision, v1: ");
   for(size_t i = 0;  i < i3->velocity.size; ++i)
     {
-      printf(" %f ", i3->velocity.values[i]);
+      printf(" %2.1f ", i3->velocity.values[i]);
     }
-  printf("\t\t\t velocity of m2 before colliding with m1: ");
+  printf("\n\t\tBefore collision, v2: ");
   for(size_t i = 0;  i < i4->velocity.size; ++i)
     {
-      printf(" %f ", i4->velocity.values[i]);
+      printf(" %2.1f ", i4->velocity.values[i]);
     }
-
-  printf("\n");
+  printf("\n\n");
   collide(i3, i4);
-  printf("\t\t\t velocity of m1 after collision: ");
+  printf("\t\tAfter collision, v1': ");
   for(size_t i = 0;  i < i3->velocity.size; ++i)
     {
-      printf(" %f ", i3->velocity.values[i]);
+      printf(" %2.1f ", i3->velocity.values[i]);
     }
-  printf("\t\t\t velocity of m2 after collision: ");
+  printf("\n\t\tAfter collision, v2': ");
   for(size_t i = 0;  i < i4->velocity.size; ++i)
     {
-      printf(" %f ", i4->velocity.values[i]);
+      printf(" %2.1f ", i4->velocity.values[i]);
     }
   printf("\n");
-  */
+
+  
   free_item(i1);
-  free_item(i2);
   free_item(i3);
   free_item(i4);
   free_vector(p1);
