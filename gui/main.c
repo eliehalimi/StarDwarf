@@ -6,6 +6,7 @@
 # include <err.h>
 # include <unistd.h>
 # include "gui.h"
+#include "../SDL/circle.c"
 int main()
 {
   SDL_Event e;
@@ -41,6 +42,10 @@ int main()
 
 	  if (quit_button->active)
 	    quit = 1;
+	
+	  if (new_button->active)
+	    quit = 1;
+
 	}
       if (!draw) continue;
       SDL_RenderClear(renderer);
@@ -53,11 +58,14 @@ int main()
       SDL_RenderPresent(renderer);
       draw = 0;
     }
+  if (new_button->active)
+	  init_circle(200);
+  else{
   clean();  
   free(startmenu_w);
   free(new_button);
   free(load_button);
   free(quit_button);
-  
+  }
   return 0;
 }

@@ -12,9 +12,11 @@
 const int SCR_CEN_X = SCR_WDT / 2;
 const int SCR_CEN_Y = SCR_HGT / 2;
 
+int MoveCircle( SDL_Renderer *r, int x, int y, int a, int b, int radius);
+int init_circle(int radius);
 
 int DrawCircle( SDL_Renderer *r, int x, int y, int radius);
-
+/*
 int main ()
 {
 	SDL_Texture *background = NULL;
@@ -37,8 +39,8 @@ int main ()
 	SDL_Rect texr; 
 	texr.x = SCR_WDT/2048;
 	texr.y = SCR_HGT/2048;
-       	texr.w = w;//*2;
-       	texr.h = h;//*2;
+       	texr.w = w;// *2;
+       	texr.h = h;// *2;
 
 	int is_running = 1;
 	
@@ -73,11 +75,106 @@ int main ()
 	SDL_Quit ();
 	return 0;
 }
-
+*/
 /*
 ** DrawCircle : Draws a circle at position x and y
 ** with a given radius
 */ 
+
+
+int Movecircle(SDL_Renderer *r,int x, int y, int a, int b, int radius)
+{
+	while (x != a && y != b)
+	{
+		if (x < a)
+			x += 1;
+		if (x > a)
+			x -= 1;
+		if (y < b)
+			y += 1;
+		if (y > b)
+			y -= 1;
+		DrawCircle(r, x, b, radius);
+		SDL_RenderClear(r);
+		SDL_RenderPresent(r);
+	}
+	return 1;
+}
+
+
+
+
+int init_circle(int radius)
+{
+	SDL_Texture *background = NULL;
+	
+      	SDL_Init ( SDL_INIT_VIDEO ); 
+
+    	SDL_Window *window = SDL_CreateWindow ( "Drawing a Circle", SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED, SCR_WDT, SCR_HGT, 0 );
+    	SDL_Renderer *renderer = SDL_CreateRenderer ( window, -1, SDL_RENDERER_SOFTWARE );
+   	
+	int w, h;
+
+
+	// Loading image
+	background = IMG_LoadTexture(renderer, "../resources/bg.jpg");
+	SDL_QueryTexture(background, NULL, NULL, &w, &h);
+	SDL_SetRenderTarget(renderer, background);
+
+	// Scaling image
+	SDL_Rect texr; 
+	texr.x = SCR_WDT/2048;
+	texr.y = SCR_HGT/2048;
+       	texr.w = w;// *2;
+       	texr.h = h;// *2;
+
+	int is_running = 1;
+	
+	SDL_Event event;
+      	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, background, NULL, &texr);
+	DrawCircle(renderer, radius, SCR_CEN_Y, radius);
+	MoveCircle(renderer, radius, SCR_CEN_Y, SCR_CEN_X, SCR_CEN_Y, radius);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_RenderPresent(renderer);
+	
+	while (is_running)
+	{
+		if ( SDL_PollEvent( &event ))
+        	{
+           		if ( event.type == SDL_QUIT )
+            		{
+				is_running = 0;
+            		}   
+       	 	}	
+        	/*
+		// Clears Screen
+		SDL_RenderClear ( renderer );
+		// Copies Texture to rendering context
+		SDL_RenderCopy(renderer, background, NULL, &texr);
+		
+		// Draws Circle
+		DrawCircle( renderer, radius, SCR_CEN_Y, radius);
+		//Movecircle(renderer, radius, SCR_CEN_Y, 588, 854, radius);
+		
+		SDL_SetRenderDrawColor ( renderer, 0, 0, 0, 255 );
+        	SDL_RenderPresent ( renderer );
+		*/
+	}
+
+	SDL_DestroyTexture(background);
+	SDL_DestroyRenderer(renderer);
+    	SDL_DestroyWindow(window);
+	
+	SDL_Quit ();
+	return 0;
+}
+
+
+
+
+
 
 
 int DrawCircle( SDL_Renderer *r, int x, int y, int radius)

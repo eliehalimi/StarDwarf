@@ -4,9 +4,9 @@
 CC=gcc
 
 CPPFLAGS= `pkg-config --cflags sdl2` -MMD
-CFLAGS=  -Wall -Wextra -Werror -std=c99 #-fsanitize=address 
+CFLAGS=  -fsanitize=address -Wall -Wextra -Werror -std=c99 #-fsanitize=address 
 LDFLAGS=
-LDLIBS=  -lm `pkg-config --libs sdl2` -lSDL2 -lSDL2_image -lSDL2_ttf #-fsanitize=address
+LDLIBS=  -fsanitize=address -lm `pkg-config --libs sdl2` -lSDL2 -lSDL2_image -lSDL2_ttf #-fsanitize=address
 
 SRC= general.o draw.o event.o main.o
 OBJ= ${SRC:.c=.o}
