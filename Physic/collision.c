@@ -1,4 +1,5 @@
 # include <stdlib.h>
+# include <stdio.h>
 # include "libvector.h"
 # include "physic.h"
 # include "collision.h"
@@ -15,13 +16,13 @@ void collide(struct item *i1, struct item *i2)
     ratio = m1/m2;
   else
     ratio = m2/m1;
-  if (ratio <=  100) //collision bwt a asteriod and a planet
+  if (ratio >=  100) //collision bwt a asteriod and a planet
     {
       if (m1 > m2) //i1 is a planet
 	{
 	  //m1v1 + m2v2 = (m1+m2)v1'
-	  
-	  i1->velocity = *add_vector(scalar_product_vector(m1/(m1+m2), &(i1->velocity)), scalar_product_vector(m2/(m1+m2), &(i2->velocity)));
+	  printf("%f \n", ratio);
+	  i1->velocity =*(clone_vector(add_vector(scalar_product_vector(m1/(m1+m2), &(i1->velocity)), scalar_product_vector(m2/(m1+m2), &(i2->velocity)))));
 	  i1->mass += i2->mass;
 	  free_item(i2);
 	}
