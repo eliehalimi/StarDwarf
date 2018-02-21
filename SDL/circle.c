@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL2/SDL_image.h>
+#include <unistd.h>
 
 #define SCR_WDT 1280
 #define SCR_HGT 960
@@ -76,7 +77,8 @@ int init_circle(int radius)
        	texr.h = h;// *2;
 
 	int is_running = 1;
-	
+	int x = 2*radius;
+	int y = 2*radius;
 	SDL_Event event;
       	SDL_RenderClear(renderer);
 	SDL_RenderCopy(renderer, background, NULL, &texr);
@@ -85,19 +87,39 @@ int init_circle(int radius)
 	SDL_RenderPresent(renderer);
 	SDL_RenderCopy(renderer, background, NULL, &texr);
 	sleep(3);
-	MoveCircle(renderer, 0+2*radius, 0+2*radius, 1280-2*radius, 720-2*radius, radius, background, &texr);
+	MoveCircle(renderer, x, y, 1280-2*radius, 720-2*radius, radius, background, &texr);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(renderer);
+	x = 1280 -2*radius;
+	y = 720-2*radius;
 	while (is_running)
-	  {
-	    SDL_WaitEvent(&event);	
-	    if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN)) // close by click x button or push enter
-	      {
-		is_running = 0;
-	      }
-	      		
-        	/*
-		// Clears Screen
+	{
+		SDL_WaitEvent(&event);	
+	    	if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN)) // close by click x button or push enter
+	      	{
+			is_running = 0;
+	      	}
+
+
+	    	if (event.type == SDL_KEYDOWN)
+		{
+			if(event.key.keysym.sym == SDLK_DOWN)
+	    			y +=1;
+		    	if (event.key.keysym.sym == SDLK_UP)
+				y -=1;
+	    		if (event.key.keysym.sym == SDLK_LEFT)
+				x -=1;
+			if (event.key.keysym.sym == SDLK_RIGHT)
+				x += 1;
+
+
+			SDL_RenderClear(renderer);
+			SDL_RenderCopy(renderer, background, NULL, &texr);
+			
+			DrawCircle(renderer, x, y, radius);
+			SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+			SDL_RenderPresent(renderer);
+		/*// Clears Screen
 		SDL_RenderClear ( renderer );
 		// Copies Texture to rendering context
 		SDL_RenderCopy(renderer, background, NULL, &texr);
@@ -107,8 +129,8 @@ int init_circle(int radius)
 		//Movecircle(renderer, radius, SCR_CEN_Y, 588, 854, radius);
 		
 		SDL_SetRenderDrawColor ( renderer, 0, 0, 0, 255 );
-        	SDL_RenderPresent ( renderer );
-		*/
+        	SDL_RenderPresent ( renderer );*/
+		}
 	}
 
 	if (is_running)
