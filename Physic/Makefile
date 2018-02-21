@@ -5,18 +5,17 @@
 # Compilers and options
 CC=gcc -fsanitize=address
 CPPFLAGS= `pkg-config --cflags sdl` -MMD
-CFLAGS= -Werror -Wall -Wextra -std=c99 -pedantic -O3
+CFLAGS= -Werror -Wall -Wextra -pedantic -std=c99 -O0 -g
 LDFLAGS=
-LDLIBS=`pkg-config --libs sdl` -lSDL_image
+LDLIBS = -lm
+# LDLIBS=`pkg-config --libs sdl` -lSDL_image
  
-SRC = libvector.c 
+SRC = libvector.c physic.c forces.c collision.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
  
-all: physic
- 
-physic: ${OBJ}
- 
+all: test
+
 test : ${OBJ}
  
 -include ${DEP}
@@ -24,6 +23,7 @@ test : ${OBJ}
 clean:
 	rm -f ${OBJ} ${DEP}
 	rm -f physic test
+	rm -f test.d test.o
 	rm -f \#*\#
 	rm -f *~
  
