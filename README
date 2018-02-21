@@ -1,0 +1,33 @@
+### StarDwarf by the Kurt Russel's Teapot team ###
+ 
+ Our main project is located in the gui folder. 
+ To compile our and execute our project :
+	- go into the gui/ folder
+	- run make
+	- launch ./main executable
+
+This corresponds to the GUI part of our project. 
+
+To test the physics part of our project: 
+	- go into the Physics/ folder
+	- run make test
+	- launch ./test[]
+	
+	you can specify wich test you want by adding arguments :
+	
+	v	./test libvector.c
+
+	f	./test force.c
+
+	p	./test physic.c
+
+	c	./test collision.c
+
+	some will be added in the futur
+
+	when no argmuent is given, test will consider all arguments.
+	
+	
+	Thank you for reading.
+	
+	The Kurt Russel's Teapot Team
