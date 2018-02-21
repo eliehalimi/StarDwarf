@@ -56,15 +56,15 @@ int init_circle(int radius)
 	
       	SDL_Init ( SDL_INIT_VIDEO ); 
 
-    	SDL_Window *window = SDL_CreateWindow ( "Drawing a Circle", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, SCR_WDT, SCR_HGT, 0 );
+    	SDL_Window *window = SDL_CreateWindow ( "Kurt Russel's Teapot - StarDwarf", SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED, 1280, 720, 0); //SCR_WDT, SCR_HGT, 0 );
     	SDL_Renderer *renderer = SDL_CreateRenderer ( window, -1, SDL_RENDERER_SOFTWARE );
    	
 	int w, h;
 
 
 	// Loading image
-	background = IMG_LoadTexture(renderer, "../resources/bg.jpg");
+	background = IMG_LoadTexture(renderer, "../gui/img/bg.jpg"); //I don't want to display bg for the time being
 	SDL_QueryTexture(background, NULL, NULL, &w, &h);
 	SDL_SetRenderTarget(renderer, background);
 
@@ -85,7 +85,7 @@ int init_circle(int radius)
 	SDL_RenderPresent(renderer);
 	SDL_RenderCopy(renderer, background, NULL, &texr);
 	sleep(3);
-	MoveCircle(renderer, 0+radius, 0, SCR_WDT, SCR_HGT, radius, background, &texr);
+	MoveCircle(renderer, 0+2*radius, 0+2*radius, 1280-2*radius, 720-2*radius, radius, background, &texr);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderPresent(renderer);
 	while (is_running)

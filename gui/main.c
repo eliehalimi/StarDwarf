@@ -10,7 +10,7 @@
 int main()
 {
   SDL_Event e;
-  SDL_Renderer *renderer = init("Kurt Kussel's teapot - StarDwarf",1280, 720);
+  SDL_Renderer *renderer = init("Kurt Russel's teapot - StarDwarf",1280, 720);
   if (!renderer) return 1;
   
   struct button *new_button = malloc(sizeof(struct button));
