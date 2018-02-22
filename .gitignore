@@ -1,8 +1,8 @@
 reated by https://www.gitignore.io/api/c,vim,linux,emacs,archlinuxpackages
 
 ### ArchLinuxPackages ###
-*.tar
-*.tar.*
+#*.tar
+#*.tar.*
 *.jar
 *.exe
 *.msi
