@@ -13,26 +13,19 @@ int window_new(struct window *window, struct image *bg, int x, int y, int w, int
   window->bg = bg;
   MakeRect(&window->rect, x, y, w, h);
   window->visible = 0;
-
+  window->event = 0;
   return 0;
 }
 
 
 int window_event(struct window *window, SDL_Event *event, int *draw)
 {
-  if (!window || !window->visible || !event) return 0;
+  if (!window || !window->event || !event) return 0;
   if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_EXPOSED)
     *draw = 1;
   if (event->type == SDL_MOUSEBUTTONDOWN && PointInRect(event->button.x, event->button.y, &window->rect))
     return 1;
   return 0;
-}
-
-int window_draw(struct window *window, SDL_Renderer *renderer)
-{
-  if (!window || !window->visible || !renderer) return 0;
-  RenderImage(renderer, window->bg, 0, 0, NULL);
-  return 1;
 }
 
 int button_new(struct button *button, struct image *selected, struct image *unselected, int x, int y, struct window *window)
@@ -41,6 +34,7 @@ int button_new(struct button *button, struct image *selected, struct image *unse
   button->window = window;
   button->active = 0;
   button->prelight = 0;
+  button->event = window->event;
   button->visible = window->visible;
   button->selected = selected;
   button->unselected = unselected;
@@ -51,8 +45,8 @@ int button_new(struct button *button, struct image *selected, struct image *unse
 
 int button_event(struct button *button, SDL_Event *event, int *draw)
 {
-  button->visible = button->window->visible;
-  if (!button || !button->visible || !event) return 0;
+  button->event = button->window->event;
+  if (!button || !button->event || !event) return 0;
   if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_EXPOSED)
     *draw = 1;
   if (event->type == SDL_MOUSEBUTTONDOWN && PointInRect(event->button.x, event->button.y,&button->rect))
@@ -83,20 +77,5 @@ int button_event(struct button *button, SDL_Event *event, int *draw)
       }
     }
 	return 0;
-}
-
-int button_draw(struct button *button, SDL_Renderer *renderer)
-{
-  if (!button || !button->visible || !renderer) return 0;
-  if (button->active)
-    RenderImage(renderer, button->selected, button->rect.x,
-		button->rect.y, NULL);
-  else if (button->prelight)
-    {
-      RenderImage(renderer, button->selected, button->rect.x, button->rect.y, NULL);
-    }
-  else
-    RenderImage(renderer, button->unselected, button->rect.x, button->rect.y, NULL);
-  return 1;
 }
 

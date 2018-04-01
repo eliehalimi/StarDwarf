@@ -6,8 +6,8 @@
 # include <err.h>
 # include <unistd.h>
 # include "gui.h"
-struct button *new_button, *load_button, *options_button, *quit_button, *credit_button, *volume_button, *back_optionmenu_button, *back_creditmenu_button;
-struct window *startmenu_w, *optionmenu_w, *creditmenu_w;
+struct button *new_button, *load_button, *options_button, *quit_button, *credit_button, *volume_button, *back_optionmenu_button, *back_creditmenu_button, *x_button, *start_button;
+struct window *startmenu_w, *optionmenu_w, *creditmenu_w, *namemenu_w;
 
 void init_button_window()
 {
@@ -24,6 +24,11 @@ void init_button_window()
 
   creditmenu_w = malloc(sizeof(struct window));
   back_creditmenu_button = malloc(sizeof(struct button));
+
+  x_button = malloc(sizeof(struct button));
+  start_button = malloc(sizeof(struct button));
+  namemenu_w = malloc(sizeof(struct window));
+
   int window_w = 1280, window_h = 720;
   
   window_new(startmenu_w, startmenu, 0, 0, window_w, window_h);
@@ -39,21 +44,40 @@ void init_button_window()
   
   window_new(creditmenu_w, creditmenu, 0, 0, window_w, window_h);
   button_new(back_creditmenu_button, back_selected, back_unselected, 400, 600, creditmenu_w);
+
+  window_new(namemenu_w, namemenu, 260, 200, 739, 300);
+  button_new(x_button, x_selected, x_unselected, 945, 205, namemenu_w);
+  button_new(start_button, start_selected, start_unselected, 500, 400, namemenu_w);
   
 
 }
 
-void button_active(int *quit, int *draw_startmenu, int *draw_optionmenu, int *draw_creditmenu)
+void button_active(int *quit, int *draw_startmenu, int *draw_optionmenu, int *draw_creditmenu, int *draw_namemenu)
 {
   if (quit_button->active)
     *quit = 1;
-  
+  if (new_button->active)
+    {
+      new_button->active = 0;
+      new_button->prelight = 0;
+      namemenu_w->visible = 1, namemenu_w->event = 1;
+      startmenu_w->event = 0;
+      *draw_namemenu = 1;
+    }
+  if (x_button->active)
+    {
+      x_button->active = 0;
+      x_button->prelight = 0;
+      namemenu_w->visible = 0, namemenu_w->event = 0;
+      startmenu_w->event = 1;
+      *draw_namemenu = 0;
+    }
   if (options_button->active)
     {
       options_button->active = 0;
       options_button->prelight = 0;
-      startmenu_w->visible = 0;
-      optionmenu_w->visible = 1;
+      startmenu_w->visible = 0, startmenu_w->event = 0;
+      optionmenu_w->visible = 1, optionmenu_w->event = 1;
       *draw_startmenu = 0;
       *draw_optionmenu = 1;
     }
@@ -61,16 +85,16 @@ void button_active(int *quit, int *draw_startmenu, int *draw_optionmenu, int *dr
     {
       back_optionmenu_button->active = 0;
       back_optionmenu_button->prelight = 0;
-      startmenu_w->visible = 1;
-      optionmenu_w->visible = 0;
+      startmenu_w->visible = 1, startmenu_w->event = 1;
+      optionmenu_w->visible = 0, optionmenu_w->event = 0;
       *draw_optionmenu = 0;
     }
   if (credit_button->active)
     {
       credit_button->active = 0;	     
       credit_button->prelight = 0;
-      optionmenu_w->visible = 0;
-      creditmenu_w->visible = 1;
+      optionmenu_w->visible = 0, optionmenu_w->event = 0;
+      creditmenu_w->visible = 1, creditmenu_w->event = 1;
       *draw_creditmenu = 1;
       *draw_startmenu = 0;
       *draw_optionmenu = 0;
@@ -79,8 +103,8 @@ void button_active(int *quit, int *draw_startmenu, int *draw_optionmenu, int *dr
     {
       back_creditmenu_button->active = 0;
       back_creditmenu_button->prelight = 0;
-      optionmenu_w->visible = 1;
-      creditmenu_w->visible = 0;
+      optionmenu_w->visible = 1, optionmenu_w->event = 1;
+      creditmenu_w->visible = 0, creditmenu_w->event = 0;
       *draw_creditmenu = 0;
       *draw_optionmenu = 1;
     }
@@ -92,8 +116,8 @@ int main()
   SDL_Renderer *renderer = init("Kurt Kussel's teapot - StarDwarf",1280, 720);
   if (!renderer) return 1;
   init_button_window();
-  int quit = 0, draw_startmenu = 1, draw_optionmenu = 0, draw_creditmenu = 0;
-  startmenu_w->visible = 1;
+  int quit = 0, draw_startmenu = 1, draw_optionmenu = 0, draw_creditmenu = 0, draw_namemenu = 0;
+  startmenu_w->visible = 1, startmenu_w->event = 1;
   while (!quit)
     {
       SDL_Delay(10);
@@ -101,7 +125,7 @@ int main()
 	{
 	  if (e.type == SDL_QUIT)
 	    quit = 1;	  
-	  button_active(&quit, &draw_startmenu, &draw_optionmenu, &draw_creditmenu);
+	  button_active(&quit, &draw_startmenu, &draw_optionmenu, &draw_creditmenu, &draw_namemenu);
 	  
 	  window_event(startmenu_w, &e, &draw_startmenu);
 	  button_event(new_button, &e, &draw_startmenu);
@@ -117,6 +141,11 @@ int main()
 	  window_event(creditmenu_w, &e, &draw_creditmenu);
 	  button_event(back_creditmenu_button, &e, &draw_creditmenu);
 
+	  window_event(namemenu_w, &e, &draw_namemenu);
+	  button_event(x_button, &e, &draw_namemenu);
+	  button_event(start_button, &e, &draw_namemenu);
+	  
+	  
 	}
       if (!draw_startmenu && !draw_optionmenu && !draw_creditmenu) continue;
       SDL_RenderClear(renderer);
@@ -127,7 +156,7 @@ int main()
 	  button_draw(load_button, renderer);
 	  button_draw(options_button, renderer);
 	  button_draw(quit_button, renderer);
-	  draw_startmenu = 0;
+	  //draw_startmenu = 0;
 	}
       if (draw_optionmenu)
 	{
@@ -135,16 +164,22 @@ int main()
 	  button_draw(credit_button, renderer);
 	  button_draw(volume_button, renderer);
 	  button_draw(back_optionmenu_button, renderer);
-	  draw_optionmenu = 0;
+	  // draw_optionmenu = 0;
 	}
       
       if (draw_creditmenu)
 	{
 	  window_draw(creditmenu_w, renderer);
 	  button_draw(back_creditmenu_button, renderer);
-	  draw_creditmenu = 0;
+	  //draw_creditmenu = 0;
 	}
 
+      if (draw_namemenu)
+	{
+	  window_draw(namemenu_w, renderer);
+	  button_draw(start_button, renderer);
+	  button_draw(x_button, renderer);
+	}
       
       SDL_RenderPresent(renderer);
 	
@@ -164,5 +199,8 @@ int main()
   free(creditmenu_w);
   free(back_creditmenu_button);
 
+  free(namemenu_w);
+  free(x_button);
+  free(start_button);
   return 0;
 }

@@ -3,7 +3,7 @@
 # include <SDL2/SDL.h>
 # include <SDL2/SDL_image.h>
 
-extern struct image *quit_selected, *quit_unselected, *new_selected, *new_unselected, *load_selected, *load_unselected, *startmenu, *optionmenu, *back_selected, *back_unselected, *options_selected, *options_unselected, *credit_selected, *credit_unselected, *volume_selected, *volume_unselected, *creditmenu;
+extern struct image *quit_selected, *quit_unselected, *new_selected, *new_unselected, *load_selected, *load_unselected, *startmenu, *optionmenu, *back_selected, *back_unselected, *options_selected, *options_unselected, *credit_selected, *credit_unselected, *volume_selected, *volume_unselected, *creditmenu, *namemenu, *x_selected, *x_unselected, *start_selected, *start_unselected;
 //extern int quit;
 
 struct image{
@@ -13,6 +13,7 @@ struct image{
 };
 
 struct window {
+  int event; 
   int visible;
   SDL_Rect rect;
   struct window *parent;
@@ -20,6 +21,7 @@ struct window {
 };
 struct button {
   int visible;
+  int event;
   int active;
   int prelight;
   SDL_Rect rect;
