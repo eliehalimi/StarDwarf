@@ -6,7 +6,7 @@
 #include <err.h>
 #include <unistd.h>
 
-struct image *quit_selected, *quit_unselected, *new_selected, *new_unselected, *load_selected, *load_unselected, *startmenu, *options_selected, *options_unselected, *optionmenu, *back_selected, *back_unselected, *credit_selected, *credit_unselected, *volume_selected, *volume_unselected, *creditmenu, *namemenu, *start_selected, *start_unselected, *x_selected, *x_unselected;
+struct image *quit_selected, *quit_unselected, *new_selected, *new_unselected, *load_selected, *load_unselected, *startmenu, *options_selected, *options_unselected, *optionmenu, *back_selected, *back_unselected, *credit_selected, *credit_unselected, *volume_selected, *volume_unselected, *creditmenu, *namemenu, *start_selected, *start_unselected, *x_selected, *x_unselected, *mainmenu, *pausemenu, *pause_selected, *pause_unselected, *resume_selected, *resume_unselected, *quit_mainmenu_selected, *quit_mainmenu_unselected;
 
 SDL_Window *window;
 SDL_Renderer *renderer;
@@ -82,8 +82,7 @@ SDL_Renderer* init (char *title, int w, int h)
   startmenu = malloc(sizeof(struct image));
   optionmenu = malloc(sizeof(struct image));
   creditmenu = malloc(sizeof(struct image));
-  namemenu = malloc(sizeof(struct image));
-  
+  namemenu = malloc(sizeof(struct image));  
   new_selected = malloc(sizeof(struct image));
   new_unselected = malloc(sizeof(struct image));
   load_selected = malloc(sizeof(struct image));
@@ -103,6 +102,18 @@ SDL_Renderer* init (char *title, int w, int h)
   start_selected = malloc(sizeof(struct image));
   start_unselected = malloc(sizeof(struct image));
 
+  mainmenu = malloc(sizeof(struct image));  
+  pause_selected = malloc(sizeof(struct image));
+  pause_unselected = malloc(sizeof(struct image));
+  
+  
+  pausemenu = malloc(sizeof(struct image));  
+  quit_mainmenu_selected = malloc(sizeof(struct image));
+  quit_mainmenu_unselected = malloc(sizeof(struct image));
+  resume_selected = malloc(sizeof(struct image));
+  resume_unselected = malloc(sizeof(struct image));
+ 
+  
   int r = 0;
   r += image_new(startmenu, "startmenu.png", renderer);
   r += image_new(new_selected, "new_selected.png", renderer);
@@ -113,7 +124,7 @@ SDL_Renderer* init (char *title, int w, int h)
   r += image_new(quit_unselected, "quit_unselected.png", renderer);
   r += image_new(options_selected, "options_selected.png", renderer);
   r += image_new(options_unselected, "options_unselected.png", renderer);
-
+  
   r += image_new(optionmenu, "optionmenu.png", renderer);
   r += image_new(credit_selected, "credit_selected.png", renderer);
   r += image_new(credit_unselected, "credit_unselected.png", renderer);
@@ -130,7 +141,15 @@ SDL_Renderer* init (char *title, int w, int h)
   r += image_new(start_selected, "start_selected.png", renderer);
   r += image_new(start_unselected, "start_unselected.png", renderer);
 
+  r += image_new(mainmenu, "mainmenu.png", renderer);
+  r += image_new(pause_selected, "pause_selected.png", renderer);
+  r += image_new(pause_unselected, "pause_unselected.png", renderer);
 
+  r += image_new(pausemenu, "pausemenu.png", renderer);
+  r += image_new(resume_selected, "resume_selected.png", renderer);
+  r += image_new(resume_unselected, "resume_unselected.png", renderer);
+  r += image_new(quit_mainmenu_selected, "quit_main_selected.png", renderer);
+  r += image_new(quit_mainmenu_unselected, "quit_main_unselected.png", renderer);
   if (r)
     {
       clean();
@@ -197,6 +216,17 @@ void clean()
   free(start_unselected);
   free(namemenu);
 
+  free(mainmenu);
+  free(pause_selected);
+  free(pause_unselected);
+  
+  free(pausemenu);
+  free(resume_selected);
+  free(resume_unselected);
+  free(quit_mainmenu_selected);
+  free(quit_mainmenu_unselected);
+    
+  
   IMG_Quit();
   SDL_Quit();
 

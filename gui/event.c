@@ -28,7 +28,7 @@ int window_event(struct window *window, SDL_Event *event, int *draw)
   return 0;
 }
 
-int button_new(struct button *button, struct image *selected, struct image *unselected, int x, int y, struct window *window)
+int button_new(struct button *button, struct image *selected, struct image *unselected, int x, int y, int w, int h, struct window *window)
 {
   if (!button) return -1;
   button->window = window;
@@ -38,7 +38,7 @@ int button_new(struct button *button, struct image *selected, struct image *unse
   button->visible = window->visible;
   button->selected = selected;
   button->unselected = unselected;
-  MakeRect(&button->rect, x, y, 450, 90);
+  MakeRect(&button->rect, x, y, w, h);
   return 0;
 }
 
