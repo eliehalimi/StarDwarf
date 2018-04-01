@@ -13,6 +13,7 @@ int draw_startmenu = 1, draw_optionmenu = 0, draw_creditmenu = 0, draw_namemenu 
 char *text;
 SDL_Renderer *renderer;
 
+char *intro;
 void init_button_window()
 {
   new_button = malloc(sizeof(struct button));
@@ -105,6 +106,20 @@ void draw()
     {
       window_draw(mainmenu_w, renderer);
       button_draw(pause_button, renderer);
+                                                            
+      SDL_Rect pos;                                                     
+      MakeRect(&pos,60,0,400,400);                                 
+      SDL_Color fcolor;                                                           
+      fcolor.r = 255;                                                   
+      fcolor.g  = 255;                                                  
+      fcolor.b  = 255;                                                  
+      TTF_Font *font = TTF_OpenFont ("textfont.ttf", 25);               
+      SDL_Surface *textSurface = TTF_RenderText_Solid(font, (const char*)intro, fcolor);       
+      SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, textSurface); 
+      SDL_QueryTexture(texture, NULL, NULL, &pos.w, &pos.h);                   
+      SDL_RenderCopy(renderer, texture, NULL, &pos);               
+      TTF_CloseFont(font);
+      SDL_DestroyTexture(texture);
     }
   
   if (draw_pausemenu)
@@ -188,6 +203,8 @@ void button_active(int *quit)
       pausemenu_w->visible = 0, pausemenu_w->event = 0;
       mainmenu_w->visible = 0;
       startmenu_w->visible = 1, startmenu_w->event = 1;
+      draw_startmenu = 1;
+      draw_mainmenu = 0;
     }
 }
 
@@ -196,11 +213,14 @@ int main()
 {
   SDL_Event e;
   renderer = init("Kurt Kussel's teapot - StarDwarf",1280, 720);
-  text = malloc(1024*sizeof(char));
+  text = malloc(30*sizeof(char));
   *text = '\0'; 
   if (!renderer) return 1; 
   init_button_window();
   int quit = 0;
+  intro = malloc(200*sizeof(char));
+  *intro = '\0';
+  TTF_Init();
   startmenu_w->visible = 1, startmenu_w->event = 1;
  
   while (!quit)
@@ -236,7 +256,15 @@ int main()
 	}
       draw();
       if (input)
-	textinput();
+	{
+	  free(intro);
+	  intro = malloc(200*sizeof(char));
+	  textinput();
+	  if (*text)
+	    sprintf(intro, "welcome to %s's world", text);
+	  else
+	    sprintf(intro, "welcome to StarDwarf's Kurt Kussel's teapot");
+	}
 
     }
   clean();

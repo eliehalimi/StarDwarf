@@ -226,7 +226,7 @@ void clean()
   free(quit_mainmenu_selected);
   free(quit_mainmenu_unselected);
     
-  
+  TTF_Quit();
   IMG_Quit();
   SDL_Quit();
 

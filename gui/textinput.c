@@ -27,29 +27,32 @@ void drawtextinput()
       button_draw(start_button, renderer);                                               
       button_draw(x_button, renderer);                                                   
     }                                                                                    
-  TTF_Init();                                                                            
   if (*text)                                                                             
     {
       SDL_Rect pos;                                                                      
-      MakeRect(&pos, 400,300,400,400);                                                   
+      MakeRect(&pos,320,300,400,400);                                                   
       SDL_Color fcolor;                                                                  
       fcolor.r = 255;                                                                    
       fcolor.g  = 255;                                                                   
       fcolor.b  = 255;                                                                   
-      TTF_Font *font = TTF_OpenFont ("textfont.ttf", 30);                                
+      TTF_Font *font = TTF_OpenFont ("textfont.ttf", 40);                                
       SDL_Surface *textSurface = TTF_RenderText_Solid(font, (const char*) text, fcolor); 
       SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, textSurface);        
       SDL_QueryTexture(texture, NULL, NULL, &pos.w, &pos.h);                             
       SDL_RenderCopy(renderer, texture, NULL, &pos);                                     
       TTF_CloseFont(font);
+      SDL_DestroyTexture(texture);
     }                                                                                    
-  TTF_Quit();                                                                            
+     
   SDL_RenderPresent(renderer);
 
 }
 
 void textinput()
 {
+  free(text);
+  text = malloc(30*sizeof(char));
+  *text = '\0';
   SDL_bool done = SDL_FALSE;
   SDL_Event e;
   int nbchar = 0;
@@ -86,31 +89,22 @@ void textinput()
 	  drawtextinput();
 
 	  
-	  switch (e.type)
+	  if (e.type ==  SDL_QUIT)
 	    {
-	    case SDL_QUIT:
 	      input = 0;
 	      done = SDL_TRUE;
-	      break;
-	    case SDL_TEXTINPUT:
-	      if (nbchar < 30)
-		{
-		  strcat(text, e.text.text);
-		  nbchar += 1;
-		}
-	      break;
-	    case SDL_TEXTEDITING:
-	      /*    
-		Update the composition text.
-		Update the cursor position.
-		Update the selection length (if any).
-	      */
-	      composition = e.edit.text;
-	      cursor = e.edit.start;
-	      selection_len = e.edit.length;
-	      break;
 	    }
-     
+	  else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_BACKSPACE && nbchar > 0)
+		{
+		  text[nbchar - 1] = '\0';
+		  nbchar -= 1;
+		}
+	  else if (e.type == SDL_TEXTINPUT && nbchar < 25)
+	    {
+	     
+	      strcat(text, e.text.text);
+	      nbchar += 1;
+	    }
 	}      
     }
   SDL_StopTextInput();
