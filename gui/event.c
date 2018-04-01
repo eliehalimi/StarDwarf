@@ -9,11 +9,12 @@
 
 int window_new(struct window *window, struct image *bg, int x, int y, int w, int h)
 {
-	if (!window) return -1;
-	window->bg = bg;
-	MakeRect(&window->rect, x, y, w, h);
-	window->visible = 0;
-	return 0;
+  if (!window) return -1;
+  window->bg = bg;
+  MakeRect(&window->rect, x, y, w, h);
+  window->visible = 0;
+
+  return 0;
 }
 
 
@@ -34,12 +35,13 @@ int window_draw(struct window *window, SDL_Renderer *renderer)
   return 1;
 }
 
-int button_new(struct button *button, struct image *selected, struct image *unselected, int x, int y)
+int button_new(struct button *button, struct image *selected, struct image *unselected, int x, int y, struct window *window)
 {
   if (!button) return -1;
+  button->window = window;
   button->active = 0;
   button->prelight = 0;
-  button->visible = 1;
+  button->visible = window->visible;
   button->selected = selected;
   button->unselected = unselected;
   MakeRect(&button->rect, x, y, 450, 90);
@@ -49,7 +51,8 @@ int button_new(struct button *button, struct image *selected, struct image *unse
 
 int button_event(struct button *button, SDL_Event *event, int *draw)
 {
-  if (!button || !button-> visible || !event) return 0;
+  button->visible = button->window->visible;
+  if (!button || !button->visible || !event) return 0;
   if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_EXPOSED)
     *draw = 1;
   if (event->type == SDL_MOUSEBUTTONDOWN && PointInRect(event->button.x, event->button.y,&button->rect))
