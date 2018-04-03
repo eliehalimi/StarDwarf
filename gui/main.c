@@ -278,7 +278,7 @@ int main()
 			//vector postion and creation of item
 			const struct vector *position = new_vector(2, values);
 			struct item *item = new_item(position);
-
+			item->size = 100;
 			//adding item to list of items in system
 			push_item(system, item);
 
@@ -288,6 +288,7 @@ int main()
 			item->rect = NULL;
 			puts("Drawing");
 			printf("x = %f, y = %f\n", item->position.values[0], item->position.values[1]);
+			//init_circle(item);
 			DrawCircle(item);
 			puts("Finished Drawing");
 
@@ -316,3 +317,4 @@ int main()
 	free(start_button);
 	return 0;
 }
+
