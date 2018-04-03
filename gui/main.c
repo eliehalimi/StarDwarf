@@ -266,14 +266,14 @@ int main()
 	  if (*text)
 	    sprintf(intro, "welcome to %s's world", text);
 	  else
-	    sprintf(intro, "welcome to StarDwarf's Kurt Kussel's teapot");
+	    sprintf(intro, "welcome to StarDwarf's Kurt Russel's teapot");
 	
 	//system created
 	struct system *system = new_system(2);
 
 	//values for position vector
 	const float val[2] = {250, 250};
-	const float *values = (const float *) val;//{250,250};
+	const float *values = (const float *) val;
 	
 	//vector postion and creation of item
 	const struct vector *position = new_vector(2, values);
@@ -286,9 +286,10 @@ int main()
  	item->renderer = renderer;
 	//item->texture = text;
 	item->rect = NULL;
-
-	
-
+	puts("Drawing");
+	printf("x = %f, y = %f\n", item->position.values[0], item->position.values[1]);
+	DrawCircle(item);
+	puts("Finished Drawing");
 
 
 	}

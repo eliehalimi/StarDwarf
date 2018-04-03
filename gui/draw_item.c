@@ -30,6 +30,8 @@ struct item *init_circle(struct item *item)
 int DrawCircle(struct item *item)
 {
 	SDL_Renderer *renderer = item->renderer;
+	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, item->texture, NULL, item->rect);
 	struct vector *position = &item->position;
 	int radius = item->size / 2;
 	int x = position->values[0];
@@ -58,6 +60,9 @@ int DrawCircle(struct item *item)
 	new_y = y - (radius * sin(0));
 
 	SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+	SDL_RenderPresent(renderer);
+
 	return old_x;
 }
 
