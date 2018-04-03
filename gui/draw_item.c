@@ -17,16 +17,17 @@ const int SCR_CEN_Y = SCR_HGT / 2;
 struct item *init_circle(struct item  *item, int radius)
 {
 	assert(radius>0);
-	
+
 	DrawCircle(renderer, item, radius);
 	return item;
 }
 
 
-int DrawCircle(SDL_Renderer *renderer, struct item *item, int radius)
+int DrawCircle(SDL_Renderer *renderer, struct item *item)
 {
-	assert(item->position->size ==2);
+
 	struct vector *position = item->position;
+	int radius = item->size / 2;
 	int x = position->values[0];
 	int y = position->values[1];
 
@@ -37,7 +38,7 @@ int DrawCircle(SDL_Renderer *renderer, struct item *item, int radius)
 	float step = (M_PI *2) /50;
 
 	/* SETS COLOR
-	*  WILL ADD A WAY TO CHANGE THE COLOR LATER ON*/
+	 *  WILL ADD A WAY TO CHANGE THE COLOR LATER ON*/
 	SDL_SetRenderDrawColor (renderer, 255, 255, 255, 255);
 
 	for (float theta = 0; theta <= (M_PI *2); theta += step)
@@ -56,62 +57,26 @@ int DrawCircle(SDL_Renderer *renderer, struct item *item, int radius)
 	return old_x;
 }
 
-void MoveCircle(SDL_Renderer *renderer, struct item *item, struct vector *position, SDL_Texture *bg, SDL_Rect *tex)
+void MoveItem(struct item *item, struct vector *position)
 {
-	assert (item->position->size == 2);
-	//int x = item->position->values[0];
-	//int y = item->position->values[1];
+	assert(item != NULL);
+	assert(position != NULL);
+	assert(item->renderer != NULL);
+	assert(item->texture != NULL);
+	assert(item->rect != NULL);
+	assert(position->size == item->nb_dimension);
 
-	int a = position->values[0];
-	int b = position->values[1];
 
-	if (a<0 || a > SCR_WDT)
-		return -1;
-	if (b<0 || b > SCR_HGT)
-		return -1;
-	
-	SDL_Event event;
-	int is_running = 1;
+	item->position->values[0] = position->values[0];
+	item->position->values[1] = position->values[1];
 
-	while(is_running)
-	{
-		SDL_WaitEvent(&event);
-		if (event.type == SDL_QUIT)
-			is_running = 0;
-		if (event.type == SDL_KEYDOWN)
-		{
-			switch(event.key.keysym.sym)
-			{
-				case SDLK_RETURN:
-					is_running = 0;
-					break;
-				case SDLK_LEFT:
-					if (item->position->values[0] > radius)
-						item->position->values[0] -=1;
-					break;
-				case SDLK_RIGHT:
-					if (item->position->values[0] < a -radius)
-						item->position->values[0] +=1;
-					break;
-				case SDLK_UP:
-					if (item->position->values[1] > radius)
-						item->position->values[1] -=1;
-					break;
-				case SDLK_DOWN:
-					if (item->position->values[1] < b-radius)
-						item->position->values[1] +=1;
-					break;
-				default:
-					break;
-			}
-		 }
 
-		SDL_RenderClear(renderer);
-		SDL_RenderCopy(renderer, bg, NULL, tex);
-		DrawCircle(renderer, item->position->values[0], item->position->values[1], radius);
-		SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-		SDL_RenderPresent(renderer);
-	}	
+	SDL_RenderClear(item->renderer);
+	SDL_RenderCopy(item->renderer, item->texture, NULL, tex);
+	DrawCircle(item->renderer, item->position->values[0], item->position->values[1], radius);
+	SDL_SetRenderDrawColor(item->renderer, 0,0,0,255);
+	SDL_RenderPresent(item->renderer);
+
 	return 1;
 }
 

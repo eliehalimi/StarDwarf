@@ -9,10 +9,13 @@ struct item
   size_t nb_dimension;
   float mass, elec_charge, size;
   char label[16];
-  char color[3];
+  char color[4];
   struct vector position, velocity, force;
   struct list user_force;                       //VECTOR LIST (sentinel)
   struct list list;                             //ITEM LIST (pointer to next)
+  SDL_Renderer *renderer;
+  SDL_Texture *texture;
+  SDL_Rect *rect;
 };
 
 struct system

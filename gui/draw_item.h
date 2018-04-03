@@ -10,9 +10,9 @@
 #include <assert.h>
 #include "../Physic/physic.h"
 
-int DrawCircle(SDL_Renderer *renderer, struct item *item, int radius);
+int DrawCircle(SDL_Renderer *renderer, struct item *item);
 
-void MoveCircle(SDL_Renderer *renderer, struct item *item, struct vector *position, SDL_Texture *bg, SDL_Rect *tex);
+void MoveItem(struct item *item, struct vector *position);
 
 struct item *init_circle(struct item  *item, int radius);
 
