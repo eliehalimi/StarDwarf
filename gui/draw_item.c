@@ -30,10 +30,10 @@ struct item *init_circle(struct item *item)
 int DrawCircle(struct item *item)
 {
 	SDL_Renderer *renderer = item->renderer;
-	struct vector position = (item->position);
+	struct vector *position = &item->position;
 	int radius = item->size / 2;
-	int x = &position->values[0];
-	int y = &position->values[1];
+	int x = position->values[0];
+	int y = position->values[1];
 
 	int new_x = 0;
 	int new_y = 0;
@@ -71,13 +71,13 @@ void MoveItem(struct item *item, const struct vector *position)
 	assert(position->size == item->nb_dimension);
 	assert(position->size ==2); //might change in the future, but we stick with 2D for now
 
-	item->position->values[0] = &position->values[0];
-	item->position->values[1] = &position->values[1];
+	item->position.values[0] = position->values[0];
+	item->position.values[1] = position->values[1];
 
 
 	SDL_RenderClear(item->renderer);
-	SDL_RenderCopy(item->renderer, item->texture, NULL, tex);
-	DrawCircle(/*item->renderer,*/ item->position->values[0], item->position->values[1]);/*, radius);*/
+	SDL_RenderCopy(item->renderer, item->texture, NULL, item->rect);
+	DrawCircle(item);
 	SDL_SetRenderDrawColor(item->renderer, 0,0,0,255);
 	SDL_RenderPresent(item->renderer);
 
@@ -97,9 +97,11 @@ void MoveItemLinear(struct item *item, const struct vector *position, float *tim
 		return;
 	}
 
-	sub_vector(item->position, position);
-	scalar_product_vector(time_frame / *time_arrival, position);
-	add_vector(item->position, position);
-	MoveItem(item, position);
+	struct vector *pos = clone_vector(position);
+	
+	sub_vector(&item->position, pos);
+	scalar_product_vector(time_frame / *time_arrival, pos);
+	add_vector(&item->position, pos);
+	MoveItem(item, pos);
 	*time_arrival -= time_frame;
 }
