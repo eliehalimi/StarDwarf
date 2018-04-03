@@ -57,7 +57,7 @@ int DrawCircle(SDL_Renderer *renderer, struct item *item)
 	return old_x;
 }
 
-void MoveItem(struct item *item, struct vector *position)
+void MoveItem(struct item *item, const struct vector *position)
 {
 	assert(item != NULL);
 	assert(position != NULL);
@@ -65,7 +65,7 @@ void MoveItem(struct item *item, struct vector *position)
 	assert(item->texture != NULL);
 	assert(item->rect != NULL);
 	assert(position->size == item->nb_dimension);
-
+	assert(position->size ==2); //might change in the future, but we stick with 2D for now
 
 	item->position->values[0] = position->values[0];
 	item->position->values[1] = position->values[1];
@@ -80,5 +80,22 @@ void MoveItem(struct item *item, struct vector *position)
 	return 1;
 }
 
+void MoveItemLinear(struct item *item, const struct vector *position, float *time_arrival, float time_frame)
+{
+	assert(item != NULL);
+	assert(position != NULL);
+	assert(time_arrival != NULL);
 
+	if(*time_arrival <= time_frame)
+	{
+		MoveItem(item, position);
+		*time_arrival = 0;
+		return
+	}
 
+	sub_vector(item->position, position);
+	scalar_product_vector(time_frame / *time_arrival);
+	add_vector(item->position, position);
+	MoveItem(item, position);
+	*time_arrival -= time_frame;
+}

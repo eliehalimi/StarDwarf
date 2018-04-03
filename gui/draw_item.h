@@ -12,7 +12,9 @@
 
 int DrawCircle(SDL_Renderer *renderer, struct item *item);
 
-void MoveItem(struct item *item, struct vector *position);
+void MoveItem(struct item *item, const struct vector *position);
+
+void MoveItemLinear(struct item *item, const struct vector *position, float *time_arrival, float time_frame);
 
 struct item *init_circle(struct item  *item, int radius);
 
