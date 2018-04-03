@@ -10,13 +10,13 @@
 #include <assert.h>
 #include "../Physic/physic.h"
 
-int DrawCircle(SDL_Renderer *renderer, struct item *item);
+int DrawCircle(struct item *item);
 
 void MoveItem(struct item *item, const struct vector *position);
 
 void MoveItemLinear(struct item *item, const struct vector *position, float *time_arrival, float time_frame);
 
-struct item *init_circle(struct item  *item, int radius);
+struct item *init_circle(struct item  *item);
 
 
 # endif

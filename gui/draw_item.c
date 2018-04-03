@@ -7,6 +7,9 @@
 #include <assert.h>
 #include "../Physic/physic.h"
 
+#include "draw_item.h"
+
+
 #define SCR_WDT 1280
 #define SCR_HGT 960
 #define M_PI	3.14159265358979323846264338327950288
@@ -14,22 +17,23 @@
 const int SCR_CEN_X = SCR_WDT / 2;
 const int SCR_CEN_Y = SCR_HGT / 2;
 
-struct item *init_circle(struct item  *item, int radius)
+struct item *init_circle(struct item *item)
 {
-	assert(radius>0);
 
-	DrawCircle(renderer, item, radius);
+	//assert radius
+
+	DrawCircle(item);
 	return item;
 }
 
 
-int DrawCircle(SDL_Renderer *renderer, struct item *item)
+int DrawCircle(struct item *item)
 {
-
-	struct vector *position = item->position;
+	SDL_Renderer *renderer = item->renderer;
+	struct vector position = (item->position);
 	int radius = item->size / 2;
-	int x = position->values[0];
-	int y = position->values[1];
+	int x = &position->values[0];
+	int y = &position->values[1];
 
 	int new_x = 0;
 	int new_y = 0;
@@ -67,13 +71,13 @@ void MoveItem(struct item *item, const struct vector *position)
 	assert(position->size == item->nb_dimension);
 	assert(position->size ==2); //might change in the future, but we stick with 2D for now
 
-	item->position->values[0] = position->values[0];
-	item->position->values[1] = position->values[1];
+	item->position->values[0] = &position->values[0];
+	item->position->values[1] = &position->values[1];
 
 
 	SDL_RenderClear(item->renderer);
 	SDL_RenderCopy(item->renderer, item->texture, NULL, tex);
-	DrawCircle(item->renderer, item->position->values[0], item->position->values[1], radius);
+	DrawCircle(/*item->renderer,*/ item->position->values[0], item->position->values[1]);/*, radius);*/
 	SDL_SetRenderDrawColor(item->renderer, 0,0,0,255);
 	SDL_RenderPresent(item->renderer);
 
