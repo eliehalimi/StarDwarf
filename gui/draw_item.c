@@ -77,7 +77,7 @@ void MoveItem(struct item *item, const struct vector *position)
 	SDL_SetRenderDrawColor(item->renderer, 0,0,0,255);
 	SDL_RenderPresent(item->renderer);
 
-	return 1;
+	return;
 }
 
 void MoveItemLinear(struct item *item, const struct vector *position, float *time_arrival, float time_frame)
@@ -90,11 +90,11 @@ void MoveItemLinear(struct item *item, const struct vector *position, float *tim
 	{
 		MoveItem(item, position);
 		*time_arrival = 0;
-		return
+		return;
 	}
 
 	sub_vector(item->position, position);
-	scalar_product_vector(time_frame / *time_arrival);
+	scalar_product_vector(time_frame / *time_arrival, position);
 	add_vector(item->position, position);
 	MoveItem(item, position);
 	*time_arrival -= time_frame;
