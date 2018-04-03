@@ -19,4 +19,4 @@ void MoveItemLinear(struct item *item, const struct vector *position, float *tim
 struct item *init_circle(struct item  *item, int radius);
 
 
-# ENDIF
+# endif

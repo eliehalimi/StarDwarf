@@ -6,6 +6,9 @@
 # include <err.h>
 # include <unistd.h>
 # include "gui.h"
+# include "draw_item.h"
+# include "../Physic/physic.h"
+# include "../Physic/libvector.h"
 
 struct button *new_button, *load_button, *options_button, *quit_button, *credit_button, *volume_button, *back_optionmenu_button, *back_creditmenu_button, *x_button, *start_button, *pause_button, *resume_button, *quit_mainmenu_button;
 struct window *startmenu_w, *optionmenu_w, *creditmenu_w, *namemenu_w, *mainmenu_w, *pausemenu_w;
@@ -264,6 +267,30 @@ int main()
 	    sprintf(intro, "welcome to %s's world", text);
 	  else
 	    sprintf(intro, "welcome to StarDwarf's Kurt Kussel's teapot");
+	
+	//system created
+	struct system *system = new_system(2);
+
+	//values for position vector
+	const float val[2] = {250, 250};
+	const float *values = (const float *) val;//{250,250};
+	
+	//vector postion and creation of item
+	const struct vector *position = new_vector(2, values);
+	struct item *item = new_item(position);
+	
+	//adding item to list of items in system
+	push_item(system, item);
+
+	//adding textures, renderer... to item
+ 	item->renderer = renderer;
+	//item->texture = text;
+	item->rect = NULL;
+
+	
+
+
+
 	}
 
     }
