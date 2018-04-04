@@ -36,7 +36,7 @@ void free_item(struct item *item)
 {
   assert(item != NULL);
   assert(item->list.next == NULL);
-  assert(item->renderer == NULL);
+  //assert(item->renderer == NULL);
   assert(item->texture == NULL);
   assert(item->rect == NULL);
   

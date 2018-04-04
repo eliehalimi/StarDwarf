@@ -15,7 +15,7 @@ struct item
   struct vector position, velocity, force;
   struct list user_force;                       //VECTOR LIST (sentinel)
   struct list list;                             //ITEM LIST (pointer to next)
-  SDL_Renderer *renderer;
+  //SDL_Renderer *renderer;
   SDL_Texture *texture;
   SDL_Rect *rect;
 };
