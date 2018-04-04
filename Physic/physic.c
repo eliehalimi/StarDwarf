@@ -24,9 +24,9 @@ struct item *new_item(const struct vector *position)
 	free(v);
 
 	for(size_t index = 0; index < 4; index++)
-	  i->color[index] = 255;
+		i->color[index] = 255;
 	//i->color[3] = 255;
-	
+
 	return i;
 }
 
@@ -74,7 +74,7 @@ void free_system(struct system *system)
 	free(system);
 }
 
-struct vector *update_item(struct item *item, float delta_time)
+void update_item(struct item *item, float delta_time)
 {
 	assert(delta_time > 0);
 	assert(item != NULL);
@@ -91,15 +91,14 @@ struct vector *update_item(struct item *item, float delta_time)
 		add_vector(CONTAINER_OF_(struct vector, list, l), totalForce);
 
 	scalar_product_vector(delta_time, totalForce);
-	add_vector(totalForce, &item->velocity);
+	sub_vector(totalForce, &item->velocity);
 
 	struct vector *totalVelocity = clone_vector(&item->velocity);
 	scalar_product_vector(delta_time, totalVelocity);
-	struct vector *new_pos = add_vector(totalVelocity, clone_vector(&item->position));
+	add_vector(totalVelocity, &item->position);
 
 	free_vector(totalForce);
 	free_vector(totalVelocity);
-	return new_pos;
 }
 
 void update_system(struct system *system, SDL_Renderer *renderer)
@@ -108,49 +107,54 @@ void update_system(struct system *system, SDL_Renderer *renderer)
 	assert(system->delta_time > 0.0f);
 	assert(system->nb_dimension > 0);
 
-	clock_t clck;
+	//clock_t clck;
 
-	struct vector **new_pos = malloc(sizeof(void *) * system->nb_item);
+	//struct vector **new_pos = malloc(sizeof(void *) * system->nb_item);
 
 	//UPDATE ITEMS AND GET THEIR NEW POS
 	for(struct list *l = system->items.next; l != NULL; l = l->next)
 	{
-		struct vector *v = update_item(CONTAINER_OF_(struct item, list, l), system->delta_time);
-		*new_pos = v;
-		new_pos++;
-	}
+	  struct item *i = CONTAINER_OF_(struct item, list, l);
+	  update_item(i, system->delta_time);
+		//*new_pos = v;
+		//new_pos++;
+		DrawCircle(i, renderer);
 
-	new_pos -= system->nb_item;
-	int isnotover = 1;
-	clck = clock();
-	float *time_arrival = malloc(sizeof(float) * system->nb_item);
-	for(size_t i = 0; i < system->nb_item; i++)
-		time_arrival[i] = clck + system->delta_time;
+	}
+	/*
+	   new_pos -= system->nb_item;
+	   int isnotover = 1;
+	   clck = clock();
+	   float *time_arrival = malloc(sizeof(float) * system->nb_item);
+	   for(size_t i = 0; i < system->nb_item; i++)
+	   time_arrival[i] = clck + system->delta_time;
 
 	//MOVE AND DISPLAY ITEMS
 	while(isnotover)
 	{
-		size_t i = 0;
-		for(struct list *l = system->items.next; l != NULL; l = l->next)
-		{
-			isnotover = 0;
-			MoveItemLinear(CONTAINER_OF_(struct item, list, l), new_pos[i], time_arrival + i, clck - clock());
-			DrawCircle(CONTAINER_OF_(struct item, list, l), renderer);
-			i++;
-		}
-		// SDL_RenderPresent(renderer);
+	isnotover = 0;
+	size_t i = 0;
+	for(struct list *l = system->items.next; l != NULL; l = l->next)
+	{
+	MoveItemLinear(CONTAINER_OF_(struct item, list, l), new_pos[i], time_arrival + i, clck - clock());
+	DrawCircle(CONTAINER_OF_(struct item, list, l), renderer);
+	if(time_arrival[i] >= 0.000001f)
+	isnotover = 1;
+	i++;
+	}
+	// SDL_RenderPresent(renderer);
 	}
 
 
 	for(size_t i = 0; i < system->nb_item; i++)
 	{
-		free_vector(new_pos[i]);
+	free_vector(new_pos[i]);
 	}
 
 	free(new_pos);
 	free(time_arrival);
 
-
+*/
 	//RESET FORCE APPLIED BY SYSTEM
 	for(struct list *l = system->items.next; l != NULL; l = l->next)
 		for(size_t i = 0; i < system->nb_dimension; ++i)

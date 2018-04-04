@@ -81,7 +81,7 @@ int DrawCircle(struct item *item, SDL_Renderer *renderer)
 	new_y = y - (item->size / 2 * sin(0));
 
 	SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
-	SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	//SDL_RenderPresent(renderer);
 
 	return old_x;

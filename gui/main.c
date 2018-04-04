@@ -280,28 +280,20 @@ int main()
 			//values for position vector
 			float val[2] = {250, 250};
 			float val2[2] = {350, 350};
-			
-			float val3[2] = {0, -9000};
-			float val4[2] = {-20000, 20000};
-			
-			struct vector *force = new_vector(2, val3);
+					        
 			//vector postion and creation of item
 			struct vector *position = new_vector(2, val);
 			struct vector *position2 = new_vector(2, val2);
 			
 			item = new_item(position);
 			item->size = 100;
-			item->mass = 100;
-			item->user_force.next = &force->list;
+			item->mass  = 100000000000000.0f;
 			item->color[1] = 0;
 			item->color[2] = 0;
-			
-			free(item->velocity.values);
-			item->velocity.values = val4;
-			
+		        
 			item2 = new_item(position2);
 			item2->size = 50;
-			item2->mass = 200;
+			item2->mass = 100000000000000.0f;
 
 			//adding item to list of items in system
 			push_item(system, item);
@@ -320,7 +312,9 @@ int main()
 
 		}
 		if(item != NULL)
-		  printf("vx = %f, vy = %f\n", item->velocity.values[0], item->velocity.values[1]);
+		  printf("1 : vx = %f, vy = %f\t", item->velocity.values[0], item->velocity.values[1]);
+		if(item2 != NULL)
+		  printf("2 : vx = %f, vy = %f\n", item2->velocity.values[0], item2->velocity.values[1]);
 
 
 	}

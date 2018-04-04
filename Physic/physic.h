@@ -10,7 +10,7 @@
 struct item
 {
 	size_t nb_dimension;
-	float mass, elec_charge, size;
+  double mass, elec_charge, size;
 	char label[16];
 	char color[4];
 	struct vector position, velocity, force;
@@ -39,7 +39,7 @@ void free_system(struct system *system);
 
 // Update the velocity and position vector of the object
 // Based on the force it is set with
-struct vector *update_item(struct item *item, float delta_time);
+void update_item(struct item *item, float delta_time);
 
 // Update every item of the system, then update the forces
 // they apply to one another
