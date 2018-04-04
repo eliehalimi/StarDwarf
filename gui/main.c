@@ -133,7 +133,7 @@ void draw(struct system *system)
 		TTF_CloseFont(font);
 		SDL_DestroyTexture(texture);
 	}
-
+	
 	if (draw_pausemenu)
 	{
 		window_draw(pausemenu_w, renderer);
@@ -200,7 +200,10 @@ void button_active(int *quit)
 		mainmenu_w->event = 0;
 		pausemenu_w->visible = 1, pausemenu_w->event = 1;
 		draw_pausemenu = 1;
+		//pause system
 	}
+
+	//for these 2, maybe add an event for when click 
 	else if (resume_button->active)
 	{
 		resume_button->active = 0;
@@ -217,6 +220,8 @@ void button_active(int *quit)
 		startmenu_w->visible = 1, startmenu_w->event = 1;
 		draw_startmenu = 1;
 		draw_mainmenu = 0;
+		//free system
+		
 	}
 }
 

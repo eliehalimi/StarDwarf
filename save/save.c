@@ -2,13 +2,14 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "save.h"
 #include "../Physic/physic.h"
 
-void save_system(struct system *sytem) //name if several systems in one simulation 
+void save_system(struct system *system) //name if several systems in one simulation 
 {
-	assert(system != NULL);
+	//assert(system != NULL);
 
-	FILE *f = fopen("system.txt", "r");
+	FILE *f = fopen("system.txt", "w+");
 	assert(f != NULL);
 	
 	fwrite(&system,sizeof(system), sizeof(char), f);
@@ -23,9 +24,10 @@ struct system *load_system(char *path)
 	
 	int i = 0;
 	char buf[1];
-	while( (size_t c = fread(&buf, 1, 1, f)) > 0)
+	size_t c;
+	while( (c = fread(&buf, 1, 1, f)) > 0)
 	{
-		*(s+i);
+	//	*(s+i);
 		i++;
 	}
 	return s;
