@@ -16,11 +16,10 @@ int draw_startmenu = 1, draw_optionmenu = 0, draw_creditmenu = 0, draw_namemenu 
 char *text;
 SDL_Renderer *renderer;
 
-struct item *item = NULL;
-struct item *item2 = NULL;
-struct item *item3 = NULL;
-
 char *intro;
+struct system *sys = NULL;
+
+
 void init_button_window()
 {
 	new_button = malloc(sizeof(struct button));
@@ -78,7 +77,7 @@ void init_button_window()
 }
 
 
-void draw(struct system *system)
+void draw(struct system *sys)
 {
 	SDL_RenderClear(renderer);
 	if (draw_startmenu)
@@ -114,9 +113,11 @@ void draw(struct system *system)
 		window_draw(mainmenu_w, renderer);
 		button_draw(pause_button, renderer);
 
-		//DrawCircle(item, renderer);//
-		update_system(system, renderer);
-		//printf("%p\n", system);
+		if(!draw_pausemenu)
+			update_system(sys, renderer);
+		else
+			for(struct list *l = sys->items.next; l != NULL; l = l->next)
+				DrawCircle(CONTAINER_OF_(struct item, list, l), renderer);
 
 
 		SDL_Rect pos;                                                     
@@ -133,7 +134,7 @@ void draw(struct system *system)
 		TTF_CloseFont(font);
 		SDL_DestroyTexture(texture);
 	}
-	
+
 	if (draw_pausemenu)
 	{
 		window_draw(pausemenu_w, renderer);
@@ -210,6 +211,7 @@ void button_active(int *quit)
 		resume_button->prelight = 1;
 		pausemenu_w->visible = 0, pausemenu_w->event = 0;
 		mainmenu_w->event = 1;
+		draw_pausemenu = 0;
 	}
 	else if (quit_mainmenu_button->active)
 	{
@@ -220,8 +222,8 @@ void button_active(int *quit)
 		startmenu_w->visible = 1, startmenu_w->event = 1;
 		draw_startmenu = 1;
 		draw_mainmenu = 0;
-		//free system
-		
+		free_system(sys);
+		draw_pausemenu = 0;
 	}
 }
 
@@ -239,8 +241,11 @@ int main()
 	*intro = '\0';
 	TTF_Init();
 	startmenu_w->visible = 1, startmenu_w->event = 1;
-	struct system *system = new_system(2);
-	system->delta_time = 0.1f;
+
+	struct item *item = NULL;
+	struct item *item2 = NULL;
+	struct item *item3 = NULL;
+
 	while (!quit)
 	{
 		SDL_Delay(10);
@@ -272,9 +277,10 @@ int main()
 			button_event(resume_button, &e, &draw_pausemenu);
 
 		}
-		draw(system);
+		draw(sys);
 		if (input)
 		{
+
 			free(intro);
 			intro = malloc(200*sizeof(char));
 			textinput();
@@ -285,35 +291,38 @@ int main()
 
 			//system created
 
+			sys = new_system(2);
+			sys->delta_time = 0.1f;
+
 			//values for position vector
 			float val[2] = {250, 250};
 			float val2[2] = {350, 350};
 			float val3[2] = {750, 500};
-					        
+
 			//vector postion and creation of item
 			struct vector *position = new_vector(2, val);
 			struct vector *position2 = new_vector(2, val2);
 			struct vector *position3 = new_vector(2, val3);
-			
+
 			item = new_item(position);
 			item->size = 100;
 			item->mass  = 100000000000000.0f;
 			item->color[1] = 0;
 			item->color[2] = 0;
 			item->velocity.values[0] = 10;
-			
+
 			item2 = new_item(position2);
 			item2->size = 50;
 			item2->mass = 100000000000000.0f;
-			
+
 			item3 = new_item(position3);
 			item3->size = 50;
 			item3->mass = 100000000000000.0f;
 
 			//adding item to list of items in system
-			push_item(system, item);
-			push_item(system, item2);
-			push_item(system, item3);
+			push_item(sys, item);
+			push_item(sys, item2);
+			push_item(sys, item3);
 
 			//adding textures, renderer... to item
 			//item->renderer = renderer;
@@ -327,12 +336,6 @@ int main()
 
 
 		}
-		/*
-		if(item != NULL)
-		  printf("1 : vx = %f, vy = %f\t", item->velocity.values[0], item->velocity.values[1]);
-		if(item2 != NULL)
-		printf("2 : vx = %f, vy = %f\n", item2->velocity.values[0], item2->velocity.values[1]);
-		*/
 
 	}
 	clean();

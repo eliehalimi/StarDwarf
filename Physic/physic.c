@@ -1,7 +1,6 @@
 # include <stdlib.h>
 # include <string.h>
 # include <assert.h>
-# include <time.h>
 # include "physic.h"
 # include "forces.h"
 # include "../gui/draw_item.h"
@@ -107,54 +106,15 @@ void update_system(struct system *system, SDL_Renderer *renderer)
 	assert(system->delta_time > 0.0f);
 	assert(system->nb_dimension > 0);
 
-	//clock_t clck;
-
-	//struct vector **new_pos = malloc(sizeof(void *) * system->nb_item);
 
 	//UPDATE ITEMS AND GET THEIR NEW POS
 	for(struct list *l = system->items.next; l != NULL; l = l->next)
 	{
-	  struct item *i = CONTAINER_OF_(struct item, list, l);
-	  update_item(i, system->delta_time);
-		//*new_pos = v;
-		//new_pos++;
+		struct item *i = CONTAINER_OF_(struct item, list, l);
+		update_item(i, system->delta_time);
 		DrawCircle(i, renderer);
 
 	}
-	/*
-	   new_pos -= system->nb_item;
-	   int isnotover = 1;
-	   clck = clock();
-	   float *time_arrival = malloc(sizeof(float) * system->nb_item);
-	   for(size_t i = 0; i < system->nb_item; i++)
-	   time_arrival[i] = clck + system->delta_time;
-
-	//MOVE AND DISPLAY ITEMS
-	while(isnotover)
-	{
-	isnotover = 0;
-	size_t i = 0;
-	for(struct list *l = system->items.next; l != NULL; l = l->next)
-	{
-	MoveItemLinear(CONTAINER_OF_(struct item, list, l), new_pos[i], time_arrival + i, clck - clock());
-	DrawCircle(CONTAINER_OF_(struct item, list, l), renderer);
-	if(time_arrival[i] >= 0.000001f)
-	isnotover = 1;
-	i++;
-	}
-	// SDL_RenderPresent(renderer);
-	}
-
-
-	for(size_t i = 0; i < system->nb_item; i++)
-	{
-	free_vector(new_pos[i]);
-	}
-
-	free(new_pos);
-	free(time_arrival);
-
-*/
 	//RESET FORCE APPLIED BY SYSTEM
 	for(struct list *l = system->items.next; l != NULL; l = l->next)
 		for(size_t i = 0; i < system->nb_dimension; ++i)
