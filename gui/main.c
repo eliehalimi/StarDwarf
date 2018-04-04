@@ -10,6 +10,7 @@
 # include "../Physic/physic.h"
 # include "../Physic/libvector.h"
 # include <string.h>
+# include "../save/save.h"
 
 struct button *new_button, *load_button, *options_button, *quit_button, *credit_button, *volume_button, *back_optionmenu_button, *back_creditmenu_button, *x_button, *start_button, *pause_button, *resume_button, *quit_mainmenu_button;
 struct window *startmenu_w, *optionmenu_w, *creditmenu_w, *namemenu_w, *mainmenu_w, *pausemenu_w;
@@ -226,6 +227,12 @@ void button_active(int *quit)
 		free_system(sys);
 		draw_pausemenu = 0;
 	}
+	else if (load_button->active)
+	{
+		load_button->active = 0;
+		sys = load_system("../save/system.txt");
+		input = 1;
+	}
 }
 
 
@@ -276,6 +283,7 @@ int main()
 			window_event(pausemenu_w, &e, &draw_pausemenu);
 			button_event(quit_mainmenu_button, &e, &draw_pausemenu);
 			button_event(resume_button, &e, &draw_pausemenu);
+
 
 		}
 		draw(sys);

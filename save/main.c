@@ -24,7 +24,9 @@ int main()
 	printf("x = %f, y = %f\n", item->position.values[0], item->position.values[1]);
 	puts("Finished Drawing");
 
-	save_system(system);
+	//save_system(system);
+	load_system("system.txt");
+	
 	puts("saved");
 
 
