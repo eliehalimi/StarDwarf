@@ -109,7 +109,9 @@ void draw()
 	{
 		window_draw(mainmenu_w, renderer);
 		button_draw(pause_button, renderer);
-		DrawCircle(item);
+		
+		DrawCircle(item);//
+		
 		SDL_Rect pos;                                                     
 		MakeRect(&pos,60,0,400,400);                                 
 		SDL_Color fcolor;                                                           
@@ -291,7 +293,7 @@ int main()
 			//init_circle(item);
 			//draw_cricle(item);
 			puts("Finished Drawing");
-
+			
 
 		}
 
