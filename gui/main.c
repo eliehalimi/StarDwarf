@@ -15,7 +15,8 @@ struct window *startmenu_w, *optionmenu_w, *creditmenu_w, *namemenu_w, *mainmenu
 int draw_startmenu = 1, draw_optionmenu = 0, draw_creditmenu = 0, draw_namemenu = 0, draw_mainmenu = 0, draw_pausemenu = 0, input = 0;
 char *text;
 SDL_Renderer *renderer;
-struct item *item;
+struct item *item = NULL;
+struct item *item2 = NULL;
 char *intro;
 void init_button_window()
 {
@@ -74,7 +75,7 @@ void init_button_window()
 }
 
 
-void draw()
+void draw(struct system *system)
 {
 	SDL_RenderClear(renderer);
 	if (draw_startmenu)
@@ -109,9 +110,12 @@ void draw()
 	{
 		window_draw(mainmenu_w, renderer);
 		button_draw(pause_button, renderer);
-		
-		DrawCircle(item, renderer);//
-		
+
+		//DrawCircle(item, renderer);//
+		update_system(system, renderer);
+		//printf("%p\n", system);
+
+
 		SDL_Rect pos;                                                     
 		MakeRect(&pos,60,0,400,400);                                 
 		SDL_Color fcolor;                                                           
@@ -227,7 +231,8 @@ int main()
 	*intro = '\0';
 	TTF_Init();
 	startmenu_w->visible = 1, startmenu_w->event = 1;
-
+	struct system *system = new_system(2);
+	system->delta_time = 0.1f;
 	while (!quit)
 	{
 		SDL_Delay(10);
@@ -259,7 +264,7 @@ int main()
 			button_event(resume_button, &e, &draw_pausemenu);
 
 		}
-		draw();
+		draw(system);
 		if (input)
 		{
 			free(intro);
@@ -271,18 +276,36 @@ int main()
 				sprintf(intro, "welcome to StarDwarf's Kurt Russel's teapot");
 
 			//system created
-			struct system *system = new_system(2);
 
 			//values for position vector
-			const float val[2] = {250, 250};
-			const float *values = (const float *) val;
-
+			float val[2] = {250, 250};
+			float val2[2] = {350, 350};
+			
+			float val3[2] = {0, -9000};
+			float val4[2] = {-20000, 20000};
+			
+			struct vector *force = new_vector(2, val3);
 			//vector postion and creation of item
-			const struct vector *position = new_vector(2, values);
+			struct vector *position = new_vector(2, val);
+			struct vector *position2 = new_vector(2, val2);
+			
 			item = new_item(position);
 			item->size = 100;
+			item->mass = 100;
+			item->user_force.next = &force->list;
+			item->color[1] = 0;
+			item->color[2] = 0;
+			
+			free(item->velocity.values);
+			item->velocity.values = val4;
+			
+			item2 = new_item(position2);
+			item2->size = 50;
+			item2->mass = 200;
+
 			//adding item to list of items in system
 			push_item(system, item);
+			push_item(system, item2);
 
 			//adding textures, renderer... to item
 			//item->renderer = renderer;
@@ -293,9 +316,12 @@ int main()
 			//init_circle(item);
 			//draw_cricle(item);
 			puts("Finished Drawing");
-			
+
 
 		}
+		if(item != NULL)
+		  printf("vx = %f, vy = %f\n", item->velocity.values[0], item->velocity.values[1]);
+
 
 	}
 	clean();

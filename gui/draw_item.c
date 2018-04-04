@@ -64,7 +64,7 @@ int DrawCircle(struct item *item, SDL_Renderer *renderer)
 
 	/* SETS COLOR
 	 *  WILL ADD A WAY TO CHANGE THE COLOR LATER ON*/
-	SDL_SetRenderDrawColor (renderer, 255, 255, 255, 255);
+	SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
 	for (int radius = item->size / 2; radius > 0; radius--)
 	{
 		for (float theta = 0; theta <= (M_PI *2); theta += step)
@@ -81,7 +81,7 @@ int DrawCircle(struct item *item, SDL_Renderer *renderer)
 	new_y = y - (item->size / 2 * sin(0));
 
 	SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
-	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+	SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
 	//SDL_RenderPresent(renderer);
 
 	return old_x;
@@ -92,8 +92,8 @@ void MoveItem(struct item *item, const struct vector *position)
 	assert(item != NULL);
 	assert(position != NULL);
 	//assert(item->renderer != NULL);
-	assert(item->texture != NULL);
-	assert(item->rect != NULL);
+	//assert(item->texture != NULL);
+	//assert(item->rect != NULL);
 	assert(position->size == item->nb_dimension);
 	assert(position->size ==2); //might change in the future, but we stick with 2D for now
 

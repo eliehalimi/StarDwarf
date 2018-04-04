@@ -1,6 +1,8 @@
 # include <assert.h>
 # include <math.h>
 # include "libvector.h"
+
+
 struct vector *new_vector(const size_t size, const float *values)
 {
   struct vector *res = calloc(sizeof(struct vector), 1);
