@@ -9,6 +9,7 @@
 # include "draw_item.h"
 # include "../Physic/physic.h"
 # include "../Physic/libvector.h"
+# include <string.h>
 
 struct button *new_button, *load_button, *options_button, *quit_button, *credit_button, *volume_button, *back_optionmenu_button, *back_creditmenu_button, *x_button, *start_button, *pause_button, *resume_button, *quit_mainmenu_button;
 struct window *startmenu_w, *optionmenu_w, *creditmenu_w, *namemenu_w, *mainmenu_w, *pausemenu_w;
@@ -289,41 +290,87 @@ int main()
 			else
 				sprintf(intro, "welcome to StarDwarf's Kurt Russel's teapot");
 
-			//system created
+			if(!strcmp(text, "Russel"))
+			  {
+			    
+			    //system created
+			
+			    sys = new_system(2);
+			    sys->delta_time = 0.1f;
+			
+			    //values for position vector
+			    float val[2] = {250, 250};
+			    float val2[2] = {250, 400};
 
-			sys = new_system(2);
-			sys->delta_time = 0.1f;
+			    //vector postion and creation of item
+			    struct vector *position = new_vector(2, val);
+			    struct vector *position2 = new_vector(2, val2);
 
-			//values for position vector
-			float val[2] = {250, 250};
-			float val2[2] = {350, 350};
-			float val3[2] = {750, 500};
+			    struct vector *force = new_vector(2, NULL);
+			    force->values[0] = -1;
+			    force->values[1] = -1;
+			    
+			    item = new_item(position);
+			    item->size = 50;
+			    item->mass  = 1000000000000000.0f;
+			    item->color[1] = 0;
+			    item->color[2] = 0;
+			    item->velocity.values[0] = 10;
+			    item->user_force.next = &force->list;
+			    
+			    item2 = new_item(position2);
+			    item2->size = 50;
+			    item2->mass = 1000000000000000.0f;
 
-			//vector postion and creation of item
-			struct vector *position = new_vector(2, val);
-			struct vector *position2 = new_vector(2, val2);
-			struct vector *position3 = new_vector(2, val3);
+			    //adding item to list of items in system
+			    push_item(sys, item);
+			    push_item(sys, item2);
 
-			item = new_item(position);
-			item->size = 100;
-			item->mass  = 100000000000000.0f;
-			item->color[1] = 0;
-			item->color[2] = 0;
-			item->velocity.values[0] = 10;
+			    free_vector(position);
+			    free_vector(position2);
+			  }
+			else
+			  {
+			    //system created
+			
+			    sys = new_system(2);
+			    sys->delta_time = 0.1f;
+			
+			    //values for position vector
+			    float val[2] = {250, 250};
+			    float val2[2] = {350, 350};
+			    float val3[2] = {750, 500};
 
-			item2 = new_item(position2);
-			item2->size = 50;
-			item2->mass = 100000000000000.0f;
+			    //vector postion and creation of item
+			    struct vector *position = new_vector(2, val);
+			    struct vector *position2 = new_vector(2, val2);
+			    struct vector *position3 = new_vector(2, val3);
 
-			item3 = new_item(position3);
-			item3->size = 50;
-			item3->mass = 100000000000000.0f;
+			    item = new_item(position);
+			    item->size = 100;
+			    item->mass  = 100000000000000.0f;
+			    item->color[1] = 0;
+			    item->color[2] = 0;
+			    item->velocity.values[0] = 10;
 
-			//adding item to list of items in system
-			push_item(sys, item);
-			push_item(sys, item2);
-			push_item(sys, item3);
+			    item2 = new_item(position2);
+			    item2->size = 50;
+			    item2->mass = 100000000000000.0f;
 
+			    item3 = new_item(position3);
+			    item3->size = 50;
+			    item3->mass = 100000000000000.0f;
+			    item3->color[0] = 0;
+			    
+			    //adding item to list of items in system
+			    push_item(sys, item);
+			    push_item(sys, item2);
+			    push_item(sys, item3);
+			    
+			    free_vector(position);
+			    free_vector(position2);
+			    free_vector(position3);
+			  }
 			//adding textures, renderer... to item
 			//item->renderer = renderer;
 			//item->texture = text;
