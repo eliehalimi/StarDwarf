@@ -39,7 +39,7 @@ struct item *init_circle(struct item *item)
 	texr.w = w;// *2;
 	texr.h = h;// *2;
 
-	SDL_RenderClear(renderer);
+	//SDL_RenderClear(renderer);
 	SDL_RenderCopy(renderer, background, NULL, &texr);
 
 	DrawCircle(item);
@@ -50,7 +50,7 @@ struct item *init_circle(struct item *item)
 int DrawCircle(struct item *item)
 {
 	SDL_Renderer *renderer = item->renderer;
-	SDL_RenderClear(renderer);
+	//SDL_RenderClear(renderer);
 	SDL_RenderCopy(renderer, item->texture, NULL, item->rect);
 	struct vector *position = &item->position;
 	int x = position->values[0];
@@ -82,7 +82,7 @@ int DrawCircle(struct item *item)
 
 	SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
 	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-	SDL_RenderPresent(renderer);
+	//SDL_RenderPresent(renderer);
 
 	return old_x;
 }
@@ -101,11 +101,11 @@ void MoveItem(struct item *item, const struct vector *position)
 	item->position.values[1] = position->values[1];
 
 
-	SDL_RenderClear(item->renderer);
+	//SDL_RenderClear(item->renderer);
 	SDL_RenderCopy(item->renderer, item->texture, NULL, item->rect);
 	DrawCircle(item);
 	SDL_SetRenderDrawColor(item->renderer, 0,0,0,255);
-	SDL_RenderPresent(item->renderer);
+	//SDL_RenderPresent(item->renderer);
 
 	return;
 }
