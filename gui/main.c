@@ -15,7 +15,7 @@ struct window *startmenu_w, *optionmenu_w, *creditmenu_w, *namemenu_w, *mainmenu
 int draw_startmenu = 1, draw_optionmenu = 0, draw_creditmenu = 0, draw_namemenu = 0, draw_mainmenu = 0, draw_pausemenu = 0, input = 0;
 char *text;
 SDL_Renderer *renderer;
-
+struct item *item;
 char *intro;
 void init_button_window()
 {
@@ -109,7 +109,9 @@ void draw()
 	{
 		window_draw(mainmenu_w, renderer);
 		button_draw(pause_button, renderer);
-
+		
+		DrawCircle(item);//
+		
 		SDL_Rect pos;                                                     
 		MakeRect(&pos,60,0,400,400);                                 
 		SDL_Color fcolor;                                                           
@@ -277,7 +279,7 @@ int main()
 
 			//vector postion and creation of item
 			const struct vector *position = new_vector(2, values);
-			struct item *item = new_item(position);
+			item = new_item(position);
 			item->size = 100;
 			//adding item to list of items in system
 			push_item(system, item);
@@ -289,9 +291,9 @@ int main()
 			puts("Drawing");
 			printf("x = %f, y = %f\n", item->position.values[0], item->position.values[1]);
 			//init_circle(item);
-			DrawCircle(item);
+			//draw_cricle(item);
 			puts("Finished Drawing");
-
+			
 
 		}
 
