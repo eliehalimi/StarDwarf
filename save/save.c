@@ -4,7 +4,7 @@
 
 #include "save.h"
 #include "../Physic/physic.h"
-
+/*
 void save_system(struct system *system) //name if several systems in one simulation 
 {
 	//assert(system != NULL);
@@ -13,7 +13,7 @@ void save_system(struct system *system) //name if several systems in one simulat
 	assert(f != NULL);
 	
 	fwrite(&system,sizeof(system), sizeof(char), f);
-}
+}*/
 /*
 struct system *load_system(char *path)
 {
@@ -44,17 +44,6 @@ struct system *load_system(char *path)
 	while(fgets(line, sizeof(line), f) != NULL)
 	{
 		char val1[16] ,val2[9], val3[10];
-	        /*char *pos;
-		if ((pos=strchr(line, '\n')) != NULL)
-		{
-			*pos = '\0';
-			strcpy(val1 , strtok(line,","));
-			strcpy(val2, strtok(line, ","));
-			strcpy(val3 , strtok(NULL,"."));
-			printf("%s|%s|%s\n",val1, val2, val3);
-		}
-		*/
-		
 
 		char *tok1 = strtok(line, " ");
 		char *tok;
@@ -62,7 +51,10 @@ struct system *load_system(char *path)
 		while ((tok = strtok(NULL, " ")) != NULL)
 		{
 			if (v1)
+			{
 				strcpy(val1, tok1);
+				v1 = 0;
+			}
 			else
 				strcpy(val2, tok1);
 			tok1 = tok;
@@ -82,19 +74,9 @@ struct system *load_system(char *path)
 		struct item *item = new_item(position);
 		item->size = z;
 		push_item(s, item);
+		printf("x= %f, y=%f, size=%d\n", x, y, z); 
 	}
 	return s;
 	
-	/*
-	while (fgets(line,sizeof(line), f) != NULL)
-	{
-		const char *val1 = strtok(line,",");
-		const char *val2 = strtok(NULL, ",");
-
-		printf("%s|%s", val1, val2);	
-		
-		int x = (int) val1;
-		printf("%d", x);
-	}
-	*/return s;
 }
+
