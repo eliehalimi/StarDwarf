@@ -231,7 +231,14 @@ void button_active(int *quit)
 	{
 		load_button->active = 0;
 		sys = load_system("../save/system.txt");
-		input = 1;
+		start_button->active = 0;
+		start_button->prelight = 0;
+		mainmenu_w->visible = 1, mainmenu_w->event = 1;
+		startmenu_w->visible = 0, startmenu_w->event = 0;
+		namemenu_w->visible = 0, namemenu_w->event = 0;
+		draw_mainmenu = 1;
+		input = 2;
+
 	}
 }
 
@@ -298,7 +305,7 @@ int main()
 			else
 				sprintf(intro, "welcome to StarDwarf's Kurt Russel's teapot");
 
-			if(!strcmp(text, "Russel"))
+			if(!strcmp(text, "Russel") && input < 2)
 			  {
 			    
 			    //system created
@@ -337,7 +344,7 @@ int main()
 			    free_vector(position);
 			    free_vector(position2);
 			  }
-			else
+			else if(input < 2)
 			  {
 			    //system created
 			

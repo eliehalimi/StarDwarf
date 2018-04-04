@@ -37,8 +37,8 @@ struct system *load_system(char *path)
 	FILE *f = fopen(path, "r");
 	assert(f != NULL);
 
-	struct system *s = malloc(sizeof(struct system));
-	
+	struct system *s = new_system(2);
+	s->delta_time = 0.1f;
 	char line[255];
 
 	while(fgets(line, sizeof(line), f) != NULL)
@@ -73,6 +73,7 @@ struct system *load_system(char *path)
 		const struct vector *position = new_vector(2, values);
 		struct item *item = new_item(position);
 		item->size = z;
+		item->nb_dimension = 2;
 		push_item(s, item);
 		printf("x= %f, y=%f, size=%d\n", x, y, z); 
 	}
