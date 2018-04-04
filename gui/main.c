@@ -110,7 +110,7 @@ void draw()
 		window_draw(mainmenu_w, renderer);
 		button_draw(pause_button, renderer);
 		
-		DrawCircle(item);//
+		DrawCircle(item, renderer);//
 		
 		SDL_Rect pos;                                                     
 		MakeRect(&pos,60,0,400,400);                                 
@@ -285,7 +285,7 @@ int main()
 			push_item(system, item);
 
 			//adding textures, renderer... to item
-			item->renderer = renderer;
+			//item->renderer = renderer;
 			//item->texture = text;
 			item->rect = NULL;
 			puts("Drawing");

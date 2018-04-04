@@ -18,14 +18,14 @@
 const int SCR_CEN_X = SCR_WDT / 2;
 const int SCR_CEN_Y = SCR_HGT / 2;
 
-struct item *init_circle(struct item *item)
+struct item *init_circle(struct item *item, SDL_Renderer *renderer)
 {
 
 	SDL_Texture *background = NULL;
 
 	int w, h;
 
-	SDL_Renderer *renderer = item->renderer;
+	//SDL_Renderer *renderer = item->renderer;
 	// Loading image
 	background = IMG_LoadTexture(renderer, NULL);
 	SDL_QueryTexture(background, NULL, NULL, &w, &h);
@@ -42,14 +42,14 @@ struct item *init_circle(struct item *item)
 	//SDL_RenderClear(renderer);
 	SDL_RenderCopy(renderer, background, NULL, &texr);
 
-	DrawCircle(item);
+	DrawCircle(item, renderer);
 	return item;
 }
 
 
-int DrawCircle(struct item *item)
+int DrawCircle(struct item *item, SDL_Renderer *renderer)
 {
-	SDL_Renderer *renderer = item->renderer;
+	//SDL_Renderer *renderer = item->renderer;
 	//SDL_RenderClear(renderer);
 	SDL_RenderCopy(renderer, item->texture, NULL, item->rect);
 	struct vector *position = &item->position;
@@ -91,7 +91,7 @@ void MoveItem(struct item *item, const struct vector *position)
 {
 	assert(item != NULL);
 	assert(position != NULL);
-	assert(item->renderer != NULL);
+	//assert(item->renderer != NULL);
 	assert(item->texture != NULL);
 	assert(item->rect != NULL);
 	assert(position->size == item->nb_dimension);
@@ -102,9 +102,9 @@ void MoveItem(struct item *item, const struct vector *position)
 
 
 	//SDL_RenderClear(item->renderer);
-	SDL_RenderCopy(item->renderer, item->texture, NULL, item->rect);
-	DrawCircle(item);
-	SDL_SetRenderDrawColor(item->renderer, 0,0,0,255);
+	//SDL_RenderCopy(item->renderer, item->texture, NULL, item->rect);
+	//DrawCircle(item);
+	//SDL_SetRenderDrawColor(item->renderer, 0,0,0,255);
 	//SDL_RenderPresent(item->renderer);
 
 	return;
