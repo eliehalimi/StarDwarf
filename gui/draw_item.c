@@ -62,8 +62,8 @@ int DrawCircle(struct item *item, SDL_Renderer *renderer)
 	int old_y = y;
 	float step = (M_PI *2) /50;
 
-	/* SETS COLOR
-	 *  WILL ADD A WAY TO CHANGE THE COLOR LATER ON*/
+	/* SETS COLOR*/
+
 	SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
 	for (int radius = item->size / 2; radius > 0; radius--)
 	{

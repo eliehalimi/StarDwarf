@@ -290,7 +290,8 @@ int main()
 			item->mass  = 100000000000000.0f;
 			item->color[1] = 0;
 			item->color[2] = 0;
-		        
+			item->velocity.values[0] = 10;
+			
 			item2 = new_item(position2);
 			item2->size = 50;
 			item2->mass = 100000000000000.0f;
@@ -311,11 +312,12 @@ int main()
 
 
 		}
+		/*
 		if(item != NULL)
 		  printf("1 : vx = %f, vy = %f\t", item->velocity.values[0], item->velocity.values[1]);
 		if(item2 != NULL)
-		  printf("2 : vx = %f, vy = %f\n", item2->velocity.values[0], item2->velocity.values[1]);
-
+		printf("2 : vx = %f, vy = %f\n", item2->velocity.values[0], item2->velocity.values[1]);
+		*/
 
 	}
 	clean();
