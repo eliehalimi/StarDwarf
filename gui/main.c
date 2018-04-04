@@ -15,8 +15,11 @@ struct window *startmenu_w, *optionmenu_w, *creditmenu_w, *namemenu_w, *mainmenu
 int draw_startmenu = 1, draw_optionmenu = 0, draw_creditmenu = 0, draw_namemenu = 0, draw_mainmenu = 0, draw_pausemenu = 0, input = 0;
 char *text;
 SDL_Renderer *renderer;
+
 struct item *item = NULL;
 struct item *item2 = NULL;
+struct item *item3 = NULL;
+
 char *intro;
 void init_button_window()
 {
@@ -280,10 +283,12 @@ int main()
 			//values for position vector
 			float val[2] = {250, 250};
 			float val2[2] = {350, 350};
+			float val3[2] = {750, 500};
 					        
 			//vector postion and creation of item
 			struct vector *position = new_vector(2, val);
 			struct vector *position2 = new_vector(2, val2);
+			struct vector *position3 = new_vector(2, val3);
 			
 			item = new_item(position);
 			item->size = 100;
@@ -295,10 +300,15 @@ int main()
 			item2 = new_item(position2);
 			item2->size = 50;
 			item2->mass = 100000000000000.0f;
+			
+			item3 = new_item(position3);
+			item3->size = 50;
+			item3->mass = 100000000000000.0f;
 
 			//adding item to list of items in system
 			push_item(system, item);
 			push_item(system, item2);
+			push_item(system, item3);
 
 			//adding textures, renderer... to item
 			//item->renderer = renderer;
