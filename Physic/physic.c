@@ -3,6 +3,7 @@
 # include <assert.h>
 # include "physic.h"
 # include "forces.h"
+# include "collision.h"
 # include "../gui/draw_item.h"
 
 struct item *new_item(const struct vector *position)
@@ -135,6 +136,7 @@ void update_system(struct system *system, SDL_Renderer *renderer)
 			scalar_product_vector(1/i1->mass, g);
 			add_vector(g, &i1->force);
 			free_vector(g);
+			collide(i1, i2);
 		}
 	}
 }
