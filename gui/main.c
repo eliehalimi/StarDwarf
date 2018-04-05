@@ -79,7 +79,7 @@ void init_button_window()
 }
 
 
-void draw(struct system *sys)
+void draw()
 {
 	SDL_RenderClear(renderer);
 	if (draw_startmenu)
@@ -112,7 +112,7 @@ void draw(struct system *sys)
 
 	if (draw_mainmenu)
 	{
-		window_draw(mainmenu_w, renderer);
+	        window_draw(mainmenu_w, renderer);
 		button_draw(pause_button, renderer);
 
 		if(!draw_pausemenu)
@@ -230,14 +230,11 @@ void button_active(int *quit)
 	else if (load_button->active)
 	{
 		load_button->active = 0;
+		load_button->prelight = 1;
+	        mainmenu_w->visible = 1, mainmenu_w->event = 1;           
+		startmenu_w->visible = 0, startmenu_w->event = 0;   
 		sys = load_system("../save/system.txt");
-		start_button->active = 0;
-		start_button->prelight = 0;
-		mainmenu_w->visible = 1, mainmenu_w->event = 1;
-		startmenu_w->visible = 0, startmenu_w->event = 0;
-		namemenu_w->visible = 0, namemenu_w->event = 0;
 		draw_mainmenu = 1;
-		input = 2;
 
 	}
 }
@@ -293,7 +290,7 @@ int main()
 
 
 		}
-		draw(sys);
+		draw();
 		if (input)
 		{
 

@@ -74,6 +74,7 @@ struct system *load_system(char *path)
 		struct item *item = new_item(position);
 		item->size = z;
 		item->nb_dimension = 2;
+		item->mass = 100000000000.0f; // there is an assertion in the update update to check the mass -> you need to initialize it
 		push_item(s, item);
 		printf("x= %f, y=%f, size=%d\n", x, y, z); 
 	}
