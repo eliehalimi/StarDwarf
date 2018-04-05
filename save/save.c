@@ -73,6 +73,7 @@ struct system *load_system(char *path)
 		const struct vector *position = new_vector(2, values);
 		struct item *item = new_item(position);
 		item->size = z;
+		item->mass = 100000000000000.0f;
 		item->nb_dimension = 2;
 		item->mass = 100000000000.0f; // there is an assertion in the update update to check the mass -> you need to initialize it
 		push_item(s, item);
