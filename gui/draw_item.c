@@ -60,23 +60,40 @@ int DrawCircle(struct item *item, SDL_Renderer *renderer)
 	int new_y = 0;
 	int old_x = x + item->size / 2;
 	int old_y = y;
-	float step = (M_PI *2) /50;
+	//float step = (M_PI *2) /50;
 
 	/* SETS COLOR*/
 
 	SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
-	for (int radius = item->size / 2; radius > 0; radius--)
+	/*for (int radius = item->size / 2; radius > 0; radius--)
 	{
 		for (float theta = 0; theta <= (M_PI *2); theta += step)
 		{
-			new_x = x + (radius * cos(theta));
+		new_x = x + (radius * cos(theta));
 			new_y = y - (radius * sin (theta));
 			SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
 			old_x = new_x;
 			old_y = new_y;
 		}
-	}
-
+		}*/
+	float square = item->size * item->size / 4;
+	
+	for(int i = -item->size / 2; i < item->size / 2; i++)
+	  {
+	    for(int j = -item->size / 2; j < item->size / 2; j++)
+	      {
+		if(i * i + j * j <= square)
+		  {
+		    new_x = x + i;
+			new_y = y +j;
+			SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+			old_x = new_x;
+			old_y = new_y;
+		
+		  }
+	      }
+	  }
+	
 	new_x = x + (item->size / 2 * cos(0));
 	new_y = y - (item->size / 2 * sin(0));
 
