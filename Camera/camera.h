@@ -25,13 +25,13 @@ struct projection
 	struct item *item;
 	struct vector position;
 	float size;
-	int shown;
+	float distance;
 	struct list next;
 };
 
 struct camera *new_camera(void);
 
-struct projection *new_projection(struct item *item);
+struct projection *new_projection(const struct item *item);
 
 void free_camera(struct camera *camera);
 
@@ -39,14 +39,14 @@ void push_projection(struct camera *camera, struct projection *projection);
 
 int remove_projection(struct camera *camera, struct projection *projection);
 
-void update_projection(struct projection *projection, struct camera *camera);
+void update_projections(struct camera *camera);
 
 void sort_projections(struct camera *camera);
 
 void rotate_camera(struct camera *camera, float alpha, float beta);
 
-void move_camera(struct camera *camera, struct vector *translation);
+void move_camera(struct camera *camera, const struct vector *translation);
 
-void Draw_from_camera(struct camera *camera);
+void Draw_from_camera(const struct camera *camera);
 
 # endif

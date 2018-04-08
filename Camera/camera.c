@@ -68,7 +68,57 @@ void free_camera(struct camera *camera)
 	}
 }
 
-void update_projection(struct projection *projection, struct camera *camera);
+void update_projections(struct camera *camera)
+{
+  assert(camera != NULL);
+  assert(camera->position.size == 3);
+  assert(camera->poisition.values[0] != camera->position.values[0] ||
+	 camera->poisition.values[1] != camera->position.values[1] ||
+	 camera->poisition.values[2] != camera->position.values[2]);
+
+  struct vector *o = clone_vector(&camera->origine);
+  sub_vector(&camera->position, o);
+
+  struct vector *b1 = new_vector(3, NULL);
+  struct vector *b2 = new_vector(3, NULL);
+  
+  if(o->values[0] != 0)
+    {
+      b1->values[0] = - o->values[1] / o->values[0];
+      b1->values[1] = 1;
+      
+      b2->values[0] = - o->values[2] / o->values[0];
+      b2->values[2] = 1;
+    }
+  else  if(o->values[1] != 0)
+    {
+      b1->values[0] = 1;
+      
+      b2->values[1] = - o->values[2] / o->values[1];
+      b2->values[2] = 1;
+    }
+  else
+    {
+      b1->values[0] = 1;
+
+      b2->values[1] = 1;
+    }
+
+  b1->next.next = b2;
+  
+  struct vector *basis  = gram_schmidt(b1);
+  free_vector(b2);
+  free_vector(b1);
+	      
+  for(struct list *l = camera->projections.next; l != NULL; l = l->next)
+    {
+      struct projection *p = CONTAINER_OF_(struct projection, list, l);
+
+      struct 
+    }
+  
+  free_vector(o)
+}
 
 void sort_projections(struct camera *camera);
 

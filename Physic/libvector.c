@@ -18,7 +18,7 @@ void free_vector(struct vector *vect)
 {
 	assert(vect != NULL);
 	assert(vect->values != NULL);
-
+	
 	free(vect->values);
 	free(vect);
 }
@@ -136,7 +136,7 @@ struct vector *gram_schmidt(const struct vector *basis)
 
       sub_vector(sub, e);
       free_vector(sub);
-      current->next.next = e;
+      current->next.next = e->next;
       current = e;
     }
 
