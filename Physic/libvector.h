@@ -40,4 +40,6 @@ struct vector *orthogonal_projection(const struct vector *list_vector, const str
 
 struct vector *gram_schmidt(const struct vector *basis);
 
+struct  vector *orthonormal_projection(const struct vector *basis, const struct vector *vector);
+
 # endif

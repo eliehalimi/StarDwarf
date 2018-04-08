@@ -142,3 +142,23 @@ struct vector *gram_schmidt(const struct vector *basis)
 
   return res;
 }
+
+struct  vector *orthonormal_projection(const struct vector *basis, const struct vector *vector);
+{
+  assert(basis != NULL);
+  assert(vector != NULL);
+  
+  struct vector *res = new_vector(vector->size, NULL);
+
+  for(struct list *l = &basis->list; l != NULL; l = l->next)
+    {
+      struct vector *b = clone_vector(CONTAINER_OF_(struct vector, list, l));
+      scalar_product_vector(inner_product(b, vector), b);
+      add_vector(b, res);
+      
+      free_vector(b);
+    }
+
+  return res;
+}
+
