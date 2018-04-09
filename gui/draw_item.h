@@ -9,6 +9,7 @@
 #include <SDL2/SDL_image.h>
 #include <assert.h>
 #include "../Physic/physic.h"
+//#include "../Camera/camera.h"
 
 int DrawCircle(struct item *item, SDL_Renderer *renderer);
 

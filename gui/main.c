@@ -116,11 +116,12 @@ void draw()
 		button_draw(pause_button, renderer);
 
 		if(!draw_pausemenu)
-			update_system(sys, renderer);
-		else
-			for(struct list *l = sys->items.next; l != NULL; l = l->next)
-				DrawCircle(CONTAINER_OF_(struct item, list, l), renderer);
-
+			update_system(sys);
+		//else
+		//	for(struct list *l = sys->items.next; l != NULL; l = l->next)
+		//		DrawCircle(CONTAINER_OF_(struct item, list, l), renderer);
+		Draw_from_camera(sys->camera, renderer);
+		  
 
 		SDL_Rect pos;                                                     
 		MakeRect(&pos,60,0,400,400);                                 

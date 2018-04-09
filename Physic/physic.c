@@ -36,6 +36,7 @@ struct system *new_system(size_t nb_dimension)
 
 	struct system *s = calloc(sizeof(struct system), 1);
 	s->nb_dimension = nb_dimension;
+	s->camera = new_camera();
 	return s;
 }
 
@@ -101,7 +102,7 @@ void update_item(struct item *item, float delta_time)
 	free_vector(totalVelocity);
 }
 
-void update_system(struct system *system, SDL_Renderer *renderer)
+void update_system(struct system *system)
 {
 	assert(system != NULL);
 	assert(system->delta_time > 0.0f);
@@ -113,7 +114,7 @@ void update_system(struct system *system, SDL_Renderer *renderer)
 	{
 		struct item *i = CONTAINER_OF_(struct item, list, l);
 		update_item(i, system->delta_time);
-		DrawCircle(i, renderer);
+		//DrawCircle(i, renderer);
 
 	}
 	//RESET FORCE APPLIED BY SYSTEM
@@ -149,6 +150,8 @@ void push_item(struct system *system, struct item *item)
 	item->list.next = system->items.next;
 	system->items.next = &item->list;
 	system->nb_item += 1;
+
+	push_projection(system->camera, new_projection(item));
 }
 
 struct item *remove_item(struct system *system, struct item *item)

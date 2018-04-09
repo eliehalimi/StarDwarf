@@ -2,11 +2,11 @@
 # define VECTOR_STARDWARF
 
 # include <stddef.h>
+# include <stdlib.h>
 
 # define CONTAINER_OF_(TYPENAME_, FIELDNAME_, PTR_)\
 	((TYPENAME_ *)(((char*)PTR_ - offsetof(TYPENAME_, FIELDNAME_))))
 
-# include <stdlib.h>
 
 struct list
 {

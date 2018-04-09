@@ -28,13 +28,14 @@ struct projection
 	struct vector position;
 	float size;
 	float distance;
-  int shown;
-  struct list next;
+	int shown;
+	struct list next;
+	struct projection *prev;
 };
 
 struct camera *new_camera(void);
 
-struct projection *new_projection(const struct item *item);
+struct projection *new_projection(struct item *item);
 
 void free_camera(struct camera *camera);
 
@@ -50,6 +51,8 @@ void rotate_camera(struct camera *camera, float alpha, float beta);
 
 void move_camera(struct camera *camera, const struct vector *translation);
 
-void Draw_from_camera(const struct camera *camera);
+void Draw_from_camera( struct camera *camera, SDL_Renderer *renderer);
+
+void DrawProj(struct projection *proj, SDL_Renderer *renderer);
 
 # endif

@@ -7,7 +7,7 @@
 #include <SDL2/SDL_image.h>
 #include <assert.h>
 #include "../Physic/physic.h"
-
+#include "../Camera/camera.h"
 #include "draw_item.h"
 
 
@@ -51,7 +51,7 @@ int DrawCircle(struct item *item, SDL_Renderer *renderer)
 {
 	//SDL_Renderer *renderer = item->renderer;
 	//SDL_RenderClear(renderer);
-	SDL_RenderCopy(renderer, item->texture, NULL, item->rect);
+  //SDL_RenderCopy(renderer, item->texture, NULL, item->rect);
 	struct vector *position = &item->position;
 	int x = position->values[0];
 	int y = position->values[1];
@@ -103,6 +103,7 @@ int DrawCircle(struct item *item, SDL_Renderer *renderer)
 
 	return old_x;
 }
+//*/
 
 void MoveItem(struct item *item, const struct vector *position)
 {

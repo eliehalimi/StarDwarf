@@ -6,6 +6,8 @@
 //# include "SDL.h"
 # include <SDL2/SDL.h>
 # include <time.h>
+# include "../Camera/camera.h"
+
 
 struct item
 {
@@ -27,6 +29,7 @@ struct system
 	size_t nb_dimension;
 	size_t nb_item;
 	float timelapse, delta_time;
+  struct camera *camera; 
 };
 
 struct item *new_item(const struct vector *postion);
@@ -43,7 +46,7 @@ void update_item(struct item *item, float delta_time);
 
 // Update every item of the system, then update the forces
 // they apply to one another
-void update_system(struct system *system, SDL_Renderer *renderer);
+void update_system(struct system *system);
 
 // Add an item to the system
 void push_item(struct system *system, struct item *item);
