@@ -33,19 +33,21 @@ void push_projection(struct camera *camera, struct projection *projection)
 {
 	projection->next.next = camera->projections.next;
 	camera->next.next = &projection>next;
+	camera->nb_proj += 1;
 }
 
 int remove_projection(struct camera *camera, struct projection *projection);
 {
-	struct list *l = camera->projections.next;
-	while(l != projection && l != NULL)
+	struct list *l = &camera->projections;
+	while(l != NULL && l->next != projection->next)
 	{
 	  l = l->next;
 	}
 	if(l == NULL)
 	  return 0;
 
-	
+	l->next = projection->next;
+	camera->nb_proj -= 1;
 	
 	return 1;
 }
@@ -72,13 +74,14 @@ void update_projections(struct camera *camera)
 {
   assert(camera != NULL);
   assert(camera->position.size == 3);
-  assert(camera->poisition.values[0] != camera->position.values[0] ||
-	 camera->poisition.values[1] != camera->position.values[1] ||
-	 camera->poisition.values[2] != camera->position.values[2]);
+  //assert(camera->poisition.values[0] != camera->position.values[0] ||
+  //	 camera->poisition.values[1] != camera->position.values[1] ||
+  //	 camera->poisition.values[2] != camera->position.values[2]);
 
   struct vector *o = clone_vector(&camera->origine);
   sub_vector(&camera->position, o);
 
+  /*
   struct vector *b1 = new_vector(3, NULL);
   struct vector *b2 = new_vector(3, NULL);
   
@@ -109,18 +112,50 @@ void update_projections(struct camera *camera)
   struct vector *basis  = gram_schmidt(b1);
   free_vector(b2);
   free_vector(b1);
-	      
+
+  */
+  
   for(struct list *l = camera->projections.next; l != NULL; l = l->next)
     {
       struct projection *p = CONTAINER_OF_(struct projection, list, l);
+      assert(p->position.size == 2);
 
-      struct 
+      p->position.values[0] = inner_product(&p->item->position, camera->Vx);
+      p->position.values[1] = inner_product(&p->item->position, camera->Vy);
+
+      struct vector *po = scalar_product_vector(inner_product(&p->item->position, o),
+						clone_vector(o));
+
+      float ratio = camera->deth / (camera->depth + magnitude_vector(po));
+      scalar_product_vector(ratio, &p->position);
+
+      p->shown = ratio <= 1;
+
+      free_vector(po);
     }
   
   free_vector(o)
 }
 
-void sort_projections(struct camera *camera);
+void sort_projections(struct camera *camera)
+{
+  for(struct list *l = camera->projections.next; l != NULL; l = l->next)
+    {
+      struct projection *pl = CONTAINER_OF_(struct projection, list, l->next);
+      
+      for(struct list *m = camera->projections.next; m != l; m= m->next)
+	{
+	  struct projection *pm = CONTAINER_OF_(struct projection, list, m->next);
+	  if(pl->distance > pm->distance)
+	    break;
+	}
+      if(m == l) continue;
+
+      
+      pl->list.next = &pm->list;
+      
+    }
+}
 
 void rotate_camera(struct camera *camera, float alpha, float beta);
 

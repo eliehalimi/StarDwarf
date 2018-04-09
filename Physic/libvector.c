@@ -18,7 +18,7 @@ void free_vector(struct vector *vect)
 {
 	assert(vect != NULL);
 	assert(vect->values != NULL);
-	
+
 	free(vect->values);
 	free(vect);
 }
@@ -93,72 +93,56 @@ float inner_product(const struct vector *v1, const struct vector *v2)
 }
 
 
-struct vector *orthogonal_projection(const struct vector *list_vector, const struct vector *vector)
+
+struct vector *gram_schmidt(const struct vector *basis)
 {
-	assert(list_vector != NULL);
+	assert(basis != NULL);
+
+	struct vector *res = clone_vector(basis);
+	struct vector *current = res;
+
+	for(struct list *lk = basis->list.next; lk != NULL; lk = lk->next)
+	{
+		struct vector *sub = new_vector(res->size, NULL);
+		struct vector *e = clone_vector(CONTAINER_OF_(struct vector, list, lk));
+
+		for(struct list *li = &res->list; li != lk; li = li->next)
+		{
+			struct vector *eps = clone_vector(CONTAINER_OF_(struct vector, list, li));
+			float ratio = inner_product(e, eps) / inner_product(eps, eps);
+			add_vector(scalar_product_vector(ratio, eps), sub);
+
+			free_vector(eps);
+		}
+		
+		sub_vector(sub, e);
+		free_vector(sub);
+
+		scalar_product_vector(1.0f / magnitude_vector(e), e);
+		
+		current->list.next = &e->list;
+		current = e;
+	}
+
+	return res;
+}
+
+struct  vector *orthonormal_projection(struct vector *basis, struct vector *vector)
+{
+	assert(basis != NULL);
 	assert(vector != NULL);
 
 	struct vector *res = new_vector(vector->size, NULL);
 
-	for(struct list *l = &list_vector->next; l != NULL; l = l->next)
+	for(struct list *l = &basis->list; l != NULL; l = l->next)
 	{
-		struct vector *b = CONTAINER_OF_(struct vector, list, l);
-		assert(b->size == vector->size);
+		struct vector *b = clone_vector(CONTAINER_OF_(struct vector, list, l));
+		scalar_product_vector(inner_product(b, vector), b);
+		add_vector(b, res);
 
-		struct vecotr *e = scalar_product_vector(inner_product(vector, b), clone_vector(b));
-
-		add_vector(e, res);
-		free_vector(e);
-	}
-}
-
-
-struct vector *gram_schmidt(const struct vector *basis)
-{
-  assert(basis != NULL);
-  
-  struct vector *res = clone_vector(basis);
-  struct vector *current = res;
-  
-  for(struct list *lk = basis->list.next; lk != NULL; lk = lk->next)
-    {
-      struct vector *sub = new_vector(res->size, NULL);
-      struct vector *e = clone_vector(CONTAINER_OF_(struct vector, list, lk));
-      
-      for(struct list *li = &res->list; li != lk; li = li->next)
-	{
-	  struct vecotr *eps = clone_vector(CONTAINER_OF_(struct vector, list, li));
-	  float ratio = inner_product(e, eps) / inner_product(eps, eps);
-	  add_vector(scalar_product_vector(ratio, eps), sub);
-
-	  free_vector(eps);
+		free_vector(b);
 	}
 
-      sub_vector(sub, e);
-      free_vector(sub);
-      current->next.next = e->next;
-      current = e;
-    }
-
-  return res;
-}
-
-struct  vector *orthonormal_projection(const struct vector *basis, const struct vector *vector);
-{
-  assert(basis != NULL);
-  assert(vector != NULL);
-  
-  struct vector *res = new_vector(vector->size, NULL);
-
-  for(struct list *l = &basis->list; l != NULL; l = l->next)
-    {
-      struct vector *b = clone_vector(CONTAINER_OF_(struct vector, list, l));
-      scalar_product_vector(inner_product(b, vector), b);
-      add_vector(b, res);
-      
-      free_vector(b);
-    }
-
-  return res;
+	return res;
 }
 

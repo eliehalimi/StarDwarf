@@ -15,6 +15,8 @@ struct camera
 {
 	struct vector position;
 	struct vector origin;
+	struct vector Vx;
+	struct vector Vy;
 	float depth;
 	size_t nb_proj;
 	struct list projections;
@@ -26,7 +28,8 @@ struct projection
 	struct vector position;
 	float size;
 	float distance;
-	struct list next;
+  int shown;
+  struct list next;
 };
 
 struct camera *new_camera(void);

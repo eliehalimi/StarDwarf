@@ -36,10 +36,8 @@ float magnitude_vector(const struct vector *vect);
 
 float inner_product(const struct vector *v1, const struct vector *v2);
 
-struct vector *orthogonal_projection(const struct vector *list_vector, const struct vector *vector);
-
 struct vector *gram_schmidt(const struct vector *basis);
 
-struct  vector *orthonormal_projection(const struct vector *basis, const struct vector *vector);
+struct  vector *orthonormal_projection(struct vector *basis, struct vector *vector);
 
 # endif
