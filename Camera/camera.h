@@ -20,6 +20,8 @@ struct camera
 	float depth;
 	size_t nb_proj;
 	struct list projections;
+	float center_X;
+	float center_Y;
 };
 
 struct projection
@@ -30,10 +32,10 @@ struct projection
 	float distance;
 	int shown;
 	struct list next;
-	struct projection *prev;
+	struct list prev;
 };
 
-struct camera *new_camera(void);
+struct camera *new_camera(float center_X, float center_Y);
 
 struct projection *new_projection(struct item *item);
 
@@ -47,12 +49,12 @@ void update_projections(struct camera *camera);
 
 void sort_projections(struct camera *camera);
 
-void rotate_camera(struct camera *camera, float alpha, float beta);
+void rotate_camera(struct camera *camera, float alpha, float beta, float gamma);
 
 void move_camera(struct camera *camera, const struct vector *translation);
 
 void Draw_from_camera( struct camera *camera, SDL_Renderer *renderer);
 
-void DrawProj(struct projection *proj, SDL_Renderer *renderer);
+void DrawProj(struct projection *proj, SDL_Renderer *renderer, float offset_X, float offset_Y);
 
 # endif

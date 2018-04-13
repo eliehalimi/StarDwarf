@@ -10,6 +10,9 @@ struct matrix
 };
 
 
+void printMat(struct matrix *mat);
+
+
 /*
  * Creation of the matrix: take two int (line & col) as parameters
  * Care: Line and col are stored as short int (2B wide).

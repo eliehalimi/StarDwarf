@@ -114,12 +114,12 @@ struct vector *gram_schmidt(const struct vector *basis)
 
 			free_vector(eps);
 		}
-		
+
 		sub_vector(sub, e);
 		free_vector(sub);
 
 		scalar_product_vector(1.0f / magnitude_vector(e), e);
-		
+
 		current->list.next = &e->list;
 		current = e;
 	}

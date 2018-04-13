@@ -1,3 +1,4 @@
+
 # include <stdlib.h>
 # include <string.h>
 # include <assert.h>
@@ -36,7 +37,6 @@ struct system *new_system(size_t nb_dimension)
 
 	struct system *s = calloc(sizeof(struct system), 1);
 	s->nb_dimension = nb_dimension;
-	s->camera = new_camera();
 	return s;
 }
 

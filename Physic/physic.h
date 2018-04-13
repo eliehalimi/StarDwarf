@@ -12,7 +12,7 @@
 struct item
 {
 	size_t nb_dimension;
-  double mass, elec_charge, size;
+	double mass, elec_charge, size;
 	char label[16];
 	char color[4];
 	struct vector position, velocity, force;
@@ -29,7 +29,7 @@ struct system
 	size_t nb_dimension;
 	size_t nb_item;
 	float timelapse, delta_time;
-  struct camera *camera; 
+	struct camera *camera; 
 };
 
 struct item *new_item(const struct vector *postion);

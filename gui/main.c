@@ -12,6 +12,10 @@
 # include <string.h>
 # include "../save/save.h"
 
+# define WINDOW_W 1280
+# define WINDOW_H 720
+
+
 struct button *new_button, *load_button, *options_button, *quit_button, *credit_button, *volume_button, *back_optionmenu_button, *back_creditmenu_button, *x_button, *start_button, *pause_button, *resume_button, *quit_mainmenu_button;
 struct window *startmenu_w, *optionmenu_w, *creditmenu_w, *namemenu_w, *mainmenu_w, *pausemenu_w;
 int draw_startmenu = 1, draw_optionmenu = 0, draw_creditmenu = 0, draw_namemenu = 0, draw_mainmenu = 0, draw_pausemenu = 0, input = 0;
@@ -49,27 +53,25 @@ void init_button_window()
 	quit_mainmenu_button = malloc(sizeof(struct button));
 	pausemenu_w = malloc(sizeof(struct window));
 
-	int window_w = 1280, window_h = 720;
-
-	window_new(startmenu_w, startmenu, 0, 0, window_w, window_h);
+	window_new(startmenu_w, startmenu, 0, 0, WINDOW_W, WINDOW_H);
 	button_new(new_button, new_selected, new_unselected, 400, 320, 450, 90, startmenu_w);
 	button_new(load_button, load_selected, load_unselected, 400, 415, 450, 90, startmenu_w);
 	button_new(options_button, options_selected, options_unselected, 400, 510, 450, 90, startmenu_w);
 	button_new(quit_button, quit_selected, quit_unselected, 400, 605, 450, 90, startmenu_w);
 
-	window_new(optionmenu_w, optionmenu, 0, 0, window_w, window_h);
+	window_new(optionmenu_w, optionmenu, 0, 0, WINDOW_W, WINDOW_H);
 	button_new(credit_button, credit_selected, credit_unselected, 400, 300, 450, 90, optionmenu_w);
 	button_new(volume_button, volume_selected, volume_unselected, 400, 400, 450, 90, optionmenu_w);
 	button_new(back_optionmenu_button, back_selected, back_unselected,400,600, 450, 90, optionmenu_w);
 
-	window_new(creditmenu_w, creditmenu, 0, 0, window_w, window_h);
+	window_new(creditmenu_w, creditmenu, 0, 0, WINDOW_W, WINDOW_H);
 	button_new(back_creditmenu_button, back_selected, back_unselected, 400, 600, 450, 90, creditmenu_w);
 
 	window_new(namemenu_w, namemenu, 260, 200, 739, 300);
 	button_new(x_button, x_selected, x_unselected, 945, 205, 54, 52, namemenu_w);
 	button_new(start_button, start_selected, start_unselected, 500, 400, 251, 68, namemenu_w);
 
-	window_new(mainmenu_w, mainmenu, 0, 0, window_w, window_h);
+	window_new(mainmenu_w, mainmenu, 0, 0, WINDOW_W, WINDOW_H);
 	button_new(pause_button, pause_selected, pause_unselected, 0, 0, 47, 49, mainmenu_w);
 
 	window_new(pausemenu_w, pausemenu, 400, 80, 739, 300);
@@ -112,16 +114,20 @@ void draw()
 
 	if (draw_mainmenu)
 	{
-	        window_draw(mainmenu_w, renderer);
+		window_draw(mainmenu_w, renderer);
 		button_draw(pause_button, renderer);
 
 		if(!draw_pausemenu)
-			update_system(sys);
-		//else
-		//	for(struct list *l = sys->items.next; l != NULL; l = l->next)
-		//		DrawCircle(CONTAINER_OF_(struct item, list, l), renderer);
+		{
+			//update_system(sys);
+			rotate_camera(sys->camera, 0.01f, 0, 0);
+		}
 		Draw_from_camera(sys->camera, renderer);
-		  
+
+		float tab[] = {0, 0};
+		struct vector *trans = new_vector(2, tab);
+
+		move_camera(sys->camera, trans);
 
 		SDL_Rect pos;                                                     
 		MakeRect(&pos,60,0,400,400);                                 
@@ -144,6 +150,7 @@ void draw()
 		button_draw(resume_button, renderer);
 		button_draw(quit_mainmenu_button, renderer);
 	}
+
 	SDL_RenderPresent(renderer);
 }
 
@@ -232,7 +239,7 @@ void button_active(int *quit)
 	{
 		load_button->active = 0;
 		load_button->prelight = 1;
-	        mainmenu_w->visible = 1, mainmenu_w->event = 1;           
+		mainmenu_w->visible = 1, mainmenu_w->event = 1;           
 		startmenu_w->visible = 0, startmenu_w->event = 0;   
 		sys = load_system("../save/system.txt");
 		draw_mainmenu = 1;
@@ -304,92 +311,98 @@ int main()
 				sprintf(intro, "welcome to StarDwarf's Kurt Russel's teapot");
 
 			if(!strcmp(text, "Russel") && input < 2)
-			  {
-			    
-			    //system created
-			
-			    sys = new_system(2);
-			    sys->delta_time = 0.1f;
-			
-			    //values for position vector
-			    float val[2] = {250, 250};
-			    float val2[2] = {250, 400};
+			{
 
-			    //vector postion and creation of item
-			    struct vector *position = new_vector(2, val);
-			    struct vector *position2 = new_vector(2, val2);
+				//system created
 
-			    struct vector *force = new_vector(2, NULL);
-			    force->values[0] = -1;
-			    force->values[1] = -1;
-			    
-			    item = new_item(position);
-			    item->size = 50;
-			    item->mass  = 1000000000000000.0f;
-			    item->color[1] = 0;
-			    item->color[2] = 0;
-			    item->velocity.values[0] = 10;
-			    item->user_force.next = &force->list;
-			    
-			    item2 = new_item(position2);
-			    item2->size = 50;
-			    item2->mass = 1000000000000000.0f;
+				sys = new_system(3);
+				sys->camera = new_camera(WINDOW_W / 2, WINDOW_H / 2);
+				sys->delta_time = 0.1f;
 
-			    //adding item to list of items in system
-			    push_item(sys, item);
-			    push_item(sys, item2);
+				//values for position vector                                                 
+				float val[3] = {0, 0, 0};
+				float val2[3] = {150, 150, 150};
+				float val3[3] = {0, 300, 0};
 
-			    free_vector(position);
-			    free_vector(position2);
-			  }
+				//vector postion and creation of item                                        
+				struct vector *position = new_vector(3, val);
+				struct vector *position2 = new_vector(3, val2);
+				struct vector *position3 = new_vector(3, val3);
+
+				item = new_item(position);
+				item->size = 100;
+				item->mass  = 100000000000000.0f;
+				item->color[1] = 0;
+				item->color[2] = 0;
+				item->velocity.values[0] = 10;
+
+				item2 = new_item(position2);
+				item2->size = 100;
+				item2->mass = 100000000000000.0f;
+
+				item3 = new_item(position3);
+				item3->size = 100;
+				item3->mass = 100000000000000.0f;
+				item3->color[0] = 0;
+
+				//adding item to list of items in system                                     
+				push_item(sys, item);
+				push_item(sys, item2);
+				push_item(sys, item3);
+
+				free_vector(position);
+				free_vector(position2);
+				free_vector(position3);
+
+
+			}
 			else if(input < 2)
-			  {
-			    //system created
-			
-			    sys = new_system(2);
-			    sys->delta_time = 0.1f;
-			
-			    //values for position vector
-			    float val[2] = {250, 250};
-			    float val2[2] = {350, 350};
-			    float val3[2] = {750, 500};
+			{
+				//system created
 
-			    //vector postion and creation of item
-			    struct vector *position = new_vector(2, val);
-			    struct vector *position2 = new_vector(2, val2);
-			    struct vector *position3 = new_vector(2, val3);
+				sys = new_system(3);
+				sys->camera = new_camera(WINDOW_W / 2, WINDOW_H / 2);
+				sys->delta_time = 0.1f;
 
-			    item = new_item(position);
-			    item->size = 100;
-			    item->mass  = 100000000000000.0f;
-			    item->color[1] = 0;
-			    item->color[2] = 0;
-			    item->velocity.values[0] = 10;
+				//values for position vector
+				float val[3] = {0, 0, 0};
+				float val2[3] = {0, 150, 0};
+				float val3[3] = {0, 300, 0};
 
-			    item2 = new_item(position2);
-			    item2->size = 50;
-			    item2->mass = 100000000000000.0f;
+				//vector postion and creation of item
+				struct vector *position = new_vector(3, val);
+				struct vector *position2 = new_vector(3, val2);
+				struct vector *position3 = new_vector(3, val3);
 
-			    item3 = new_item(position3);
-			    item3->size = 50;
-			    item3->mass = 100000000000000.0f;
-			    item3->color[0] = 0;
-			    
-			    //adding item to list of items in system
-			    push_item(sys, item);
-			    push_item(sys, item2);
-			    push_item(sys, item3);
-			    
-			    free_vector(position);
-			    free_vector(position2);
-			    free_vector(position3);
-			  }
+				item = new_item(position);
+				item->size = 100;
+				item->mass  = 100000000000000.0f;
+				item->color[1] = 0;
+				item->color[2] = 0;
+				item->velocity.values[0] = 10;
+
+				item2 = new_item(position2);
+				item2->size = 100;
+				item2->mass = 100000000000000.0f;
+
+				item3 = new_item(position3);
+				item3->size = 100;
+				item3->mass = 100000000000000.0f;
+				item3->color[0] = 0;
+
+				//adding item to list of items in system
+				push_item(sys, item);
+				push_item(sys, item2);
+				push_item(sys, item3);
+
+				free_vector(position);
+				free_vector(position2);
+				free_vector(position3);
+			}
 			//adding textures, renderer... to item
 			//item->renderer = renderer;
 			//item->texture = text;
 			item->rect = NULL;
-			puts("Drawing");
-			printf("x = %f, y = %f\n", item->position.values[0], item->position.values[1]);
 			//init_circle(item);
 			//draw_cricle(item);
 			puts("Finished Drawing");

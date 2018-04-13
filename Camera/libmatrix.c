@@ -4,6 +4,20 @@
 # include "libmatrix.h"
 # include "../Physic/libvector.h"
 
+void printMat(struct matrix *mat)
+{
+	printf("\n");
+	for(int i = 0; i < mat->line; i++)
+	{
+		for(int j = 0; j < mat->col; j++)
+		{
+			printf("%f ", mat->grid[i * mat->col + j]);
+		}
+		printf("\n");
+	}
+}
+
+
 /*
  * Creation of the matrix: take two int (line & col) as parameters
  * Care: Line and col are stored as short int (2B wide).
@@ -32,14 +46,13 @@ struct matrix *newMat(int line, int col)
 struct matrix *mult(struct matrix *mat1, struct matrix *mat2)
 {
 	assert(mat1->col == mat2->line);
-	if(mat1->col != mat2->col)
-		return NULL; // maybe change to raise an error?
+
 	struct matrix *new = newMat(mat1->line, mat2->col);
 
 	for(int i = 0; i < mat1->line; i++)
 		for(int j = 0; j < mat2->col; j++)
 			for(int k = 0; k < mat2->line; k++)
-				new->grid[i * mat2->col + j] += mat1->grid[i * mat1->col + k] * mat2->grid[k * mat2->line + j];
+				new->grid[i * mat2->col + j] += mat1->grid[i * mat1->col + k] * mat2->grid[k * mat2->col + j];
 	return new;
 }
 
@@ -163,7 +176,10 @@ struct vector *mult_vector(struct matrix *mat, struct vector *vect)
 
 
 	struct matrix *m = newMat(vect->size, 1);
-	fill(m, vect->values, vect->size);
+
+	for(size_t i = 0; i < vect->size; i++)
+		m->grid[i] = vect->values[i];
+
 	struct matrix *resmat = mult(mat, m);
 	freeMat(m);
 	struct vector *resvect = new_vector(vect->size, resmat->grid);

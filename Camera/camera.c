@@ -10,24 +10,28 @@
 #include "../gui/draw_item.h"
 
 
-struct camera *new_camera()
+struct camera *new_camera(float center_X, float center_Y)
 {
 	struct camera *camera = calloc(sizeof(struct camera), 1);
 	camera->position.size = 3;
 	camera->origin.size = 3;
 	camera->Vx.size = 3;
 	camera->Vy.size = 3;
-	camera->depth = 1.0f;
+	camera->depth = 10000000;
 
 	camera->position.values = calloc(sizeof(float), 3);
 	camera->origin.values = calloc(sizeof(float), 3);
-	camera->origin.values[2] = 1;
-	
+	camera->position.values[0] = 300;
+	camera->position.values[1] = 0;
+	camera->position.values[2] = 0;
+
 	camera->Vx.values = calloc(sizeof(float), 3);
 	camera->Vy.values = calloc(sizeof(float), 3);
-	camera->Vx.values[0] = 1;
-	camera->Vy.values[1] = 1;
+	camera->Vx.values[1] = 1;
+	camera->Vy.values[2] = 1;
 
+	camera->center_X = center_X;
+	camera->center_Y = center_Y;
 
 	return camera;
 }
@@ -39,12 +43,21 @@ struct projection *new_projection(struct item *item)
 	struct projection *projection = calloc(sizeof(struct projection), 1);
 	projection->item = item;
 	projection->position.size = 2;
+	projection->position.values = calloc(sizeof(float), 2);
 	return projection;
 }
 
 void push_projection(struct camera *camera, struct projection *projection)
 {
+	assert(camera != NULL);
+	assert(projection != NULL);
+
+
 	projection->next.next = camera->projections.next;
+	if(camera->projections.next != NULL)
+		CONTAINER_OF_(struct projection, next, camera->projections.next)->prev.next = &projection->prev;
+
+	projection->prev.next = NULL;
 	camera->projections.next = &projection->next;
 	camera->nb_proj += 1;
 }
@@ -100,18 +113,27 @@ void update_projections(struct camera *camera)
 	{
 		struct projection *p = CONTAINER_OF_(struct projection, next, l);
 		assert(p->position.size == 2);
-		
-		p->position.values[0] = inner_product(&p->item->position, &camera->Vx);
-		p->position.values[1] = inner_product(&p->item->position, &camera->Vy);
+		assert(p->position.values != NULL);
 
-		struct vector *po = scalar_product_vector(inner_product(&p->item->position, o),
+		struct vector *new_pos = sub_vector(&camera->position,
+				clone_vector(&p->item->position));
+
+		p->position.values[0] = inner_product(new_pos, &camera->Vx);
+		p->position.values[1] = inner_product(new_pos, &camera->Vy);
+
+
+		struct vector *po = scalar_product_vector(inner_product(new_pos, o),
 				clone_vector(o));
 
-		float ratio = camera->depth / (camera->depth + magnitude_vector(po));
+		float distance = magnitude_vector(po);
+		float ratio = camera->depth / (camera->depth + distance);
 		scalar_product_vector(ratio, &p->position);
 
-		p->shown = ratio <= 1;
+		p->distance = distance;
+		p->shown = inner_product(new_pos, o) >= 0;
+		p->size = p->item->size * ratio;
 
+		free_vector(new_pos);
 		free_vector(po);
 	}
 
@@ -122,40 +144,60 @@ void sort_projections(struct camera *camera)
 {
 	for(struct list *l = camera->projections.next; l != NULL; l = l->next)
 	{
-		struct projection *pl = CONTAINER_OF_(struct projection, next, l->next);
+		struct projection *pl = CONTAINER_OF_(struct projection, next, l);
 		struct projection *pm = pl;
-		for(struct list *m = camera->projections.next; m != l; m= m->next)
+		struct list *m = camera->projections.next;
+		for(; m != l; m= m->next)
 		{
 			pm = CONTAINER_OF_(struct projection, next, m);
 			if(pl->distance > pm->distance)
 				break;
 		}
-		if(pm == pl) continue;
+		if(m == l) continue;
 
-		pl->prev->next.next = pl->next.next;
-		CONTAINER_OF_(struct projection, next, pl->next.next)->prev = pl->prev;
+		CONTAINER_OF_(struct projection, prev, pl->prev.next)->next.next = pl->next.next;
+		if(pl->next.next != NULL)
+			CONTAINER_OF_(struct projection, next, pl->next.next)->prev.next = pl->prev.next;
 
-		pm->prev->next.next = &pl->next;
-		pl->prev = pm->prev;
+		if(pm->prev.next != NULL)
+			CONTAINER_OF_(struct projection, prev, pm->prev.next)->next.next = &pl->next;
+		else
+		  camera->projections.next = &pl->next;
+		pl->prev.next = pm->prev.next;
 
 		pl->next.next = &pm->next;
-		pm->prev = pl;
+		pm->prev.next = &pl->prev;
 
 	}
 }
 
-void rotate_camera(struct camera *camera, float alpha, float beta)
+void rotate_camera(struct camera *camera, float alpha, float beta, float gamma)
 {
 	assert(camera != NULL);
 
-	float tab[] = {cosf(alpha) * cosf(beta), -sinf(beta) * cosf(alpha), 0,
-		sinf(beta) * cosf(alpha), cos(beta) * cosf(alpha), 0,
-		sin(alpha), sin(alpha), 1};
+	float tabZ[] = {cosf(alpha), -sinf(alpha), 0,
+		sinf(alpha), cos(alpha), 0,
+		0, 0, 1};
 
-	struct matrix *linapp = newMat(3, 3);
+	struct matrix *linappZ = newMat(3, 3);
+	fill(linappZ, tabZ, 9);
 
-	fill(linapp, tab, 9);
-	
+	float tabY[] = {cosf(beta), 0, sinf(beta),
+		0, 1, 0,
+		-sinf(beta), 0, cos(beta)};
+
+	struct matrix *linappY = newMat(3, 3);
+	fill(linappY, tabY, 9);
+
+	float tabX[] = {1, 0, 0,
+		0, cosf(gamma), -sinf(gamma),
+		0, sinf(gamma), cos(gamma)};
+
+	struct matrix *linappX = newMat(3, 3);
+	fill(linappX, tabX, 9);
+
+	struct matrix *linapp = mult(mult(linappZ, linappY), linappX);
+
 	add_vector(&camera->origin, mult_vector(linapp, sub_vector(&camera->origin, &camera->position)));
 	mult_vector(linapp, &camera->Vx);
 	mult_vector(linapp, &camera->Vy);
@@ -177,59 +219,63 @@ void move_camera(struct camera *camera, const struct vector *translation)
 
 	add_vector(X, &camera->origin);
 	add_vector(Y, &camera->origin);
+
+	free_vector(X);
+	free_vector(Y);
 }
 
 
-void DrawProj(struct projection *proj, SDL_Renderer *renderer)
+void DrawProj(struct projection *proj, SDL_Renderer *renderer, float offset_X, float offset_Y)
 {
-        int x = proj->position.values[0];
-        int y = proj->position.values[1];
 
-        int new_x = 0;
-        int new_y = 0;
-        int old_x = x + proj->size / 2;
-        int old_y = y;
+	int x = proj->position.values[0] + offset_X;
+	int y = proj->position.values[1]  + offset_Y;
 
-        struct item *item = proj->item;
+	int new_x = 0;
+	int new_y = 0;
+	int old_x = x + proj->size / 2;
+	int old_y = y;
 
-        // SETS COLOR                                                                                                                                         
+	struct item *item = proj->item;
 
-        SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
-        float square = proj->size * proj->size / 4;
+	// SETS COLOR                                                                                                                                         
 
-        for(int i = -proj->size / 2; i < proj->size / 2; i++)
-          {
-            for(int j = -proj->size / 2; j < proj->size / 2; j++)
-              {
-                if(i * i + j * j <= square)
-                  {
-                    new_x = x + i;
-                        new_y = y +j;
-                        SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
-                        old_x = new_x;
-                        old_y = new_y;
+	SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
+	float square = proj->size * proj->size / 4;
 
-                  }
-              }
-          }
+	for(int i = -proj->size / 2; i < proj->size / 2; i++)
+	{
+		for(int j = -proj->size / 2; j < proj->size / 2; j++)
+		{
+			if(i * i + j * j <= square)
+			{
+				new_x = x + i;
+				new_y = y +j;
+				SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+				old_x = new_x;
+				old_y = new_y;
 
-        new_x = x + (proj->size / 2 * cos(0));
-        new_y = y - (proj->size / 2 * sin(0));
+			}
+		}
+	}
 
-        SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	new_x = x + (proj->size / 2 * cos(0));
+	new_y = y - (proj->size / 2 * sin(0));
+
+	SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
 void Draw_from_camera(struct camera *camera, SDL_Renderer *renderer)
 {
-  update_projections(camera);
-  sort_projections(camera);
+	update_projections(camera);
+	sort_projections(camera);
 
-  for(struct list *l = camera->projections.next; l != NULL; l = l->next)
-    {
-      struct projection *p = CONTAINER_OF_(struct projection, next, l);
+	for(struct list *l = camera->projections.next; l != NULL; l = l->next)
+	{
+		struct projection *p = CONTAINER_OF_(struct projection, next, l);
 
-      if(p->shown)
-	DrawProj(p, renderer);
-    }
+		if(p->shown)
+			DrawProj(p, renderer, camera->center_X, camera->center_Y);
+	}
 }
