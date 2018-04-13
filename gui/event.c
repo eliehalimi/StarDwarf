@@ -79,3 +79,4 @@ int button_event(struct button *button, SDL_Event *event, int *draw)
 	return 0;
 }
 
+int camera_event(struct camera *camera, SDL_Event *event, struct vector *vector);

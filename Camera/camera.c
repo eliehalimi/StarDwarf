@@ -17,11 +17,11 @@ struct camera *new_camera(float center_X, float center_Y)
 	camera->origin.size = 3;
 	camera->Vx.size = 3;
 	camera->Vy.size = 3;
-	camera->depth = 10000000;
+	camera->depth = 500;
 
 	camera->position.values = calloc(sizeof(float), 3);
 	camera->origin.values = calloc(sizeof(float), 3);
-	camera->position.values[0] = 300;
+	camera->position.values[0] = 301;
 	camera->position.values[1] = 0;
 	camera->position.values[2] = 0;
 
@@ -107,8 +107,8 @@ void update_projections(struct camera *camera)
 
 	struct vector *o = clone_vector(&camera->origin);
 	sub_vector(&camera->position, o);
-
-
+	scalar_product_vector( 1.0f / magnitude_vector(o), o);
+	
 	for(struct list *l = camera->projections.next; l != NULL; l = l->next)
 	{
 		struct projection *p = CONTAINER_OF_(struct projection, next, l);

@@ -2,6 +2,8 @@
 # define GUI_H
 # include <SDL2/SDL.h>
 # include <SDL2/SDL_image.h>
+# include "../Physic/libvector.h"
+# include "../Camera/camera.h"
 
 extern struct image *quit_selected, *quit_unselected, *new_selected, *new_unselected, *load_selected, *load_unselected, *startmenu, *optionmenu, *back_selected, *back_unselected, *options_selected, *options_unselected, *credit_selected, *credit_unselected, *volume_selected, *volume_unselected, *creditmenu, *namemenu, *x_selected, *x_unselected, *start_selected, *start_unselected, *mainmenu, *pausemenu, *pause_selected, *pause_unselected, *resume_selected, *resume_unselected, *quit_mainmenu_selected, *quit_mainmenu_unselected;
 //extern int quit;
@@ -64,6 +66,7 @@ void clean();
 //text input
 void drawtextinput();
 void textinput();
-  
+
+int camera_event(struct camera *camera, SDL_Event *event, struct vector *vector);
 
 # endif

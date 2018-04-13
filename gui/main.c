@@ -119,8 +119,8 @@ void draw()
 
 		if(!draw_pausemenu)
 		{
-			//update_system(sys);
-			rotate_camera(sys->camera, 0.01f, 0, 0);
+		  //update_system(sys);
+		  rotate_camera(sys->camera, 0.01f, 0, 0);
 		}
 		Draw_from_camera(sys->camera, renderer);
 
@@ -322,7 +322,7 @@ int main()
 				//values for position vector                                                 
 				float val[3] = {0, 0, 0};
 				float val2[3] = {150, 150, 150};
-				float val3[3] = {0, 300, 0};
+				float val3[3] = {0, 250, 0};
 
 				//vector postion and creation of item                                        
 				struct vector *position = new_vector(3, val);
