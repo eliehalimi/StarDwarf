@@ -251,7 +251,7 @@ void button_active(int *quit)
 int main()
 {
 	SDL_Event e;
-	renderer = init("Kurt Kussel's teapot - StarDwarf",1280, 720);
+	renderer = init("Kurt Russel's teapot - StarDwarf",1280, 720);
 	text = malloc(30*sizeof(char));
 	*text = '\0'; 
 	if (!renderer) return 1; 
