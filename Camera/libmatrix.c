@@ -146,11 +146,9 @@ struct matrix *substract(struct matrix *mat1, struct matrix *mat2)
  * -Takes a matrix and a position in the matrix, and returns the value.
  * return '\0' as an error;
  */
-unsigned char get(struct matrix *mat, int line, int col)
+float get(const struct matrix *mat, int line, int col)
 {
 	assert(line < mat->line && col < mat->col);
-	if(line >= mat->line || col >= mat->col)
-		return '\0'; // This is an error
 	return mat->grid[line * mat->col + col];
 }
 
@@ -159,11 +157,9 @@ unsigned char get(struct matrix *mat, int line, int col)
  * SetValue:
  * -takes a matrix and a position in the matrix and set the value in this position
  */
-void set(struct matrix *mat, int line, int col, char val)
+void set(struct matrix *mat, int line, int col, float val)
 {
 	assert(line < mat->line && col < mat->col);
-	if(line >= mat->line || col >= mat->col)
-		return;
 	mat->grid[line * mat->col + col] = val;
 	return;
 }
@@ -191,4 +187,15 @@ struct vector *mult_vector(struct matrix *mat, struct vector *vect)
 
 	free_vector(resvect);
 	return vect;
+}
+
+struct matrix *transpose(const struct matrix *mat)
+{
+  struct matrix *new = newMat(mat->col, mat->line);
+
+  for(size_t i = 0; (int) i < mat->line; ++i)
+    for(size_t j = 0; (int) j < mat->col; ++j)
+      set(new, j, i, get(mat, i, j));
+  
+  return new;
 }

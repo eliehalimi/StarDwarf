@@ -121,6 +121,7 @@ void draw()
 		{
 		  //update_system(sys);
 		  rotate_camera(sys->camera, 0.01f, 0, 0);
+		  //sys->camera->position.values[0] += 10;
 		}
 		Draw_from_camera(sys->camera, renderer);
 

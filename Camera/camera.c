@@ -17,11 +17,11 @@ struct camera *new_camera(float center_X, float center_Y)
 	camera->origin.size = 3;
 	camera->Vx.size = 3;
 	camera->Vy.size = 3;
-	camera->depth = 500;
+	camera->depth = 300;
 
 	camera->position.values = calloc(sizeof(float), 3);
 	camera->origin.values = calloc(sizeof(float), 3);
-	camera->position.values[0] = 301;
+	camera->position.values[0] = 400;
 	camera->position.values[1] = 0;
 	camera->position.values[2] = 0;
 
@@ -196,12 +196,17 @@ void rotate_camera(struct camera *camera, float alpha, float beta, float gamma)
 	struct matrix *linappX = newMat(3, 3);
 	fill(linappX, tabX, 9);
 
-	struct matrix *linapp = mult(mult(linappZ, linappY), linappX);
-
+	struct matrix *m = mult(linappZ, linappY);
+	struct matrix *linapp = mult(m, linappX);
+	freeMat(m);
+	
 	add_vector(&camera->origin, mult_vector(linapp, sub_vector(&camera->origin, &camera->position)));
 	mult_vector(linapp, &camera->Vx);
 	mult_vector(linapp, &camera->Vy);
 
+	freeMat(linappX);
+	freeMat(linappY);
+	freeMat(linappZ);
 	freeMat(linapp);
 }
 
@@ -279,3 +284,57 @@ void Draw_from_camera(struct camera *camera, SDL_Renderer *renderer)
 			DrawProj(p, renderer, camera->center_X, camera->center_Y);
 	}
 }
+
+void dolly_rotation(struct camera *camera, float rotZ, float rotX)
+{
+  	assert(camera != NULL);
+
+	float tabZ[] = {cosf(rotZ), -sinf(rotZ), 0,
+			sinf(rotZ), cos(rotZ), 0,
+			0, 0, 1};
+
+	struct matrix *linappZ = newMat(3, 3);
+	fill(linappZ, tabZ, 9);
+
+	
+	float tabX[] = {1, 0, 0,
+			0, cosf(rotX), -sinf(rotX),
+			0, sinf(rotX), cos(rotX),};
+
+
+	struct matrix *linappX = newMat(3, 3);
+	fill(linappX, tabX, 9);
+
+	struct vector *Vx = &camera->Vx;
+	struct vector *Vy = &camera->Vy;
+	struct vector *Vz = sub_vector(&camera->origin, clone_vector(&camera->position));
+	scalar_product_vector(1.0f / magnitude_vector(Vz), Vz);
+	
+	float tabT[] = {Vx->values[0], Vx->values[1], Vx->values[2],
+			Vy->values[0], Vy->values[1], Vy->values[2],
+			Vz->values[0], Vz->values[1], Vz->values[2]};
+
+	struct matrix *T = newMat(3,3);
+	fill(T, tabT, 9);
+
+	struct matrix *invT = transpose(T);
+
+	struct matrix *m = mult(T, mult(linappX, invT));
+	//freeMat(linappX);
+	//linappX = mult(T, invT);
+	//freeMat(m);
+
+	struct matrix *linapp = mult(m, linappZ);
+	
+	add_vector(&camera->origin, mult_vector(linapp,
+						sub_vector(&camera->origin, &camera->position)));
+	mult_vector(linapp, &camera->Vx);
+	mult_vector(linapp, &camera->Vy);
+
+	freeMat(linapp);
+	freeMat(linappX);
+	freeMat(linappZ);
+	freeMat(T);
+	freeMat(invT);
+}
+

@@ -57,4 +57,6 @@ void Draw_from_camera( struct camera *camera, SDL_Renderer *renderer);
 
 void DrawProj(struct projection *proj, SDL_Renderer *renderer, float offset_X, float offset_Y);
 
+void dolly_rotation(struct camera *camera, float rotZ, float rotX);
+
 # endif

@@ -80,14 +80,16 @@ struct matrix *substract(struct matrix *mat1, struct matrix *mat2);
  * Return the value at designed line and column from the matrix.
  * return \0 as an error
  */
-unsigned char get(struct matrix *mat, int line, int col);
+float get(const struct matrix *mat, int line, int col);
 
 /*
  * SetValue:
  * -takes a matrix and a position in the matrix and set the value in this position
  */
-void set(struct matrix *mat, int line, int col, char val);
+void set(struct matrix *mat, int line, int col, float val);
 
 struct vector *mult_vector(struct matrix *mat, struct vector *vect);
+
+struct matrix *transpose(const struct matrix *mat);
 
 # endif
