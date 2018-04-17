@@ -330,7 +330,22 @@ void dolly_rotation(struct camera *camera, float rotZ, float rotX)
 						sub_vector(&camera->origin, &camera->position)));
 	mult_vector(linapp, &camera->Vx);
 	mult_vector(linapp, &camera->Vy);
+	/*
+	camera->Vx.list.next = &camera->Vy.list;
+	camera->Vy.list.next = NULL;
+	
+	
+	struct vector *basis = gram_schmidt(&camera->Vx);
+	camera->Vx.values[0] = basis->values[0];
+	camera->Vx.values[1] = basis->values[1];
+	camera->Vx.values[2] = basis->values[2];
 
+	struct vector *basis2 = CONTAINER_OF_(struct vector, list, basis->list.next);
+	camera->Vy.values[0] = basis2->values[0];
+	camera->Vy.values[1] = basis2->values[1];
+	camera->Vy.values[2] = basis2->values[2];
+	
+	*/
 	freeMat(linapp);
 	freeMat(linappX);
 	freeMat(linappZ);
