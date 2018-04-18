@@ -67,6 +67,6 @@ void clean();
 void drawtextinput();
 void textinput();
 
-int camera_event(struct camera *camera, SDL_Event *event, struct vector *vector);
+int camera_event(struct camera *camera, SDL_Event *event);
 
 # endif

@@ -119,8 +119,8 @@ void draw()
 
 		if(!draw_pausemenu)
 		{
-		  //update_system(sys);
-		  dolly_rotation(sys->camera, 0.01f, 0.01f);
+		  update_system(sys);
+		  //dolly_rotation(sys->camera, 0.01f, 0.01f);
 		  //sys->camera->position.values[0] += 10;
 		}
 		Draw_from_camera(sys->camera, renderer);
@@ -296,8 +296,8 @@ int main()
 			window_event(pausemenu_w, &e, &draw_pausemenu);
 			button_event(quit_mainmenu_button, &e, &draw_pausemenu);
 			button_event(resume_button, &e, &draw_pausemenu);
-
-
+			if(sys)
+			  camera_event(sys->camera, &e);
 		}
 		draw();
 		if (input)

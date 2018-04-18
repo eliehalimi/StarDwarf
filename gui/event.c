@@ -7,6 +7,8 @@
 # include <unistd.h>
 # include "gui.h"
 
+# define SPEEDCAMERA 0.01f
+
 int window_new(struct window *window, struct image *bg, int x, int y, int w, int h)
 {
   if (!window) return -1;
@@ -79,4 +81,25 @@ int button_event(struct button *button, SDL_Event *event, int *draw)
 	return 0;
 }
 
-int camera_event(struct camera *camera, SDL_Event *event, struct vector *vector);
+int camera_event(struct camera *camera, SDL_Event *event)
+{
+  if(!camera || !event) return 0;
+  //if(event->type == SDL_MOUSEBUTTONDOWN)
+  // {
+  dolly_rotation(camera, -(event->button.x - camera->mouse_x) * SPEEDCAMERA,
+		 -(event->button.y - camera->mouse_y) * SPEEDCAMERA);
+  //struct vector *trans = new_vector(2, NULL);
+  //trans->values[0] = -(event->button.x - camera->mouse_x) * SPEEDCAMERA;
+  //trans->values[1] = -(event->button.y - camera->mouse_y) * SPEEDCAMERA;
+
+  //printf("%d - %f = %f, %d - %f = %F\n", event->button.x, camera->mouse_x, trans->values[0],
+  //event->button.x, camera->mouse_y, trans->values[1]);
+  
+  //  move_camera(camera, trans);
+  //dolly_rotation(camera, 0.01f, 0);
+  // }
+
+  camera->mouse_x = event->button.x;
+  camera->mouse_y = event->button.y;
+  return 0;
+}
