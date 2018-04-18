@@ -305,9 +305,21 @@ void dolly_rotation(struct camera *camera, float rotZ, float rotX)
 	struct matrix *linappX = newMat(3, 3);
 	fill(linappX, tabX, 9);
 
-	struct vector *Vx = &camera->Vx;
-	struct vector *Vy = &camera->Vy;
+	struct vector *Vx = scalar_product_vector(1.0f / magnitude_vector(&camera->Vx), &camera->Vx);
+
+	
+	struct vector *sub = scalar_product_vector(inner_product(&camera->Vy, Vx), clone_vector(Vx));
+	struct vector *Vy = sub_vector(sub, &camera->Vy);
+	free_vector(sub);
+	scalar_product_vector(1.0f / magnitude_vector(&camera->Vy), &camera->Vy);
+
+	
 	struct vector *Vz = sub_vector(&camera->origin, clone_vector(&camera->position));
+	sub = scalar_product_vector(inner_product(Vz, Vx), clone_vector(Vx));
+	sub_vector(sub, Vz);
+	free_vector(sub);
+	sub = scalar_product_vector(inner_product(Vz, Vy), clone_vector(Vy));
+	sub_vector(sub, Vz);
 	scalar_product_vector(1.0f / magnitude_vector(Vz), Vz);
 	
 	float tabT[] = {Vx->values[0], Vx->values[1], Vx->values[2],
@@ -319,33 +331,19 @@ void dolly_rotation(struct camera *camera, float rotZ, float rotX)
 
 	struct matrix *invT = transpose(T);
 
-	struct matrix *m = mult(T, mult(linappX, invT));
-	//freeMat(linappX);
-	//linappX = mult(T, invT);
-	//freeMat(m);
+	struct matrix *m = mult(linappX, T);
+	freeMat(linappX);
+	linappX = mult(invT, m);
+	freeMat(m);
 
-	struct matrix *linapp = mult(m, linappZ);
+	struct matrix *linapp = mult(linappX, linappZ);
 	
 	add_vector(&camera->origin, mult_vector(linapp,
 						sub_vector(&camera->origin, &camera->position)));
 	mult_vector(linapp, &camera->Vx);
 	mult_vector(linapp, &camera->Vy);
-	/*
-	camera->Vx.list.next = &camera->Vy.list;
-	camera->Vy.list.next = NULL;
-	
-	
-	struct vector *basis = gram_schmidt(&camera->Vx);
-	camera->Vx.values[0] = basis->values[0];
-	camera->Vx.values[1] = basis->values[1];
-	camera->Vx.values[2] = basis->values[2];
 
-	struct vector *basis2 = CONTAINER_OF_(struct vector, list, basis->list.next);
-	camera->Vy.values[0] = basis2->values[0];
-	camera->Vy.values[1] = basis2->values[1];
-	camera->Vy.values[2] = basis2->values[2];
-	
-	*/
+
 	freeMat(linapp);
 	freeMat(linappX);
 	freeMat(linappZ);

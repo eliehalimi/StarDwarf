@@ -120,7 +120,7 @@ void draw()
 		if(!draw_pausemenu)
 		{
 		  //update_system(sys);
-		  rotate_camera(sys->camera, 0.01f, 0, 0);
+		  dolly_rotation(sys->camera, 0.01f, 0.01f);
 		  //sys->camera->position.values[0] += 10;
 		}
 		Draw_from_camera(sys->camera, renderer);
