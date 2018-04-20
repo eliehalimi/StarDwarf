@@ -366,9 +366,9 @@ int main()
 				sys->delta_time = 0.1f;
 
 				//values for position vector
-				float val[3] = {0, 0, 0};
-				float val2[3] = {0, 150, 0};
-				float val3[3] = {0, 300, 0};
+				float val[3] = {150, 150, 0};
+				float val2[3] = {0, 300, 0};
+				float val3[3] = {0, 0, 300};
 
 				//vector postion and creation of item
 				struct vector *position = new_vector(3, val);
@@ -377,14 +377,15 @@ int main()
 
 				item = new_item(position);
 				item->size = 100;
-				item->mass  = 100000000000000.0f;
+				item->mass  = 200000000000000.0f;
 				item->color[1] = 0;
 				item->color[2] = 0;
-				item->velocity.values[0] = 10;
 
 				item2 = new_item(position2);
-				item2->size = 100;
-				item2->mass = 100000000000000.0f;
+				item2->size = 10;
+				item2->mass = 1000000000000.0f;
+				item2->color[0] = 0;
+				item2->color[2] = 0;
 
 				item3 = new_item(position3);
 				item3->size = 100;

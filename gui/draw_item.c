@@ -49,9 +49,6 @@ struct item *init_circle(struct item *item, SDL_Renderer *renderer)
 
 int DrawCircle(struct item *item, SDL_Renderer *renderer)
 {
-	//SDL_Renderer *renderer = item->renderer;
-	//SDL_RenderClear(renderer);
-  //SDL_RenderCopy(renderer, item->texture, NULL, item->rect);
 	struct vector *position = &item->position;
 	int x = position->values[0];
 	int y = position->values[1];
@@ -60,22 +57,10 @@ int DrawCircle(struct item *item, SDL_Renderer *renderer)
 	int new_y = 0;
 	int old_x = x + item->size / 2;
 	int old_y = y;
-	//float step = (M_PI *2) /50;
 
 	/* SETS COLOR*/
 
 	SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
-	/*for (int radius = item->size / 2; radius > 0; radius--)
-	{
-		for (float theta = 0; theta <= (M_PI *2); theta += step)
-		{
-		new_x = x + (radius * cos(theta));
-			new_y = y - (radius * sin (theta));
-			SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
-			old_x = new_x;
-			old_y = new_y;
-		}
-		}*/
 	float square = item->size * item->size / 4;
 	
 	for(int i = -item->size / 2; i < item->size / 2; i++)
@@ -99,54 +84,112 @@ int DrawCircle(struct item *item, SDL_Renderer *renderer)
 
 	SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	//SDL_RenderPresent(renderer);
 
 	return old_x;
 }
-//*/
 
-void MoveItem(struct item *item, const struct vector *position)
+
+void DrawProj(struct projection *proj, SDL_Renderer *renderer, float offset_X, float offset_Y)
 {
-	assert(item != NULL);
-	assert(position != NULL);
-	//assert(item->renderer != NULL);
-	//assert(item->texture != NULL);
-	//assert(item->rect != NULL);
-	assert(position->size == item->nb_dimension);
-	assert(position->size ==2); //might change in the future, but we stick with 2D for now
 
-	item->position.values[0] = position->values[0];
-	item->position.values[1] = position->values[1];
+        int x = proj->position.values[0] + offset_X;
+        int y = proj->position.values[1]  + offset_Y;
 
+        int new_x = 0;
+        int new_y = 0;
+        int old_x = x + proj->size / 2;
+        int old_y = y;
 
-	//SDL_RenderClear(item->renderer);
-	//SDL_RenderCopy(item->renderer, item->texture, NULL, item->rect);
-	//DrawCircle(item);
-	//SDL_SetRenderDrawColor(item->renderer, 0,0,0,255);
-	//SDL_RenderPresent(item->renderer);
+        struct item *item = proj->item;
 
-	return;
+        // SETS COLOR
+
+	
+        SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
+        float square = proj->size * proj->size / 4;
+
+        for(int i = -proj->size / 2; i < proj->size / 2; i++)
+        {
+                for(int j = -proj->size / 2; j < proj->size / 2; j++)
+                {
+                        if(i * i + j * j <= square)
+                        {
+                                new_x = x + i;
+                                new_y = y +j;
+                                SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+                                old_x = new_x;
+                                old_y = new_y;
+
+                        }
+                }
+        }
+
+        new_x = x + (proj->size / 2 * cos(0));
+        new_y = y - (proj->size / 2 * sin(0));
+
+        SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
-void MoveItemLinear(struct item *item, const struct vector *position, float *time_arrival, float time_frame)
+void Draw_from_camera(struct camera *camera, SDL_Renderer *renderer)
 {
-	assert(item != NULL);
-	assert(position != NULL);
-	assert(time_arrival != NULL);
+        update_projections(camera);
+        sort_projections(camera);
 
-	if(*time_arrival <= time_frame)
-	{
-		MoveItem(item, position);
-		*time_arrival = 0;
-		return;
-	}
+        for(struct list *l = camera->projections.next; l != NULL; l = l->next)
+        {
+                struct projection *p = CONTAINER_OF_(struct projection, next, l);
 
-	struct vector *pos = clone_vector(position);
-
-	sub_vector(&item->position, pos);
-	scalar_product_vector(time_frame / *time_arrival, pos);
-	add_vector(&item->position, pos);
-	MoveItem(item, pos);
-	*time_arrival -= time_frame;
+                if(p->shown)
+                        DrawProj(p, renderer, camera->center_X, camera->center_Y);
+        }
 }
+/*
+void Draw_vector(struct camera *camera, struct vector *origin, struct vector *relative, SDL_Renderer *renderer)
+{
+  assert(camera != NULL);
+  assert(origin != NULL);
+  assert(relative != NULL);
+  assert(renderer != NULL);
+  assert(origin->size == 3);
+  assert(relative->size == 3);
 
+
+  struct vector *absolue = add_vector(origin, clone_vector(relative));
+
+  struct vector *Vx = &camera->Vx;
+  struct vector *Vy = &camera->Vy;
+  struct vector *Vz = sub_vector(&camera->position, clone_vector(&camera->origin));
+  scalar_product_vector(1.0f / magnitude_vector(Vz), Vz);
+
+  float x1 = inner_product(origin, Vx);
+  float y1  = inner_product(origin, Vy);
+  
+  float x2  = inner_product(absolue, Vx);
+  float y2  = inner_product(absolue, Vy);
+
+  float ratioO = inner_product(origin, Vz) / (inner_product(origin, Vz) + camera->depth);
+
+  float ratioA = inner_product(absolue, Vz) / (inner_product(absolue, Vz) + camera->depth);
+
+  x1 *= ratioO;
+  y1 *= ratioO;
+  
+  x2 *= ratioA;
+  y2 *= ratioA;
+  
+  //float mag = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+  float mag = magnitude_vector(relative);
+  
+  float yp = y2 - (y2 - y1) * 0.1f;
+
+  float xp1 = x1 + (x2 - x1) * 0.1f * mag;
+  float xp2 = x1 - (x2 - x1) * 0.1f * mag;
+  
+  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+  SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+  
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+}
+*/

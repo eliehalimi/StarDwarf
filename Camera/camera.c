@@ -44,6 +44,7 @@ struct projection *new_projection(struct item *item)
 	projection->item = item;
 	projection->position.size = 2;
 	projection->position.values = calloc(sizeof(float), 2);
+	item->proj = projection;
 	return projection;
 }
 
@@ -72,7 +73,20 @@ int remove_projection(struct camera *camera, struct projection *projection)
 	if(l == NULL)
 		return 0;
 
-	l->next = projection->next.next;
+	l->next = l->next->next;
+	
+	if(l->next != NULL)
+	  {
+	    if(l == &camera->projections)
+	      CONTAINER_OF_(struct projection, next, l->next)->prev.next = NULL;
+	    else
+	      CONTAINER_OF_(struct projection, next, l->next)->prev.next =
+		&CONTAINER_OF_(struct projection, next, l)->prev;
+	  }
+	    
+
+	
+	
 	camera->nb_proj -= 1;
 
 	return 1;
@@ -132,7 +146,7 @@ void update_projections(struct camera *camera)
 		p->distance = distance;
 		p->shown = inner_product(new_pos, o) >= 0;
 		p->size = p->item->size * ratio;
-
+		
 		free_vector(new_pos);
 		free_vector(po);
 	}
@@ -230,60 +244,6 @@ void move_camera(struct camera *camera, const struct vector *translation)
 }
 
 
-void DrawProj(struct projection *proj, SDL_Renderer *renderer, float offset_X, float offset_Y)
-{
-
-	int x = proj->position.values[0] + offset_X;
-	int y = proj->position.values[1]  + offset_Y;
-
-	int new_x = 0;
-	int new_y = 0;
-	int old_x = x + proj->size / 2;
-	int old_y = y;
-
-	struct item *item = proj->item;
-
-	// SETS COLOR                                                                                                                                         
-
-	SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
-	float square = proj->size * proj->size / 4;
-
-	for(int i = -proj->size / 2; i < proj->size / 2; i++)
-	{
-		for(int j = -proj->size / 2; j < proj->size / 2; j++)
-		{
-			if(i * i + j * j <= square)
-			{
-				new_x = x + i;
-				new_y = y +j;
-				SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
-				old_x = new_x;
-				old_y = new_y;
-
-			}
-		}
-	}
-
-	new_x = x + (proj->size / 2 * cos(0));
-	new_y = y - (proj->size / 2 * sin(0));
-
-	SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-}
-
-void Draw_from_camera(struct camera *camera, SDL_Renderer *renderer)
-{
-	update_projections(camera);
-	sort_projections(camera);
-
-	for(struct list *l = camera->projections.next; l != NULL; l = l->next)
-	{
-		struct projection *p = CONTAINER_OF_(struct projection, next, l);
-
-		if(p->shown)
-			DrawProj(p, renderer, camera->center_X, camera->center_Y);
-	}
-}
 
 void dolly_rotation(struct camera *camera, float rotZ, float rotX)
 {
@@ -305,6 +265,7 @@ void dolly_rotation(struct camera *camera, float rotZ, float rotX)
 	struct matrix *linappX = newMat(3, 3);
 	fill(linappX, tabX, 9);
 
+
 	struct vector *Vx = scalar_product_vector(1.0f / magnitude_vector(&camera->Vx), &camera->Vx);
 
 	
@@ -321,6 +282,7 @@ void dolly_rotation(struct camera *camera, float rotZ, float rotX)
 	sub = scalar_product_vector(inner_product(Vz, Vy), clone_vector(Vy));
 	sub_vector(sub, Vz);
 	scalar_product_vector(1.0f / magnitude_vector(Vz), Vz);
+	
 	
 	float tabT[] = {Vx->values[0], Vx->values[1], Vx->values[2],
 			Vy->values[0], Vy->values[1], Vy->values[2],

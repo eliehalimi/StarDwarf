@@ -11,6 +11,10 @@
 #include "../Physic/physic.h"
 #include "../Physic/libvector.h"
 
+# define NOTMOVING 0
+# define ROTATING 1
+# define TRANSLATING 2
+
 struct camera
 {
 	struct vector position;
@@ -23,6 +27,7 @@ struct camera
 	float center_X;
 	float center_Y;
   float mouse_x, mouse_y;
+  int event_type;
 };
 
 struct projection
@@ -53,10 +58,6 @@ void sort_projections(struct camera *camera);
 void rotate_camera(struct camera *camera, float alpha, float beta, float gamma);
 
 void move_camera(struct camera *camera, const struct vector *translation);
-
-void Draw_from_camera( struct camera *camera, SDL_Renderer *renderer);
-
-void DrawProj(struct projection *proj, SDL_Renderer *renderer, float offset_X, float offset_Y);
 
 void dolly_rotation(struct camera *camera, float rotZ, float rotX);
 
