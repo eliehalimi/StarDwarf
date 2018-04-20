@@ -2,22 +2,22 @@
 # define VECTOR_STARDWARF
 
 # include <stddef.h>
+# include <stdlib.h>
 
 # define CONTAINER_OF_(TYPENAME_, FIELDNAME_, PTR_)\
-  ((TYPENAME_ *)(((char*)PTR_ - offsetof(TYPENAME_, FIELDNAME_))))
+	((TYPENAME_ *)(((char*)PTR_ - offsetof(TYPENAME_, FIELDNAME_))))
 
-# include <stdlib.h>
 
 struct list
 {
-  struct list *next;
+	struct list *next;
 };
 
 struct vector
 {
-  size_t size;
-  float *values;
-  struct list list;
+	size_t size;
+	float *values;
+	struct list list;
 };
 
 struct vector *new_vector(size_t size, const float *values);
@@ -33,5 +33,11 @@ struct vector *clone_vector(const struct vector *vect);
 struct vector *sub_vector(const struct vector *in, struct vector *out);
 
 float magnitude_vector(const struct vector *vect);
+
+float inner_product(const struct vector *v1, const struct vector *v2);
+
+struct vector *gram_schmidt(const struct vector *basis);
+
+struct  vector *orthonormal_projection(struct vector *basis, struct vector *vector);
 
 # endif

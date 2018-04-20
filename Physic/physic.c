@@ -1,3 +1,4 @@
+
 # include <stdlib.h>
 # include <string.h>
 # include <assert.h>
@@ -101,7 +102,7 @@ void update_item(struct item *item, float delta_time)
 	free_vector(totalVelocity);
 }
 
-void update_system(struct system *system, SDL_Renderer *renderer)
+void update_system(struct system *system)
 {
 	assert(system != NULL);
 	assert(system->delta_time > 0.0f);
@@ -113,7 +114,6 @@ void update_system(struct system *system, SDL_Renderer *renderer)
 	{
 		struct item *i = CONTAINER_OF_(struct item, list, l);
 		update_item(i, system->delta_time);
-		DrawCircle(i, renderer);
 
 	}
 	//RESET FORCE APPLIED BY SYSTEM
@@ -136,7 +136,15 @@ void update_system(struct system *system, SDL_Renderer *renderer)
 			scalar_product_vector(1/i1->mass, g);
 			add_vector(g, &i1->force);
 			free_vector(g);
-			collide(i1, i2);
+			if(collide(system, i1, i2))
+			  {
+			    struct vector *totalVelocity = clone_vector(&i1->velocity);
+			    scalar_product_vector(system->delta_time, totalVelocity);
+			    while(distance(i1,i2) < i1->size / 2 + i2->size / 2)
+			      add_vector(totalVelocity, &i1->position);
+			    free_vector(totalVelocity);
+			    assert(!collide(system, i1, i2));
+			  }
 		}
 	}
 }
@@ -149,6 +157,8 @@ void push_item(struct system *system, struct item *item)
 	item->list.next = system->items.next;
 	system->items.next = &item->list;
 	system->nb_item += 1;
+
+	push_projection(system->camera, new_projection(item));
 }
 
 struct item *remove_item(struct system *system, struct item *item)
@@ -156,17 +166,24 @@ struct item *remove_item(struct system *system, struct item *item)
 	assert(system != NULL);
 	assert(item != NULL);
 
-	for(struct list *l = &system->items; l != NULL; l = l->next)
+	for(struct list *l = &system->items; l->next != NULL; l = l->next)
 	{
 		if(CONTAINER_OF_(struct item, list, l->next) == item)
 		{
 			struct item *i = CONTAINER_OF_(struct item, list, l->next);
-			struct list *u = i->list.next;
+
+			if(l == &system->items)
+				system->items.next = system->items.next->next;
+			else
+				l->next = l->next->next;
+
+
 			i->list.next = NULL;
-			l->next = u;
+
+			system->nb_item--;
+			remove_projection(system->camera, item->proj);
 			return i;
 		}
 	}
-
 	return NULL;
 }

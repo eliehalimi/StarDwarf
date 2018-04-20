@@ -5,5 +5,5 @@
 #include "libvector.h"
 #include "physic.h"
 
-void collide(struct item *i1, struct item *i2); 
+int collide(struct system *system, struct item *i1, struct item *i2); 
 # endif
