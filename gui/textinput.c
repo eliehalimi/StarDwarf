@@ -78,11 +78,13 @@ void textinput(SDL_Renderer *renderer, struct htable *button_list, struct htable
 	      ((struct button *)(access_htable(button_list, "start")->value))->active = 0;
 	      ((struct button *)(access_htable(button_list, "start")->value))->prelight = 0;
 	      ((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 1;
-	      ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 1;                           
+	      ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 1;
 	      ((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 0;
 	      ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
 	      ((struct window *)(access_htable(window_list, "namemenu")->value))->visible = 0;
 	      ((struct window *)(access_htable(window_list, "namemenu")->value))->event = 0;
+	      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->visible = 1;   
+	      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 1;    
 	      *((int *)(access_htable(draw_list, "mainmenu")->value)) = 1; 
 	      done = SDL_TRUE;
 	      

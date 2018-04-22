@@ -104,7 +104,11 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   add_htable(img_list, "resume_selected", malloc(sizeof(struct image)));
   add_htable(img_list, "resume_unselected", malloc(sizeof(struct image)));
   add_htable(img_list, "itemsmenu", malloc(sizeof(struct image)));
- 
+  add_htable(img_list, "item_namebox_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "item_namebox_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "item_posbox_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "item_posbox_unselected", malloc(sizeof(struct image)));
+
   
   int r = 0;
   r += image_new(access_htable(img_list, "startmenu")->value, "startmenu.png", renderer);
@@ -143,7 +147,11 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   r += image_new(access_htable(img_list, "quit_mainmenu_selected")->value, "quit_main_selected.png", renderer);
   r += image_new(access_htable(img_list, "quit_mainmenu_unselected")->value, "quit_main_unselected.png", renderer);
   r += image_new(access_htable(img_list, "itemsmenu")->value, "itemsmenu.png", renderer);
-
+  r += image_new(access_htable(img_list, "item_namebox_selected")->value, "item_namebox_selected.png", renderer);
+  r += image_new(access_htable(img_list, "item_namebox_unselected")->value, "item_namebox_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "item_posbox_selected")->value, "item_posbox_selected.png", renderer);
+  r += image_new(access_htable(img_list, "item_posbox_unselected")->value, "item_posbox_unselected.png", renderer);
+  
   if (r)
     {
       clean(button_list, window_list, img_list, draw_list);
@@ -189,6 +197,12 @@ void clean(struct htable *button_list, struct htable *window_list, struct htable
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "quit_mainmenu_selected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "quit_mainmenu_unselected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "itemsmenu")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "item_namebox_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "item_namebox_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "item_namebox_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "item_posbox_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "item_posbox_unselected")->value)->texture);
+
   SDL_DestroyWindow(window);
   SDL_DestroyRenderer(renderer);  
 

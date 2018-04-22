@@ -31,6 +31,8 @@ int main()
 	text = malloc(30*sizeof(char));
 	*text = '\0'; 
 	if (!renderer) return 1;
+	printf("1\n");
+
 	init_button_window(WINDOW_W, WINDOW_H, button_list, window_list, img_list, draw_list);
 
 	int quit = 0;
@@ -44,7 +46,7 @@ int main()
 	struct item *item = NULL;
 	struct item *item2 = NULL;
 	struct item *item3 = NULL;
-	
+
 	while (!quit)
 	{
 		SDL_Delay(10);
@@ -69,6 +71,17 @@ int main()
 			button_event(access_htable(button_list, "back_creditmenu")->value, &e, access_htable(draw_list, "creditmenu")->value);
 
 			window_event(access_htable(window_list, "mainmenu")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			button_event(access_htable(button_list, "item_name")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			button_event(access_htable(button_list, "item_x")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			button_event(access_htable(button_list, "item_y")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			button_event(access_htable(button_list, "item_z")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			button_event(access_htable(button_list, "item_vx")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			button_event(access_htable(button_list, "item_vy")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			button_event(access_htable(button_list, "item_vz")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			button_event(access_htable(button_list, "item_mass")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			button_event(access_htable(button_list, "item_radius")->value, &e, access_htable(draw_list, "mainmenu")->value);
+
+
 			button_event(access_htable(button_list, "pause")->value, &e, access_htable(draw_list, "mainmenu")->value);
 
 			window_event(access_htable(window_list, "pausemenu")->value, &e, access_htable(draw_list, "pausemenu")->value);
@@ -81,7 +94,6 @@ int main()
 		draw(renderer, button_list, window_list, draw_list, sys);
 		if (*((int *)(access_htable(draw_list, "input")->value)))
 		{
-
 			free(intro);
 			intro = malloc(200*sizeof(char));
 			textinput(renderer, button_list, window_list, draw_list);
@@ -89,22 +101,19 @@ int main()
 				sprintf(intro, "welcome to %s's world", text);
 			else
 				sprintf(intro, "welcome to StarDwarf's Kurt Russel's teapot");
-
 			if(!strcmp(text, "Russel") &&  *((int *)(access_htable(draw_list, "input")->value))< 2)
 			{
-
 				//system created
-
 				sys = new_system(3);
 				sys->camera = new_camera(WINDOW_W / 2, WINDOW_H / 2);
 				sys->delta_time = 0.1f;
 
-				//values for position vector                                                 
+				//values for position vector                                       
 				float val[3] = {0, 0, 0};
 				float val2[3] = {150, 150, 150};
 				float val3[3] = {0, 250, 0};
 
-				//vector postion and creation of item                                        
+				//vector postion and creation of item                             
 				struct vector *position = new_vector(3, val);
 				struct vector *position2 = new_vector(3, val2);
 				struct vector *position3 = new_vector(3, val3);
@@ -125,7 +134,7 @@ int main()
 				item3->mass = 100000000000000.0f;
 				item3->color[0] = 0;
 
-				//adding item to list of items in system                                     
+				//adding item to list of items in system                           
 				push_item(sys, item);
 				push_item(sys, item2);
 				push_item(sys, item3);
@@ -133,8 +142,6 @@ int main()
 				free_vector(position);
 				free_vector(position2);
 				free_vector(position3);
-
-
 			}
 			else if(*((int *)(access_htable(draw_list, "input")->value)) < 2)
 			{
@@ -182,8 +189,6 @@ int main()
 			}
 			item->rect = NULL;
 		        puts("Finished Drawing");
-
-
 		}
 
 	}
