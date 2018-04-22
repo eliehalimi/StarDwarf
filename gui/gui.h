@@ -5,10 +5,6 @@
 # include "../Physic/libvector.h"
 # include "../Camera/camera.h"
 # include "hash_table.h"
-extern struct htable *img_list;
-
-extern struct button *new_button, *load_button, *options_button, *quit_button, *credit_button, *volume_button, *back_optionmenu_button, *back_creditmenu_button, *x_button, *start_button, *pause_button, *resume_button, *quit_mainmenu_button;                                                                                  
-extern struct window *startmenu_w, *optionmenu_w, *creditmenu_w, *namemenu_w, *mainmenu_w, *pausemenu_w;                  
 extern int draw_startmenu, draw_optionmenu, draw_creditmenu, draw_namemenu, draw_mainmenu, draw_pausemenu, input;   
 extern char *text;
 extern SDL_Renderer *renderer;
@@ -47,7 +43,7 @@ int RenderImage(SDL_Renderer *renderer, struct image *img, int x, int y, SDL_Rec
 int image_new(struct image *img, char *fname, SDL_Renderer* renderer);
 
 
-SDL_Renderer* init (char *title, int w, int h);
+SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list);
 
 int window_new(struct window *window, struct image *bg, int x, int y, int w, int h);
 
@@ -61,11 +57,15 @@ int button_event(struct button *button, SDL_Event *event, int *draw);
 
 int button_draw(struct button *button, SDL_Renderer *renderer);
   
-void clean();
+void clean(struct htable *button_list, struct htable *window_list, struct htable  *img_list);
 
 //text input
-void drawtextinput();
-void textinput();
+void drawtextinput(struct htable *button_list, struct htable *window_list);
+void textinput(struct htable *button_list, struct htable *window_list);
+
+//supporting main
+void init_button_window(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list);
+void button_active(int *quit, struct system *sys, struct htable *button_list, struct htable *window_list);
 
 int camera_event(struct camera *camera, SDL_Event *event);
 

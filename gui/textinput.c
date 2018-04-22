@@ -10,22 +10,22 @@
 char *composition;
 Sint32 cursor;
 Sint32 selection_len;
-void drawtextinput()
+void drawtextinput(struct htable *button_list, struct htable *window_list)
 {
   SDL_RenderClear(renderer);
   if (draw_startmenu)
     {
-      window_draw(startmenu_w, renderer);
-      button_draw(new_button, renderer);                                                 
-      button_draw(load_button, renderer);                                                
-      button_draw(options_button, renderer);                                             
-      button_draw(quit_button, renderer);                                                
+      window_draw(access_htable(window_list, "startmenu")->value, renderer);
+      button_draw(access_htable(button_list, "new")->value, renderer);                                                 
+      button_draw(access_htable(button_list, "load")->value, renderer);                                                
+      button_draw(access_htable(button_list, "option")->value, renderer);                                             
+      button_draw(access_htable(button_list, "quit")->value, renderer);                                                
     }                                                                                    
   if (draw_namemenu)                                                                     
     {
-      window_draw(namemenu_w, renderer);                                                 
-      button_draw(start_button, renderer);                                               
-      button_draw(x_button, renderer);                                                   
+      window_draw(access_htable(window_list, "namemenu")->value, renderer);                                            
+      button_draw(access_htable(button_list, "start")->value, renderer);                                               
+      button_draw(access_htable(button_list, "x")->value, renderer);                                                   
     }                                                                                    
   if (*text)                                                                             
     {
@@ -48,7 +48,7 @@ void drawtextinput()
 
 }
 
-void textinput()
+void textinput(struct htable *button_list, struct htable *window_list)
 {
   free(text);
   text = malloc(30*sizeof(char));
@@ -63,30 +63,35 @@ void textinput()
       SDL_Delay(10);
       while (SDL_PollEvent(&e))
 	{
-	  if (x_button->active)
+	  if (((struct button *)(access_htable(button_list, "x")->value))->active)
 	    {
-	      x_button->active = 0;
-	      x_button->prelight = 0;
-	      namemenu_w->visible = 0, namemenu_w->event = 0;
-	      startmenu_w->event = 1;
+	      ((struct button *)(access_htable(button_list, "x")->value))->active = 0;
+	      ((struct button *)(access_htable(button_list, "x")->value))->prelight = 0;
+	      ((struct window *)(access_htable(window_list, "namemenu")->value))->visible = 0;
+	      ((struct window *)(access_htable(window_list, "namemenu")->value))->event = 0;
+	      ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 1;
 	      draw_namemenu = 0; 
 	      done = SDL_TRUE;  
 	    }
-	  else if (start_button->active)
+	  else if (((struct button *)(access_htable(button_list, "start")->value))->active)
 	    {
-	      start_button->active = 0;
-	      start_button->prelight = 0;
-	      mainmenu_w->visible = 1, mainmenu_w->event = 1;                           
-	      startmenu_w->visible = 0, startmenu_w->event = 0;                         
-	      namemenu_w->visible = 0, namemenu_w->event = 0;
+	      ((struct button *)(access_htable(button_list, "start")->value))->active = 0;
+	      ((struct button *)(access_htable(button_list, "start")->value))->prelight = 0;
+	      ((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 1;
+	      ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 1;                           
+	      ((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 0;
+	      ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
+	      ((struct window *)(access_htable(window_list, "namemenu")->value))->visible = 0;
+	      ((struct window *)(access_htable(window_list, "namemenu")->value))->event = 0;
 	      draw_mainmenu = 1; 
 	      done = SDL_TRUE;
+	      
 	    }
 
-	  window_event(namemenu_w, &e, &draw_namemenu);                          
-	  button_event(x_button, &e, &draw_namemenu);
-	  button_event(start_button, &e, &draw_namemenu); 
-	  drawtextinput();
+	  window_event(access_htable(window_list, "namemenu")->value, &e, &draw_namemenu);                          
+	  button_event(access_htable(button_list, "x")->value, &e, &draw_namemenu);
+	  button_event(access_htable(button_list, "start")->value, &e, &draw_namemenu); 
+	  drawtextinput(button_list, window_list);
 
 	  
 	  if (e.type ==  SDL_QUIT)

@@ -8,7 +8,6 @@
 #include "hash_table.h"
 SDL_Window *window;
 SDL_Renderer *renderer;
-struct htable *img_list;
 int window_draw(struct window *window, SDL_Renderer *renderer)
 {
   if (!window || !window->visible || !renderer) return 0;
@@ -59,7 +58,7 @@ int image_new(struct image *img, char *fname, SDL_Renderer* renderer)
   return 0;
 }
 
-SDL_Renderer* init (char *title, int w, int h)
+SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list)
 {
   SDL_Rect srect;
   SDL_Init(SDL_INIT_EVERYTHING);
@@ -77,7 +76,6 @@ SDL_Renderer* init (char *title, int w, int h)
   window = SDL_CreateWindow(title, srect.w/2 - w/2, srect.h/2-h/2,w,h,SDL_WINDOW_SHOWN);
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-  img_list = create_htable(30);
   add_htable(img_list, "startmenu", malloc(sizeof(struct image)));
   add_htable(img_list, "optionmenu", malloc(sizeof(struct image)));
   add_htable(img_list, "creditmenu", malloc(sizeof(struct image)));
@@ -109,6 +107,7 @@ SDL_Renderer* init (char *title, int w, int h)
   add_htable(img_list, "quit_mainmenu_unselected", malloc(sizeof(struct image)));
   add_htable(img_list, "resume_selected", malloc(sizeof(struct image)));
   add_htable(img_list, "resume_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "itemsmenu", malloc(sizeof(struct image)));
  
   
   int r = 0;
@@ -147,15 +146,17 @@ SDL_Renderer* init (char *title, int w, int h)
   r += image_new(access_htable(img_list, "resume_unselected")->value, "resume_unselected.png", renderer);
   r += image_new(access_htable(img_list, "quit_mainmenu_selected")->value, "quit_main_selected.png", renderer);
   r += image_new(access_htable(img_list, "quit_mainmenu_unselected")->value, "quit_main_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "itemsmenu")->value, "itemsmenu.png", renderer);
+
   if (r)
     {
-      clean();
+      clean(button_list, window_list, img_list);
       return NULL;
     }
   return renderer;
 }
 
-void clean()
+void clean(struct htable *button_list, struct htable *window_list, struct htable *img_list)
 { 
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "startmenu")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "new_selected")->value)->texture);
@@ -191,11 +192,13 @@ void clean()
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "resume_unselected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "quit_mainmenu_selected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "quit_mainmenu_unselected")->value)->texture);
-
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "itemsmenu")->value)->texture);
   SDL_DestroyWindow(window);
   SDL_DestroyRenderer(renderer);  
 
   free_htable(img_list);
+  free_htable(button_list);
+  free_htable(window_list);
   
   TTF_Quit();
   IMG_Quit();
