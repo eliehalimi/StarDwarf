@@ -5,9 +5,7 @@
 # include "../Physic/libvector.h"
 # include "../Camera/camera.h"
 # include "hash_table.h"
-extern int draw_startmenu, draw_optionmenu, draw_creditmenu, draw_namemenu, draw_mainmenu, draw_pausemenu, input;   
-extern char *text;
-extern SDL_Renderer *renderer;
+extern char *text, *intro;
 struct image{
   SDL_Texture *texture;
   int w;
@@ -43,7 +41,7 @@ int RenderImage(SDL_Renderer *renderer, struct image *img, int x, int y, SDL_Rec
 int image_new(struct image *img, char *fname, SDL_Renderer* renderer);
 
 
-SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list);
+SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list);
 
 int window_new(struct window *window, struct image *bg, int x, int y, int w, int h);
 
@@ -57,16 +55,16 @@ int button_event(struct button *button, SDL_Event *event, int *draw);
 
 int button_draw(struct button *button, SDL_Renderer *renderer);
   
-void clean(struct htable *button_list, struct htable *window_list, struct htable  *img_list);
+void clean(struct htable *button_list, struct htable *window_list, struct htable  *img_list, struct htable *draw_list);
 
 //text input
-void drawtextinput(struct htable *button_list, struct htable *window_list);
-void textinput(struct htable *button_list, struct htable *window_list);
+void drawtextinput(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list);
+void textinput(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list);
 
 //supporting main
-void init_button_window(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list);
-void button_active(int *quit, struct system *sys, struct htable *button_list, struct htable *window_list);
-
+void init_button_window(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list,  struct htable *draw_list);
+void button_active(int *quit, struct system *sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list);
+void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list,  struct htable *draw_list, struct system *sys);
 int camera_event(struct camera *camera, SDL_Event *event);
 
 # endif

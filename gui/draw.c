@@ -58,21 +58,17 @@ int image_new(struct image *img, char *fname, SDL_Renderer* renderer)
   return 0;
 }
 
-SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list)
+SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list)
 {
   SDL_Rect srect;
   SDL_Init(SDL_INIT_EVERYTHING);
-  // get the desktop area represented by a display, with the primary display located at 0,0.
   SDL_GetDisplayBounds(0, &srect);
   if  (w > srect.w || h > srect.h)
     {
       SDL_Quit();
       return NULL;
     }
-  // load support for the JPG and PNG image formats
   IMG_Init(IMG_INIT_JPG|IMG_INIT_PNG);
-  
-  //create a window with the specified position, dimensions, and flags. 
   window = SDL_CreateWindow(title, srect.w/2 - w/2, srect.h/2-h/2,w,h,SDL_WINDOW_SHOWN);
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -150,13 +146,13 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
 
   if (r)
     {
-      clean(button_list, window_list, img_list);
+      clean(button_list, window_list, img_list, draw_list);
       return NULL;
     }
   return renderer;
 }
 
-void clean(struct htable *button_list, struct htable *window_list, struct htable *img_list)
+void clean(struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list)
 { 
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "startmenu")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "new_selected")->value)->texture);
@@ -199,6 +195,7 @@ void clean(struct htable *button_list, struct htable *window_list, struct htable
   free_htable(img_list);
   free_htable(button_list);
   free_htable(window_list);
+  free_htable(draw_list);
   
   TTF_Quit();
   IMG_Quit();
