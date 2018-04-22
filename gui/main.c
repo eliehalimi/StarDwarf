@@ -11,6 +11,7 @@
 # include "../Physic/libvector.h"
 # include <string.h>
 # include "../save/save.h"
+# include "hash_table.h"
 
 # define WINDOW_W 1280
 # define WINDOW_H 720
@@ -53,30 +54,30 @@ void init_button_window()
 	quit_mainmenu_button = malloc(sizeof(struct button));
 	pausemenu_w = malloc(sizeof(struct window));
 
-	window_new(startmenu_w, startmenu, 0, 0, WINDOW_W, WINDOW_H);
-	button_new(new_button, new_selected, new_unselected, 400, 320, 450, 90, startmenu_w);
-	button_new(load_button, load_selected, load_unselected, 400, 415, 450, 90, startmenu_w);
-	button_new(options_button, options_selected, options_unselected, 400, 510, 450, 90, startmenu_w);
-	button_new(quit_button, quit_selected, quit_unselected, 400, 605, 450, 90, startmenu_w);
+	window_new(startmenu_w, access_htable(img_list, "startmenu")->value, 0, 0, WINDOW_W, WINDOW_H);
+	button_new(new_button, access_htable(img_list,"new_selected")->value, access_htable(img_list, "new_unselected")->value, 400, 320, startmenu_w);
+	button_new(load_button, access_htable(img_list,"load_selected")->value, access_htable(img_list,"load_unselected")->value, 400, 415, startmenu_w);
+	button_new(options_button, access_htable(img_list,"options_selected")->value, access_htable(img_list,"options_unselected")->value, 400, 510, startmenu_w);
+	button_new(quit_button, access_htable(img_list,"quit_selected")->value, access_htable(img_list,"quit_unselected")->value, 400, 605, startmenu_w);
 
-	window_new(optionmenu_w, optionmenu, 0, 0, WINDOW_W, WINDOW_H);
-	button_new(credit_button, credit_selected, credit_unselected, 400, 300, 450, 90, optionmenu_w);
-	button_new(volume_button, volume_selected, volume_unselected, 400, 400, 450, 90, optionmenu_w);
-	button_new(back_optionmenu_button, back_selected, back_unselected,400,600, 450, 90, optionmenu_w);
+	window_new(optionmenu_w, access_htable(img_list,"optionmenu")->value, 0, 0, WINDOW_W, WINDOW_H);
+	button_new(credit_button, access_htable(img_list,"credit_selected")->value, access_htable(img_list,"credit_unselected")->value, 400, 300, optionmenu_w);
+	button_new(volume_button, access_htable(img_list,"volume_selected")->value, access_htable(img_list,"volume_unselected")->value, 400, 400, optionmenu_w);
+	button_new(back_optionmenu_button, access_htable(img_list,"back_selected")->value, access_htable(img_list,"back_unselected")->value,400,600, optionmenu_w);
 
-	window_new(creditmenu_w, creditmenu, 0, 0, WINDOW_W, WINDOW_H);
-	button_new(back_creditmenu_button, back_selected, back_unselected, 400, 600, 450, 90, creditmenu_w);
+	window_new(creditmenu_w, access_htable(img_list,"creditmenu")->value, 0, 0, WINDOW_W, WINDOW_H);
+	button_new(back_creditmenu_button, access_htable(img_list,"back_selected")->value, access_htable(img_list,"back_unselected")->value, 400, 600, creditmenu_w);
 
-	window_new(namemenu_w, namemenu, 260, 200, 739, 300);
-	button_new(x_button, x_selected, x_unselected, 945, 205, 54, 52, namemenu_w);
-	button_new(start_button, start_selected, start_unselected, 500, 400, 251, 68, namemenu_w);
+	window_new(namemenu_w, access_htable(img_list,"namemenu")->value, 260, 200, 739, 300);
+	button_new(x_button, access_htable(img_list,"x_selected")->value, access_htable(img_list,"x_unselected")->value, 945, 205, namemenu_w);
+	button_new(start_button, access_htable(img_list,"start_selected")->value, access_htable(img_list,"start_unselected")->value, 500, 400, namemenu_w);
 
-	window_new(mainmenu_w, mainmenu, 0, 0, WINDOW_W, WINDOW_H);
-	button_new(pause_button, pause_selected, pause_unselected, 0, 0, 47, 49, mainmenu_w);
+	window_new(mainmenu_w, access_htable(img_list,"mainmenu")->value, 0, 0, WINDOW_W, WINDOW_H);
+	button_new(pause_button, access_htable(img_list,"pause_selected")->value, access_htable(img_list,"pause_unselected")->value, 0, 0, mainmenu_w);
 
-	window_new(pausemenu_w, pausemenu, 400, 80, 739, 300);
-	button_new(resume_button, resume_selected, resume_unselected, 520, 110, 242, 77, pausemenu_w);
-	button_new(quit_mainmenu_button, quit_mainmenu_selected, quit_mainmenu_unselected, 520, 560, 242, 77, pausemenu_w);
+	window_new(pausemenu_w, access_htable(img_list,"pausemenu")->value, 400, 80, 739, 300);
+	button_new(resume_button, access_htable(img_list,"resume_selected")->value, access_htable(img_list,"resume_unselected")->value, 520, 110, pausemenu_w);
+	button_new(quit_mainmenu_button, access_htable(img_list,"quit_mainmenu_selected")->value, access_htable(img_list,"quit_mainmenu_unselected")->value, 520, 560, pausemenu_w);
 
 }
 

@@ -5,12 +5,10 @@
 #include <SDL2/SDL_ttf.h>
 #include <err.h>
 #include <unistd.h>
-
-struct image *quit_selected, *quit_unselected, *new_selected, *new_unselected, *load_selected, *load_unselected, *startmenu, *options_selected, *options_unselected, *optionmenu, *back_selected, *back_unselected, *credit_selected, *credit_unselected, *volume_selected, *volume_unselected, *creditmenu, *namemenu, *start_selected, *start_unselected, *x_selected, *x_unselected, *mainmenu, *pausemenu, *pause_selected, *pause_unselected, *resume_selected, *resume_unselected, *quit_mainmenu_selected, *quit_mainmenu_unselected;
-
+#include "hash_table.h"
 SDL_Window *window;
 SDL_Renderer *renderer;
-
+struct htable *img_list;
 int window_draw(struct window *window, SDL_Renderer *renderer)
 {
   if (!window || !window->visible || !renderer) return 0;
@@ -78,78 +76,77 @@ SDL_Renderer* init (char *title, int w, int h)
   //create a window with the specified position, dimensions, and flags. 
   window = SDL_CreateWindow(title, srect.w/2 - w/2, srect.h/2-h/2,w,h,SDL_WINDOW_SHOWN);
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  
-  startmenu = malloc(sizeof(struct image));
-  optionmenu = malloc(sizeof(struct image));
-  creditmenu = malloc(sizeof(struct image));
-  namemenu = malloc(sizeof(struct image));  
-  new_selected = malloc(sizeof(struct image));
-  new_unselected = malloc(sizeof(struct image));
-  load_selected = malloc(sizeof(struct image));
-  load_unselected = malloc(sizeof(struct image));
-  quit_selected = malloc(sizeof(struct image));
-  quit_unselected = malloc(sizeof(struct image));
-  options_selected = malloc(sizeof(struct image));
-  options_unselected = malloc(sizeof(struct image));
-  credit_selected = malloc(sizeof(struct image));
-  credit_unselected = malloc(sizeof(struct image));  
-  back_selected = malloc(sizeof(struct image));
-  back_unselected = malloc(sizeof(struct image));
-  volume_selected = malloc(sizeof(struct image));
-  volume_unselected = malloc(sizeof(struct image));
-  x_selected = malloc(sizeof(struct image));
-  x_unselected = malloc(sizeof(struct image));
-  start_selected = malloc(sizeof(struct image));
-  start_unselected = malloc(sizeof(struct image));
 
-  mainmenu = malloc(sizeof(struct image));  
-  pause_selected = malloc(sizeof(struct image));
-  pause_unselected = malloc(sizeof(struct image));
-  
-  
-  pausemenu = malloc(sizeof(struct image));  
-  quit_mainmenu_selected = malloc(sizeof(struct image));
-  quit_mainmenu_unselected = malloc(sizeof(struct image));
-  resume_selected = malloc(sizeof(struct image));
-  resume_unselected = malloc(sizeof(struct image));
+  img_list = create_htable(30);
+  add_htable(img_list, "startmenu", malloc(sizeof(struct image)));
+  add_htable(img_list, "optionmenu", malloc(sizeof(struct image)));
+  add_htable(img_list, "creditmenu", malloc(sizeof(struct image)));
+  add_htable(img_list, "namemenu", malloc(sizeof(struct image)));  
+  add_htable(img_list, "new_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "new_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "load_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "load_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "quit_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "quit_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "options_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "options_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "credit_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "credit_unselected", malloc(sizeof(struct image)));  
+  add_htable(img_list, "back_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "back_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "volume_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "volume_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "x_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "x_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "start_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "start_unselected", malloc(sizeof(struct image)));
+
+  add_htable(img_list, "mainmenu", malloc(sizeof(struct image)));  
+  add_htable(img_list, "pause_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "pause_unselected", malloc(sizeof(struct image)));  
+  add_htable(img_list, "pausemenu", malloc(sizeof(struct image)));  
+  add_htable(img_list, "quit_mainmenu_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "quit_mainmenu_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "resume_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "resume_unselected", malloc(sizeof(struct image)));
  
   
   int r = 0;
-  r += image_new(startmenu, "startmenu.png", renderer);
-  r += image_new(new_selected, "new_selected.png", renderer);
-  r += image_new(new_unselected, "new_unselected.png", renderer);
-  r += image_new(load_selected, "load_selected.png", renderer);
-  r += image_new(load_unselected, "load_unselected.png", renderer);
-  r += image_new(quit_selected, "quit_selected.png", renderer);
-  r += image_new(quit_unselected, "quit_unselected.png", renderer);
-  r += image_new(options_selected, "options_selected.png", renderer);
-  r += image_new(options_unselected, "options_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "startmenu")->value, "startmenu.png", renderer);
+  r += image_new(access_htable(img_list, "new_selected")->value, "new_selected.png", renderer);
+  r += image_new(access_htable(img_list, "new_unselected")->value, "new_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "load_selected")->value, "load_selected.png", renderer);
+  r += image_new(access_htable(img_list, "load_unselected")->value , "load_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "quit_selected")->value, "quit_selected.png", renderer);
+  r += image_new(access_htable(img_list, "quit_unselected")->value, "quit_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "options_selected")->value, "options_selected.png", renderer);
+  r += image_new(access_htable(img_list, "options_unselected")->value, "options_unselected.png", renderer);
   
-  r += image_new(optionmenu, "optionmenu.png", renderer);
-  r += image_new(credit_selected, "credit_selected.png", renderer);
-  r += image_new(credit_unselected, "credit_unselected.png", renderer);
-  r += image_new(back_selected, "back_selected.png", renderer);
-  r += image_new(back_unselected, "back_unselected.png", renderer);
-  r += image_new(volume_selected, "volume_selected.png", renderer);
-  r += image_new(volume_unselected, "volume_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "optionmenu")->value, "optionmenu.png", renderer);
+  r += image_new(access_htable(img_list, "credit_selected")->value, "credit_selected.png", renderer);
+  r += image_new(access_htable(img_list, "credit_unselected")->value, "credit_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "back_selected")->value, "back_selected.png", renderer);
+  r += image_new(access_htable(img_list, "back_unselected")->value, "back_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "volume_selected")->value, "volume_selected.png", renderer);
+  r += image_new(access_htable(img_list, "volume_unselected")->value, "volume_unselected.png", renderer);
 
-  r += image_new(creditmenu, "creditmenu.png", renderer);
+  r += image_new(access_htable(img_list, "creditmenu")->value, "creditmenu.png", renderer);
 
-  r += image_new(namemenu, "namemenu.png", renderer);
-  r += image_new(x_selected, "x_selected.png", renderer);
-  r += image_new(x_unselected, "x_unselected.png", renderer);
-  r += image_new(start_selected, "start_selected.png", renderer);
-  r += image_new(start_unselected, "start_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "namemenu")->value, "namemenu.png", renderer);
+  r += image_new(access_htable(img_list, "x_selected")->value, "x_selected.png", renderer);
+  r += image_new(access_htable(img_list, "x_unselected")->value, "x_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "start_selected")->value, "start_selected.png", renderer);
+  r += image_new(access_htable(img_list, "start_unselected")->value, "start_unselected.png", renderer);
 
-  r += image_new(mainmenu, "mainmenu.png", renderer);
-  r += image_new(pause_selected, "pause_selected.png", renderer);
-  r += image_new(pause_unselected, "pause_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "mainmenu")->value, "mainmenu.png", renderer);
+  r += image_new(access_htable(img_list, "pause_selected")->value, "pause_selected.png", renderer);
+  r += image_new(access_htable(img_list, "pause_unselected")->value, "pause_unselected.png", renderer);
 
-  r += image_new(pausemenu, "pausemenu.png", renderer);
-  r += image_new(resume_selected, "resume_selected.png", renderer);
-  r += image_new(resume_unselected, "resume_unselected.png", renderer);
-  r += image_new(quit_mainmenu_selected, "quit_main_selected.png", renderer);
-  r += image_new(quit_mainmenu_unselected, "quit_main_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "pausemenu")->value, "pausemenu.png", renderer);
+  r += image_new(access_htable(img_list, "resume_selected")->value, "resume_selected.png", renderer);
+  r += image_new(access_htable(img_list, "resume_unselected")->value, "resume_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "quit_mainmenu_selected")->value, "quit_main_selected.png", renderer);
+  r += image_new(access_htable(img_list, "quit_mainmenu_unselected")->value, "quit_main_unselected.png", renderer);
   if (r)
     {
       clean();
@@ -159,73 +156,47 @@ SDL_Renderer* init (char *title, int w, int h)
 }
 
 void clean()
-{
-  SDL_DestroyTexture(new_selected->texture);
-  SDL_DestroyTexture(new_unselected->texture);
-  SDL_DestroyTexture(load_selected->texture);
-  SDL_DestroyTexture(load_unselected->texture);
-  SDL_DestroyTexture(quit_selected->texture);
-  SDL_DestroyTexture(quit_unselected->texture);
-  SDL_DestroyTexture(options_selected->texture);
-  SDL_DestroyTexture(options_unselected->texture);
-
-  SDL_DestroyTexture(credit_selected->texture);
-  SDL_DestroyTexture(credit_unselected->texture);
-  SDL_DestroyTexture(back_selected->texture);
-  SDL_DestroyTexture(back_unselected->texture);
-  SDL_DestroyTexture(volume_selected->texture);
-  SDL_DestroyTexture(volume_unselected->texture);
- 
+{ 
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "startmenu")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "new_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "new_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "load_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "load_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "quit_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "quit_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "options_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "options_unselected")->value)->texture);
   
-  SDL_DestroyTexture(startmenu->texture);
-  SDL_DestroyTexture(optionmenu->texture);
-  SDL_DestroyTexture(creditmenu->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "optionmenu")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "credit_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "credit_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "back_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "back_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "volume_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "volume_unselected")->value)->texture);
 
-  SDL_DestroyTexture(namemenu->texture);
-  SDL_DestroyTexture(x_selected->texture);
-  SDL_DestroyTexture(x_unselected->texture);
-  SDL_DestroyTexture(start_selected->texture);
-  SDL_DestroyTexture(start_unselected->texture);
-  
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "creditmenu")->value)->texture);
+
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "namemenu")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "x_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "x_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "start_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "start_unselected")->value)->texture);
+
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "mainmenu")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "pause_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "pause_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "pausemenu")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "resume_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "resume_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "quit_mainmenu_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "quit_mainmenu_unselected")->value)->texture);
+
   SDL_DestroyWindow(window);
   SDL_DestroyRenderer(renderer);  
 
-  free(new_selected);
-  free(new_unselected);
-  free(load_selected);
-  free(load_unselected);
-  free(options_selected);
-  free(options_unselected);
-  free(quit_selected);
-  free(quit_unselected);
-  free(startmenu);
-
-  free(credit_selected);
-  free(credit_unselected);
-  free(volume_selected);
-  free(volume_unselected);
-  free(back_selected);
-  free(back_unselected);
-  free(optionmenu);
-
-  free(creditmenu);
-
-  free(x_selected);
-  free(x_unselected);
-  free(start_selected);
-  free(start_unselected);
-  free(namemenu);
-
-  free(mainmenu);
-  free(pause_selected);
-  free(pause_unselected);
+  free_htable(img_list);
   
-  free(pausemenu);
-  free(resume_selected);
-  free(resume_unselected);
-  free(quit_mainmenu_selected);
-  free(quit_mainmenu_unselected);
-    
   TTF_Quit();
   IMG_Quit();
   SDL_Quit();
