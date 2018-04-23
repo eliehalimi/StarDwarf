@@ -32,19 +32,74 @@ struct system *load_system(char *path)
 	return s;
 }
 */
-struct system *load_system(char *path)
+struct system *load_system(char *path) //ADD SYSTEM SO THAT I CAN ADD CAMERA 
 {
 	FILE *f = fopen(path, "r");
 	assert(f != NULL);
 
-	struct system *s = new_system(2);
-	s->delta_time = 0.1f;
+	struct system *sys = new_system(3);
+	sys->delta_time = 0.1f;
+	//sys->camera = new_camera(WINDOW_W /2, WINDOW_H /2);
 	char line[255];
 
 	while(fgets(line, sizeof(line), f) != NULL)
 	{
-		char val1[16] ,val2[9], val3[10];
+		char *str;
+		str = strtok(line, " ");
+		int counter = 1;	
+		
 
+		float x = 0;
+		float y = 0;
+		float z = 0;	
+		double mass = 0;
+		//double elec_charge = 0;
+		double size = 0;
+		float val[3] = {0, 0, 0};
+		struct vector *position  = NULL;
+		struct item *item = NULL;
+		while (str != NULL)
+		{
+			switch(counter)
+			{
+				case 1:
+					x = (float) atoi(str);
+					val[0] = x;
+					counter++;
+					break;
+				case 2:
+					y = (float) atoi(str);
+					val[1] = y;
+					counter++;
+					break;
+				case 3:
+					z = (float) atoi(str);
+					val[2] = z;
+				      	counter++;
+					break;
+				case 4:
+					size = (double) atol(str);
+					counter++;
+					break;
+				case 5:
+					mass = (double) atol(str);
+					counter++;
+					break;
+				default:
+					break;
+			}
+			position = new_vector(3, val);				
+			item = new_item(position);
+			item->size = size;
+			item->mass = mass;
+			push_item(sys, item);
+			str = strtok(NULL, " ");
+		}
+		free_vector(position);
+	}
+	return sys;
+}
+/*
 		char *tok1 = strtok(line, " ");
 		char *tok;
 		int v1 = 1;
@@ -79,7 +134,4 @@ struct system *load_system(char *path)
 		push_item(s, item);
 		printf("x= %f, y=%f, size=%d\n", x, y, z); 
 	}
-	return s;
-	
-}
-
+*/
