@@ -32,13 +32,13 @@ struct system *load_system(char *path)
 	return s;
 }
 */
-struct system *load_system(char *path) //ADD SYSTEM SO THAT I CAN ADD CAMERA 
+struct system *load_system(char *path, struct system *sys) //ADD SYSTEM SO THAT I CAN ADD CAMERA 
 {
 	FILE *f = fopen(path, "r");
 	assert(f != NULL);
-
-	struct system *sys = new_system(3);
-	sys->delta_time = 0.1f;
+	assert(system != NULL);
+	///struct system *sys = new_system(3);
+	//sys->delta_time = 0.1f;
 	//sys->camera = new_camera(WINDOW_W /2, WINDOW_H /2);
 	char line[255];
 
@@ -60,6 +60,7 @@ struct system *load_system(char *path) //ADD SYSTEM SO THAT I CAN ADD CAMERA
 		struct item *item = NULL;
 		while (str != NULL)
 		{
+			printf("%s\n", str);
 			switch(counter)
 			{
 				case 1:
@@ -88,14 +89,22 @@ struct system *load_system(char *path) //ADD SYSTEM SO THAT I CAN ADD CAMERA
 				default:
 					break;
 			}
-			position = new_vector(3, val);				
-			item = new_item(position);
-			item->size = size;
-			item->mass = mass;
-			push_item(sys, item);
+		
 			str = strtok(NULL, " ");
 		}
+		printf("val{%f, %f, %f} \n", val[0], val[1], val[2]);
+		position = new_vector(3, val);				
+		item = new_item(position);
+		item->size = size;
+		item->mass = mass;
+		printf("%f %f", item->size, item->mass);
+
+		push_item(sys, item);
+		//str = strtok(NULL, " ");
 		free_vector(position);
+		printf("%d %d %d %f %f \n", item->position.values[0], item->position.values[1],
+			       	item->position.values[2], item->mass, item->size);
+		
 	}
 	return sys;
 }

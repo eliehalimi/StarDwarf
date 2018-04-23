@@ -242,7 +242,10 @@ void button_active(int *quit)
 		load_button->prelight = 1;
 		mainmenu_w->visible = 1, mainmenu_w->event = 1;           
 		startmenu_w->visible = 0, startmenu_w->event = 0;   
-		sys = load_system("../save/system.txt");
+		struct system *sys = new_system(3);
+		sys->camera = new_camera(WINDOW_W /2, WINDOW_H /2);
+		sys->delta_time = 0.1f;
+		sys = load_system("../save/system.txt", sys);
 		draw_mainmenu = 1;
 
 	}
