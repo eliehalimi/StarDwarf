@@ -1,6 +1,7 @@
 # include "hash_table.h"
 # include <string.h>
 # include <stdio.h>
+# include <assert.h>
 uint32_t hash(char *data)
 {
   uint32_t h = 0;
@@ -44,6 +45,7 @@ struct pair *access_htable(struct htable *htable, char *key)
       if (cur->key == NULL || (cur->key != NULL && strcmp(cur->key, key) ==0))
 	return cur;
     }
+  assert(0);
   return NULL;
 }
 int add_htable(struct htable *htable, char *key, void *value)

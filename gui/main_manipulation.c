@@ -9,24 +9,153 @@
 # include "draw_item.h"
 # include "hash_table.h"
 # include "../save/save.h"
-
-void init_button_window(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list)
+void init_system(int w, int h, struct htable *text_list)
 {
-	add_htable(draw_list, "startmenu", malloc(sizeof(int)));  
-	add_htable(draw_list, "optionmenu", malloc(sizeof(int)));
-	add_htable(draw_list, "creditmenu", malloc(sizeof(int)));
-	add_htable(draw_list, "namemenu", malloc(sizeof(int)));
-	add_htable(draw_list, "mainmenu", malloc(sizeof(int)));
-	add_htable(draw_list, "pausemenu", malloc(sizeof(int)));
-	add_htable(draw_list, "input", malloc(sizeof(int)));
+  struct item *item = NULL;
+  struct item *item2 = NULL;
+  struct item *item3 = NULL;
+  if(!strcmp(((struct text *)(access_htable(text_list,"name")->value))->text, "Russel"))
+    {
+      //system created
+      sys = new_system(3);
+      sys->camera = new_camera(w / 2, h / 2);
+      sys->delta_time = 0.1f;
+      
+      //values for position vector                                       
+      float val[3] = {0, 0, 0};
+      float val2[3] = {150, 150, 150};
+      float val3[3] = {0, 250, 0};
+      
+      //vector postion and creation of item                             
+      struct vector *position = new_vector(3, val);
+      struct vector *position2 = new_vector(3, val2);
+      struct vector *position3 = new_vector(3, val3);
+      
+      item = new_item(position);
+      item->size = 100;
+      item->mass  = 100000000000000.0f;
+      item->color[1] = 0;
+      item->color[2] = 0;
+      item->velocity.values[0] = 10;
+      
+      item2 = new_item(position2);
+      item2->size = 100;
+      item2->mass = 100000000000000.0f;
+      
+      item3 = new_item(position3);
+      item3->size = 100;
+      item3->mass = 100000000000000.0f;
+      item3->color[0] = 0;
+      
+      //adding item to list of items in system                           
+      push_item(sys, item);
+      push_item(sys, item2);
+      push_item(sys, item3);
+      
+      free_vector(position);
+      free_vector(position2);
+      free_vector(position3);
+    }
+  else
+    {
+      //system created
+      sys = new_system(3);
+      sys->camera = new_camera(w / 2, h / 2);
+      sys->delta_time = 0.1f;
+      
+      //values for position vector
+      float val[3] = {150, 150, 0};
+      float val2[3] = {0, 300, 0};
+      float val3[3] = {0, 0, 300};
+      
+      //vector postion and creation of item
+      struct vector *position = new_vector(3, val);
+      struct vector *position2 = new_vector(3, val2);
+      struct vector *position3 = new_vector(3, val3);
+      
+      item = new_item(position);
+      item->size = 100;
+      item->mass  = 200000000000000.0f;
+      item->color[1] = 0;
+      item->color[2] = 0;
+      
+      item2 = new_item(position2);
+      item2->size = 10;
+      item2->mass = 1000000000000.0f;
+      item2->color[0] = 0;
+      item2->color[2] = 0;
+      
+      item3 = new_item(position3);
+      item3->size = 100;
+      item3->mass = 100000000000000.0f;
+      item3->color[0] = 0;
+      
+      //adding item to list of items in system
+      push_item(sys, item);
+      push_item(sys, item2);
+      push_item(sys, item3);
+      
+      free_vector(position);
+      free_vector(position2);
+      free_vector(position3);
+    }
+  item->rect = NULL;
+  puts("Finished Drawing");
+}
+void init_draw_list(struct htable *draw_list)
+{
+  add_htable(draw_list, "startmenu", malloc(sizeof(int)));  
+  add_htable(draw_list, "optionmenu", malloc(sizeof(int)));
+  add_htable(draw_list, "creditmenu", malloc(sizeof(int)));
+  add_htable(draw_list, "namemenu", malloc(sizeof(int)));
+  add_htable(draw_list, "mainmenu", malloc(sizeof(int)));
+  add_htable(draw_list, "pausemenu", malloc(sizeof(int)));
+  
+  *((int *)(access_htable(draw_list, "startmenu")->value)) = 1;
+  *((int *)(access_htable(draw_list, "creditmenu")->value)) = 0;
+  *((int *)(access_htable(draw_list, "namemenu")->value)) = 0;
+  *((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
+  *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
+  *((int *)(access_htable(draw_list, "optionmenu")->value)) = 0;  
+}
+void init_text_list(struct htable *text_list)
+{ 
+  add_htable(text_list, "name", malloc(sizeof(struct text)));
+  add_htable(text_list, "intro", malloc(sizeof(struct text)));
+  add_htable(text_list, "item_name", malloc(sizeof(struct text)));
+  add_htable(text_list, "item_x", malloc(sizeof(struct text)));
+  add_htable(text_list, "item_y", malloc(sizeof(struct text)));
+  add_htable(text_list, "item_z", malloc(sizeof(struct text)));
+  add_htable(text_list, "item_mass", malloc(sizeof(struct text)));
+  add_htable(text_list, "item_radius", malloc(sizeof(struct text)));
+  add_htable(text_list, "item_vx", malloc(sizeof(struct text)));
+  add_htable(text_list, "item_vy", malloc(sizeof(struct text)));
+  add_htable(text_list, "item_vz", malloc(sizeof(struct text)));
+    
+  struct text *intro = (struct text *)(access_htable(text_list, "intro")->value);
+  intro->text = malloc(200*sizeof(char));
+  *(intro->text) = '\0';
+  intro->nbchar = 0;
+  intro->active = 0;
+  
+  struct text *name = (struct text *)(access_htable(text_list, "name")->value);
+  name->text = malloc(30*sizeof(char));
+  *(name->text) = '\0';
+  name->nbchar = 0;
+  name->active = 0;
 
-	*((int *)(access_htable(draw_list, "startmenu")->value)) = 1;
-	*((int *)(access_htable(draw_list, "creditmenu")->value)) = 0;
-	*((int *)(access_htable(draw_list, "namemenu")->value)) = 0;
-	*((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
-	*((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
-	*((int *)(access_htable(draw_list, "optionmenu")->value)) = 0;
-	*((int *)(access_htable(draw_list, "input")->value)) = 0;
+  struct text *item_name = (struct text *)(access_htable(text_list, "item_name")->value);
+  item_name->text = malloc(20*sizeof(char));
+  *(item_name->text) = '\0';
+  item_name->nbchar = 0;
+  item_name->active = 0;
+
+}
+void init_lists(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list)
+{
+  
+        init_draw_list(draw_list);
+        init_text_list(text_list);
 
 	add_htable(button_list, "new", malloc(sizeof(struct button)));
 	add_htable(button_list, "load", malloc(sizeof(struct button)));
@@ -56,6 +185,9 @@ void init_button_window(int w, int h, struct htable *button_list, struct htable 
 	add_htable(button_list, "item_vx", malloc(sizeof(struct button)));
 	add_htable(button_list, "item_vy", malloc(sizeof(struct button)));
 	add_htable(button_list, "item_vz", malloc(sizeof(struct button)));
+	add_htable(button_list, "add", malloc(sizeof(struct button)));
+	add_htable(button_list, "delete", malloc(sizeof(struct button)));
+
 	add_htable(window_list, "mainmenu", malloc(sizeof(struct window)));
 	add_htable(window_list, "itemsmenu", malloc(sizeof(struct window)));
 	
@@ -88,213 +220,24 @@ void init_button_window(int w, int h, struct htable *button_list, struct htable 
 	window_new(access_htable(window_list, "mainmenu")->value, access_htable(img_list,"mainmenu")->value, 0, 0, w, h);
 	window_new(access_htable(window_list, "itemsmenu")->value, access_htable(img_list,"itemsmenu")->value, 1053, 44, 227,676);
 	button_new(access_htable(button_list, "pause")->value, access_htable(img_list,"pause_selected")->value, access_htable(img_list,"pause_unselected")->value, 0, 0, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "item_name")->value, access_htable(img_list,"item_namebox_selected")->value, access_htable(img_list,"item_namebox_unselected")->value, 1091, 80, access_htable(window_list, "itemsmenu")->value);
-	button_new(access_htable(button_list, "item_x")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 155, access_htable(window_list, "itemsmenu")->value);
-	button_new(access_htable(button_list, "item_y")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 195, access_htable(window_list, "itemsmenu")->value);
-	button_new(access_htable(button_list, "item_z")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 235, access_htable(window_list, "itemsmenu")->value);
-	button_new(access_htable(button_list, "item_mass")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 300, access_htable(window_list, "itemsmenu")->value);
-	button_new(access_htable(button_list, "item_radius")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 365, access_htable(window_list, "itemsmenu")->value);
-	button_new(access_htable(button_list, "item_vx")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 435, access_htable(window_list, "itemsmenu")->value);
-	button_new(access_htable(button_list, "item_vy")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 470, access_htable(window_list, "itemsmenu")->value);
-	button_new(access_htable(button_list, "item_vz")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 505, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "item_name")->value, access_htable(img_list,"item_namebox_selected")->value, access_htable(img_list,"item_namebox_unselected")->value, 1073, 68, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "item_x")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1095, 130, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "item_y")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1095, 158, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "item_z")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1095, 186, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "item_mass")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 239, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "item_radius")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 289, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "item_vx")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 340, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "item_vy")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 368, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "item_vz")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 396, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "add")->value, access_htable(img_list,"add_selected")->value, access_htable(img_list,"add_unselected")->value, 1090, 610, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "delete")->value, access_htable(img_list,"delete_selected")->value, access_htable(img_list,"delete_unselected")->value, 1090, 660, access_htable(window_list, "mainmenu")->value);
 	
 	
 	window_new(access_htable(window_list, "pausemenu")->value, access_htable(img_list,"pausemenu")->value, 400, 80, 739, 300);
 	button_new(access_htable(button_list, "resume")->value, access_htable(img_list,"resume_selected")->value, access_htable(img_list,"resume_unselected")->value, 520, 110, access_htable(window_list, "pausemenu")->value);
 	button_new(access_htable(button_list, "quit_mainmenu")->value, access_htable(img_list,"quit_mainmenu_selected")->value, access_htable(img_list,"quit_mainmenu_unselected")->value, 520, 560, access_htable(window_list, "pausemenu")->value);
 
+
+	((struct button *)(access_htable(button_list, "item_name")->value))->textbox = 1;
 }
 
-void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct system *sys)
-{
-	SDL_RenderClear(renderer);
-	if (*((int *)(access_htable(draw_list, "startmenu")->value)))
-	{
-	        window_draw(access_htable(window_list, "startmenu")->value, renderer);
-		button_draw(access_htable(button_list, "new")->value, renderer);
-		button_draw(access_htable(button_list, "load")->value, renderer);
-		button_draw(access_htable(button_list, "option")->value, renderer);
-		button_draw(access_htable(button_list, "quit")->value, renderer);
-	}
-	if (*((int *)(access_htable(draw_list, "optionmenu")->value)))
-	{
-	        window_draw(access_htable(window_list, "optionmenu")->value, renderer);
-		button_draw(access_htable(button_list, "credit")->value, renderer);
-		button_draw(access_htable(button_list, "volume")->value, renderer);
-		button_draw(access_htable(button_list, "back_optionmenu")->value, renderer);
-	}
-
-	if (*((int *)(access_htable(draw_list, "creditmenu")->value)))
-	{
-	        window_draw(access_htable(window_list, "creditmenu")->value, renderer);
-		button_draw(access_htable(button_list, "back_creditmenu")->value, renderer);
-	}
-	if (*((int *)(access_htable(draw_list, "namemenu")->value)))
-	{
-	        window_draw(access_htable(window_list, "namemenu")->value, renderer);
-		button_draw(access_htable(button_list, "start")->value, renderer);
-		button_draw(access_htable(button_list, "x")->value, renderer);
-	}
-
-	if (*((int *)(access_htable(draw_list, "mainmenu")->value)))
-	{
-	        window_draw(access_htable(window_list, "mainmenu")->value, renderer);
-		window_draw(access_htable(window_list, "itemsmenu")->value, renderer);
-		button_draw(access_htable(button_list, "item_name")->value, renderer);
-		button_draw(access_htable(button_list, "item_x")->value, renderer);
-		button_draw(access_htable(button_list, "item_y")->value, renderer);
-		button_draw(access_htable(button_list, "item_z")->value, renderer);
-		button_draw(access_htable(button_list, "pause")->value, renderer);
-		button_draw(access_htable(button_list, "item_vx")->value, renderer);
-		button_draw(access_htable(button_list, "item_vy")->value, renderer);
-		button_draw(access_htable(button_list, "item_vz")->value, renderer);
-		button_draw(access_htable(button_list, "item_mass")->value, renderer);
-		button_draw(access_htable(button_list, "item_radius")->value, renderer);
-		if(!*((int *)(access_htable(draw_list, "pausemenu")->value)))
-		{
-		  update_system(sys);
-		  //dolly_rotation(sys->camera, 0.01f, 0.01f);
-		  //sys->camera->position.values[0] += 10;
-		}
-		Draw_from_camera(sys->camera, renderer);
-
-		float tab[] = {0, 0};
-		struct vector *trans = new_vector(2, tab);
-
-		move_camera(sys->camera, trans);
-
-		SDL_Rect pos;                                                     
-		MakeRect(&pos,60,0,400,400);                                 
-		SDL_Color fcolor;                                                           
-		fcolor.r = 255;                                                   
-		fcolor.g  = 255;                                                  
-		fcolor.b  = 255;                                                  
-		TTF_Font *font = TTF_OpenFont ("textfont.ttf", 25);               
-		SDL_Surface *textSurface = TTF_RenderText_Solid(font, (const char*)intro, fcolor);       
-		SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, textSurface); 
-		SDL_QueryTexture(texture, NULL, NULL, &pos.w, &pos.h);                   
-		SDL_RenderCopy(renderer, texture, NULL, &pos);               
-		TTF_CloseFont(font);
-		SDL_DestroyTexture(texture);
-	}
-
-	if (*((int *)(access_htable(draw_list, "pausemenu")->value)))
-	{
-	        window_draw(access_htable(window_list, "pausemenu")->value, renderer);
-		button_draw(access_htable(button_list, "resume")->value, renderer);
-		button_draw(access_htable(button_list, "quit_mainmenu")->value, renderer);
-	}
-
-	SDL_RenderPresent(renderer);
-}
-
-
-void button_active(int *quit, struct system *sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list)
-{
-	if (((struct button *)(access_htable(button_list, "quit")->value))->active)
-		*quit = 1;
-	else if (((struct button *)(access_htable(button_list, "new")->value))->active)
-	{
-		((struct button *)(access_htable(button_list, "new")->value))->active = 0;
-		((struct button *)(access_htable(button_list, "new")->value))->prelight = 0;
-		((struct window *)(access_htable(window_list, "namemenu")->value))->visible = 1;
-		((struct window *)(access_htable(window_list, "namemenu")->value))->event = 1;
-		((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
-		*((int *)(access_htable(draw_list, "namemenu")->value)) = 1;
-		*((int *)(access_htable(draw_list, "input")->value)) = 1;
-	}
-	else if (((struct button *)(access_htable(button_list, "option")->value))->active)
-	{
-	        ((struct button *)(access_htable(button_list, "option")->value))->active = 0;
-		((struct button *)(access_htable(button_list, "option")->value))->prelight = 0;
-		((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 0;
-		((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
-	        ((struct window *)(access_htable(window_list, "optionmenu")->value))->visible = 1;
-		((struct window *)(access_htable(window_list, "optionmenu")->value))->event = 1;
-	        *((int *)(access_htable(draw_list, "startmenu")->value)) = 0;
-	        *((int *)(access_htable(draw_list, "optionmenu")->value)) = 1;
-	}
-	else if (((struct button *)(access_htable(button_list, "back_optionmenu")->value))->active)
-	{
-		((struct button *)(access_htable(button_list, "back_optionmenu")->value))->active = 0;
-		((struct button *)(access_htable(button_list, "back_optionmenu")->value))->prelight = 0;
-		((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 1;
-		((struct window *)(access_htable(window_list, "startmenu")->value))->event = 1;
-		((struct window *)(access_htable(window_list, "optionmenu")->value))->visible = 0;
-		((struct window *)(access_htable(window_list, "optionmenu")->value))->event = 0;
-	        *((int *)(access_htable(draw_list, "optionmenu")->value)) = 0;
-	}
-	else if (((struct button *)(access_htable(button_list, "credit")->value))->active)
-	{
-		((struct button *)(access_htable(button_list, "credit")->value))->active = 0;	     
-		((struct button *)(access_htable(button_list, "credit")->value))->prelight = 0;
-		((struct window *)(access_htable(window_list, "optionmenu")->value))->visible = 0;
-		((struct window *)(access_htable(window_list, "optionmenu")->value))->event = 0;
-		((struct window *)(access_htable(window_list, "creditmenu")->value))->visible = 1;
-		((struct window *)(access_htable(window_list, "creditmenu")->value))->event = 1;
-	        *((int *)(access_htable(draw_list, "creditmenu")->value)) = 1;
-	        *((int *)(access_htable(draw_list, "startmenu")->value)) = 0;
-	        *((int *)(access_htable(draw_list, "optionmenu")->value)) = 0;
-	}
-	else if (((struct button *)(access_htable(button_list, "back_creditmenu")->value))->active)
-	{
-		((struct button *)(access_htable(button_list, "back_creditmenu")->value))->active = 0;
-		((struct button *)(access_htable(button_list, "back_creditmenu")->value))->prelight = 0;
-		((struct window *)(access_htable(window_list, "optionmenu")->value))->visible = 1;
-		((struct window *)(access_htable(window_list, "optionmenu")->value))->event = 1;
-		((struct window *)(access_htable(window_list, "creditmenu")->value))->visible = 0;
-		((struct window *)(access_htable(window_list, "creditmenu")->value))->event = 0;
-	        *((int *)(access_htable(draw_list, "creditmenu")->value)) = 0;
-	        *((int *)(access_htable(draw_list, "optionmenu")->value)) = 1;
-	}
-	else if (((struct button *)(access_htable(button_list, "pause")->value))->active)
-	{
-		((struct button *)(access_htable(button_list, "pause")->value))->active = 0;
-		((struct button *)(access_htable(button_list, "pause")->value))->prelight = 0;
-		((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
-		((struct window *)(access_htable(window_list, "pausemenu")->value))->visible = 1;
-		((struct window *)(access_htable(window_list, "pausemenu")->value))->event = 1;
-	        *((int *)(access_htable(draw_list, "pausemenu")->value)) = 1;
-		//pause system
-	}
-
-	//for these 2, maybe add an event for when click 
-	else if (((struct button *)(access_htable(button_list, "resume")->value))->active)
-	{
-		((struct button *)(access_htable(button_list, "resume")->value))->active = 0;
-		((struct button *)(access_htable(button_list, "resume")->value))->prelight = 1;
-		((struct window *)(access_htable(window_list, "pausemenu")->value))->visible = 0;
-		((struct window *)(access_htable(window_list, "pausemenu")->value))->event = 0;
-		((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 1;
-	        *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
-	}
-	else if (((struct button *)(access_htable(button_list, "quit_mainmenu")->value))->active)
-	{
-		((struct button *)(access_htable(button_list, "quit_mainmenu")->value))->active = 0;
-		((struct button *)(access_htable(button_list, "quit_mainmenu")->value))->prelight = 0;
-		((struct window *)(access_htable(window_list, "pausemenu")->value))->visible = 0;
-		((struct window *)(access_htable(window_list, "pausemenu")->value))->event = 0;
-		((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 0;
-		((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 1;
-		((struct window *)(access_htable(window_list, "startmenu")->value))->event = 1;
-		*((int *)(access_htable(draw_list, "startmenu")->value))= 1;
-	        *((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
-		free_system(sys);
-	        *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
-	}
-	else if (((struct button *)(access_htable(button_list, "load")->value))->active)
-	{
-		((struct button *)(access_htable(button_list, "load")->value))->active = 0;
-		((struct button *)(access_htable(button_list, "load")->value))->prelight = 1;
-		((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 1;
-		((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 1;
-        	((struct window *)(access_htable(window_list, "itemsmenu")->value))->visible = 1;
-		((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 1;
-		
-		((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 0;
-		((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;   
-		sys = load_system("../save/system.txt");
-	        *((int *)(access_htable(draw_list, "mainmenu")->value)) = 1;
-
-	}
-}
