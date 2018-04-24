@@ -319,7 +319,7 @@ struct vector *selecting_position(struct camera *camera)
   if(camera->event_type != SELECTED)
     return NULL;
 
-  camera->event_type = NOTMOVING;
+  camera->event_type =  NOTMOVING;
 
   struct vector *o = sub_vector(&camera->position, clone_vector(&camera->origin));
   float ratio = (camera->depth + magnitude_vector(o)) / camera->depth;
@@ -334,5 +334,6 @@ struct vector *selecting_position(struct camera *camera)
 
   add_vector(Vy, Vx);
   free_vector(Vy);
+  add_vector(&camera->origin, Vx);
   return Vx;
 }
