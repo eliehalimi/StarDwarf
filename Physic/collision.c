@@ -33,12 +33,16 @@ int collide(struct system *system, struct item *i1, struct item *i2)
 				//m1v1 + m2v2 = (m1+m2)v1'
 				memcpy(i1->velocity.values, v->values, sizeof(float)* v->size);
 				i1->mass += i2->mass;
+				
+				add_vector(scalar_product_vector(m2/m1, &i2->velocity), &i1->velocity);
 				free_item(remove_item(system, i2));
 			}
 			else
 			{
 				memcpy(i2->velocity.values, v->values, sizeof(float)*v->size);
 				i2->mass += i1->mass;
+				
+				add_vector(scalar_product_vector(m1/m2, &i1->velocity), &i2->velocity);
 				free_item(remove_item(system, i1));
 
 			}

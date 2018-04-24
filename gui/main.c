@@ -367,7 +367,7 @@ int main()
 
 				//values for position vector
 				float val[3] = {150, 150, 0};
-				float val2[3] = {0, 300, 0};
+				float val2[3] = {150, 10000, 0};
 				float val3[3] = {0, 0, 300};
 
 				//vector postion and creation of item
@@ -386,6 +386,7 @@ int main()
 				item2->mass = 1000000000000.0f;
 				item2->color[0] = 0;
 				item2->color[2] = 0;
+				item2->velocity.values[1] = -1000;
 
 				item3 = new_item(position3);
 				item3->size = 100;

@@ -72,6 +72,7 @@ void free_system(struct system *system)
 		free_item(i);
 		l = next;
 	}
+	free_camera(system->camera);
 	free(system);
 }
 
