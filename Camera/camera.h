@@ -14,6 +14,8 @@
 # define NOTMOVING 0
 # define ROTATING 1
 # define TRANSLATING 2
+# define CREATING 3
+# define SELECTED 4
 
 struct camera
 {
@@ -60,5 +62,7 @@ void rotate_camera(struct camera *camera, float alpha, float beta, float gamma);
 void move_camera(struct camera *camera, const struct vector *translation);
 
 void dolly_rotation(struct camera *camera, float rotZ, float rotX);
+
+struct vector *selecting_position(struct camera *camera);
 
 # endif

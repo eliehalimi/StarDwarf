@@ -313,3 +313,26 @@ void dolly_rotation(struct camera *camera, float rotZ, float rotX)
 	freeMat(invT);
 }
 
+
+struct vector *selecting_position(struct camera *camera)
+{
+  if(camera->event_type != SELECTED)
+    return NULL;
+
+  camera->event_type = NOTMOVING;
+
+  struct vector *o = sub_vector(&camera->position, clone_vector(&camera->origin));
+  float ratio = (camera->depth + magnitude_vector(o)) / camera->depth;
+  free_vector(o);
+  
+  
+  float x = (camera->mouse_x - camera->center_X) * ratio;
+  float y = (camera->mouse_y - camera->center_Y) * ratio;
+
+  struct vector *Vx = scalar_product_vector(x, clone_vector(&camera->Vx));
+  struct vector *Vy = scalar_product_vector(y, clone_vector(&camera->Vy));
+
+  add_vector(Vy, Vx);
+  free_vector(Vy);
+  return Vx;
+}
