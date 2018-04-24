@@ -18,7 +18,7 @@
 
 struct button *new_button, *load_button, *options_button, *quit_button, *credit_button, *volume_button, *back_optionmenu_button, *back_creditmenu_button, *x_button, *start_button, *pause_button, *resume_button, *quit_mainmenu_button;
 struct window *startmenu_w, *optionmenu_w, *creditmenu_w, *namemenu_w, *mainmenu_w, *pausemenu_w;
-int draw_startmenu = 1, draw_optionmenu = 0, draw_creditmenu = 0, draw_namemenu = 0, draw_mainmenu = 0, draw_pausemenu = 0, input = 0;
+int draw_startmenu = 1, draw_optionmenu = 0, draw_creditmenu = 0, draw_namemenu = 0, draw_mainmenu = 0, draw_pausemenu = 0, draw_loadmenu = 0, input = 0;
 char *text;
 SDL_Renderer *renderer;
 
@@ -117,7 +117,18 @@ void draw()
 		window_draw(mainmenu_w, renderer);
 		button_draw(pause_button, renderer);
 
-		if(!draw_pausemenu)
+	
+		if (draw_loadmenu)
+		{
+			struct system *sys = new_system(3);
+			sys = load_system("../save/system.txt", sys);	
+			sys->camera = new_camera(WINDOW_W /2, WINDOW_H /2);
+			sys->delta_time = 0.1f;
+			update_system(sys);	
+		}
+	
+	
+		if(!draw_pausemenu && !draw_loadmenu)
 		{
 		  update_system(sys);
 		  //dolly_rotation(sys->camera, 0.01f, 0.01f);
@@ -242,11 +253,7 @@ void button_active(int *quit)
 		load_button->prelight = 1;
 		mainmenu_w->visible = 1, mainmenu_w->event = 1;           
 		startmenu_w->visible = 0, startmenu_w->event = 0;   
-		struct system *sys = new_system(3);
-		sys->camera = new_camera(WINDOW_W /2, WINDOW_H /2);
-		sys->delta_time = 0.1f;
-		sys = load_system("../save/system.txt", sys);
-		draw_mainmenu = 1;
+		draw_loadmenu = 1;
 
 	}
 }

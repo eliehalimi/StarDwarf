@@ -32,7 +32,7 @@ struct system *load_system(char *path)
 	return s;
 }
 */
-struct system *load_system(char *path, struct system *sys) //ADD SYSTEM SO THAT I CAN ADD CAMERA 
+struct system *load_system(char *path, struct system *sys)
 {
 	FILE *f = fopen(path, "r");
 	assert(f != NULL);
@@ -92,18 +92,18 @@ struct system *load_system(char *path, struct system *sys) //ADD SYSTEM SO THAT 
 		
 			str = strtok(NULL, " ");
 		}
-		printf("val{%f, %f, %f} \n", val[0], val[1], val[2]);
+	//	printf("val{%f, %f, %f} \n", val[0], val[1], val[2]);
 		position = new_vector(3, val);				
 		item = new_item(position);
 		item->size = size;
 		item->mass = mass;
-		printf("%f %f", item->size, item->mass);
-
+	//	printf("%f %f", item->size, item->mass);
+		item->rect = NULL;
 		push_item(sys, item);
 		//str = strtok(NULL, " ");
 		free_vector(position);
-		printf("%d %d %d %f %f \n", item->position.values[0], item->position.values[1],
-			       	item->position.values[2], item->mass, item->size);
+	//	printf("%f %f %f %f %f \n", item->position.values[0], item->position.values[1],
+	//		       	item->position.values[2], item->mass, item->size);
 		
 	}
 	return sys;
