@@ -41,6 +41,7 @@ int button_new(struct button *button, struct image *selected, struct image *unse
   button->selected = selected;
   button->unselected = unselected;
   button->textbox = 0;
+  button->input = 0;
   MakeRect(&button->rect, x, y, selected->w, selected->h);
   return 0;
 }
@@ -51,36 +52,64 @@ int button_event(struct button *button, SDL_Event *event, int *draw)
   if (!button || !button->event || !event) return 0;
   if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_EXPOSED)
     *draw = 1;
-  if (event->type == SDL_MOUSEBUTTONDOWN && PointInRect(event->button.x, event->button.y,&button->rect))
+
+  if (!button->textbox)
     {
-      button->active = 1;
-      //button->prelight = 1;
-      *draw = 1;
+      if (event->type == SDL_MOUSEBUTTONDOWN && PointInRect(event->button.x, event->button.y,&button->rect))
+	{
+	  button->active = 1;
+	  button->prelight = 1;
+	  *draw = 1;
+	}
+      else if (event->type == SDL_MOUSEMOTION && PointInRect(event->motion.x, event->motion.y, &button->rect))
+	{
+	  button->prelight = 1;
+	  *draw = 1;
+	}
+      else if (!PointInRect(event->motion.x, event->motion.y, &button->rect))
+	{
+	  button->prelight = 0;
+	  button->active = 0;
+	  *draw = 1;  
+	}
     }
-  else if  (PointInRect(event->button.x, event->button.y, &button->rect))
+  else
     {
-      button->active  = 0;
-      button->prelight = 1;
-      *draw = 1;
-      return 1;
+      if (event->type == SDL_MOUSEBUTTONDOWN && PointInRect(event->button.x, event->button.y,&button->rect))
+	{
+	  button->active = 1;
+	  button->prelight = 1;
+	  button->input = 1;
+	  *draw = 1;
+	}
+      
+      else if (button->input && event->type == SDL_MOUSEBUTTONDOWN && !PointInRect(event->button.x, event->button.y,&button->rect))
+	{
+	  button->active = 0;
+	  button->prelight = 0;
+	  button->input = 0;
+	  *draw = 1;
+	}
+      else if (button->input && !PointInRect(event->button.x, event->button.y,&button->rect))
+	{
+	  button->active = 0;
+	  button->prelight = 1;
+	  button->input = 1;
+	  *draw = 1;
+	}
+      else if (PointInRect(event->button.x, event->button.y,&button->rect))
+	{
+	  button->prelight = 1;
+	}
+      else if (event->type == SDL_MOUSEMOTION)
+	{
+	  button->prelight = 0;
+	  button->active = 0;
+	  button->input = 0;
+	  *draw = 1;  
+	}
     }
-  else if (event->type == SDL_MOUSEMOTION && PointInRect(event->motion.x, event->motion.y, &button->rect))
-    {
-      button->prelight = 1;
-      *draw = 1;
-    }
-  else if (event->type == SDL_MOUSEMOTION && !PointInRect(event->motion.x, event->motion.y, &button->rect))
-    {
-      if (!button->textbox)
-	button->prelight = 0;
-      *draw = 1;
-      if (button->active) {
-	button->active = 0;
-	return 1;
-      }
-	 
-    }
-  return 0;
+  return 1;
 }
 
 int camera_event(struct camera *camera, SDL_Event *event)

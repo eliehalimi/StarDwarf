@@ -118,38 +118,30 @@ void init_draw_list(struct htable *draw_list)
   *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
   *((int *)(access_htable(draw_list, "optionmenu")->value)) = 0;  
 }
+
+void init_text(struct htable *text_list, char *name, int size, int item)
+{
+  add_htable(text_list, name, malloc(sizeof(struct text)));
+  struct text *text = (struct text *)(access_htable(text_list, name)->value);
+  text->text = malloc(size*sizeof(char));
+  *(text->text) = '\0';
+  text->nbchar = 0;
+  text->active = 0;
+  text->item = item;
+}
 void init_text_list(struct htable *text_list)
-{ 
-  add_htable(text_list, "name", malloc(sizeof(struct text)));
-  add_htable(text_list, "intro", malloc(sizeof(struct text)));
-  add_htable(text_list, "item_name", malloc(sizeof(struct text)));
-  add_htable(text_list, "item_x", malloc(sizeof(struct text)));
-  add_htable(text_list, "item_y", malloc(sizeof(struct text)));
-  add_htable(text_list, "item_z", malloc(sizeof(struct text)));
-  add_htable(text_list, "item_mass", malloc(sizeof(struct text)));
-  add_htable(text_list, "item_radius", malloc(sizeof(struct text)));
-  add_htable(text_list, "item_vx", malloc(sizeof(struct text)));
-  add_htable(text_list, "item_vy", malloc(sizeof(struct text)));
-  add_htable(text_list, "item_vz", malloc(sizeof(struct text)));
-    
-  struct text *intro = (struct text *)(access_htable(text_list, "intro")->value);
-  intro->text = malloc(200*sizeof(char));
-  *(intro->text) = '\0';
-  intro->nbchar = 0;
-  intro->active = 0;
-  
-  struct text *name = (struct text *)(access_htable(text_list, "name")->value);
-  name->text = malloc(30*sizeof(char));
-  *(name->text) = '\0';
-  name->nbchar = 0;
-  name->active = 0;
-
-  struct text *item_name = (struct text *)(access_htable(text_list, "item_name")->value);
-  item_name->text = malloc(20*sizeof(char));
-  *(item_name->text) = '\0';
-  item_name->nbchar = 0;
-  item_name->active = 0;
-
+{
+  init_text(text_list, "name", 30, 0);
+  init_text(text_list, "intro", 200, 0);
+  init_text(text_list, "item_name", 20, 1);
+  init_text(text_list, "item_x", 20, 1);
+  init_text(text_list, "item_y", 20, 1);
+  init_text(text_list, "item_z", 20, 1);
+  init_text(text_list, "item_mass", 20, 1);
+  init_text(text_list, "item_radius", 20, 1);
+  init_text(text_list, "item_vx", 20, 1);
+  init_text(text_list, "item_vy", 20, 1);
+  init_text(text_list, "item_vz", 20, 1);
 }
 void init_lists(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list)
 {
@@ -239,5 +231,14 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 
 
 	((struct button *)(access_htable(button_list, "item_name")->value))->textbox = 1;
+	((struct button *)(access_htable(button_list, "item_x")->value))->textbox = 1;
+	((struct button *)(access_htable(button_list, "item_y")->value))->textbox = 1;
+	((struct button *)(access_htable(button_list, "item_z")->value))->textbox = 1;
+	((struct button *)(access_htable(button_list, "item_mass")->value))->textbox = 1;
+	((struct button *)(access_htable(button_list, "item_radius")->value))->textbox = 1;
+	((struct button *)(access_htable(button_list, "item_vx")->value))->textbox = 1;
+	((struct button *)(access_htable(button_list, "item_vy")->value))->textbox = 1;
+	((struct button *)(access_htable(button_list, "item_vz")->value))->textbox = 1;
+
 }
 

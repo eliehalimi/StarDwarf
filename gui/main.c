@@ -17,6 +17,11 @@
 # define WINDOW_H 720
 
 struct system *sys = NULL;
+void text_event(SDL_Event e, struct htable *text_list, struct htable *button_list, char *name, int size)
+{
+  if (((struct text *)(access_htable(text_list, name)->value))->active)  
+    textinput(e,(struct text *)(access_htable(text_list, name)->value), size, access_htable(button_list, name)->value);
+}
 int main()
 {
 	SDL_Event e;
@@ -44,11 +49,16 @@ int main()
 		       
 			button_active(WINDOW_W, WINDOW_H, &quit, sys, button_list, window_list, draw_list, text_list);
 			if (((struct text *)(access_htable(text_list, "name")->value))->active)  
-			  textinput(e,(struct text *)(access_htable(text_list, "name")->value), 25);
-			if (((struct text *)(access_htable(text_list, "item_name")->value))->active)  
-			  textinput(e,(struct text *)(access_htable(text_list, "item_name")->value), 10);
-
-
+			  textinput(e,(struct text *)(access_htable(text_list, "name")->value), 25, NULL);
+			text_event(e, text_list, button_list, "item_name", 10);
+			text_event(e, text_list, button_list, "item_x", 10);
+			text_event(e, text_list, button_list, "item_y", 10);
+			text_event(e, text_list, button_list, "item_z", 10);
+			text_event(e, text_list, button_list, "item_mass", 10);
+			text_event(e, text_list, button_list, "item_radius", 10);
+			text_event(e, text_list, button_list, "item_vx", 10);
+			text_event(e, text_list, button_list, "item_vy", 10);
+			text_event(e, text_list, button_list, "item_vz", 10);
 			
 			window_event(access_htable(window_list, "startmenu")->value, &e, access_htable(draw_list, "startmenu")->value);
 			button_event(access_htable(button_list, "new")->value, &e, access_htable(draw_list, "startmenu")->value);

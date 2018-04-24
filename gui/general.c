@@ -214,6 +214,25 @@ void clean(struct htable *button_list, struct htable *window_list, struct htable
 
   free(((struct text *)(access_htable(text_list, "name")->value))->text);
   free((struct text *)(access_htable(text_list, "name")->value));
+  free(((struct text *)(access_htable(text_list, "intro")->value))->text);
+  free((struct text *)(access_htable(text_list, "intro")->value));
+  free(((struct text *)(access_htable(text_list, "item_name")->value))->text);
+  free((struct text *)(access_htable(text_list, "item_name")->value));
+  free(((struct text *)(access_htable(text_list, "item_x")->value))->text);
+  free((struct text *)(access_htable(text_list, "item_x")->value));
+  free(((struct text *)(access_htable(text_list, "item_y")->value))->text);
+  free((struct text *)(access_htable(text_list, "item_y")->value));
+  free(((struct text *)(access_htable(text_list, "item_z")->value))->text);
+  free((struct text *)(access_htable(text_list, "item_z")->value));
+  free(((struct text *)(access_htable(text_list, "item_radius")->value))->text);
+  free((struct text *)(access_htable(text_list, "item_mass")->value));
+  free(((struct text *)(access_htable(text_list, "item_vx")->value))->text);
+  free((struct text *)(access_htable(text_list, "item_vx")->value));
+  free(((struct text *)(access_htable(text_list, "item_vy")->value))->text);
+  free((struct text *)(access_htable(text_list, "item_vy")->value));
+  free(((struct text *)(access_htable(text_list, "item_vz")->value))->text);
+  free((struct text *)(access_htable(text_list, "item_vz")->value));
+  
   SDL_StopTextInput();
 
   SDL_DestroyWindow(window);

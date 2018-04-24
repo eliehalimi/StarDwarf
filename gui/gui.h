@@ -15,6 +15,7 @@ struct text{
   char *text;
   int nbchar;
   int active;
+  int item;
 };
 struct window {
   int event; 
@@ -29,6 +30,7 @@ struct button {
   int active;
   int prelight;
   int textbox;
+  int input;
   SDL_Rect rect;
   struct window *window;
   struct image *unselected;
@@ -63,8 +65,8 @@ int button_draw(struct button *button, SDL_Renderer *renderer);
 void clean(struct htable *button_list, struct htable *window_list, struct htable  *img_list, struct htable *draw_list, struct htable *text_list);
 
 //text input
-void display_text(SDL_Renderer *renderer, char *text, int x, int h, int rgb, int size);
-void textinput(SDL_Event e, struct text *text, int maxchr);
+void display_text(SDL_Renderer *renderer, struct htable *text_list, char *name, int x, int h, int rgb, int size);
+void textinput(SDL_Event e, struct text *text, int maxchr, struct button *button);
 void init_textinput(struct htable *text_list, char *name, int size);
 
 //supporting main
