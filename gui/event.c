@@ -115,25 +115,28 @@ int button_event(struct button *button, SDL_Event *event, int *draw)
 int camera_event(struct camera *camera, SDL_Event *event)
 {
 	if(!camera || !event) return 0;
+
+	if(event->type == SDL_MOUSEBUTTONDOWN)
+	  printf("%i\n", event->button.button);
 	
-	if(event->type == SDL_MOUSEBUTTONDOWN && camera->event_type != CREATING)
+	if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_RIGHT)
 	{
 		camera->event_type = ROTATING;
 	}
-	else if(event->type == 768 && camera->event_type != CREATING)
+	else if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_MIDDLE)
 	{
 		camera->event_type = TRANSLATING;
 	}
-	else if((event->type == SDL_MOUSEBUTTONUP || event->type == 769) && camera->event_type != CREATING)
+	else if(event->type == SDL_MOUSEBUTTONUP && camera->event_type != CREATING)
 	{
 		camera->event_type = NOTMOVING;
 	}
-	else if(camera->event_type == ROTATING && event->type == SDL_MOUSEMOTION)
+	else if(camera->event_type == ROTATING && event->type == SDL_MOUSEMOTION  && event->button.button == 4)
 	{
 		dolly_rotation(camera, -(event->button.x - camera->mouse_x) * SPEEDROTATION,
 				-(event->button.y - camera->mouse_y) * SPEEDROTATION);
 	}
-	else if(camera->event_type == TRANSLATING && event->type == SDL_MOUSEMOTION)
+	else if(camera->event_type == TRANSLATING && event->type == SDL_MOUSEMOTION&& event->button.button == 2)
 	{
 		struct vector *trans = new_vector(2, NULL);
 		trans->values[0] = -(event->button.x - camera->mouse_x) * SPEEDTRANSLATION;
@@ -146,16 +149,16 @@ int camera_event(struct camera *camera, SDL_Event *event)
 	  {
 	    camera->event_type = SELECTED;
 	  }
-	/*
-	  else if(camera->event_type == NOTMOVING && left click of the mouse is pressed)
+	
+	else if(camera->event_type == NOTMOVING && event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_LEFT)
 	  {
-	  struct item *i = selecting item(camera);
-	  if(i != NULL)
-	  {
-	  fill user's input with i's values
+	    struct item *i = selecting_item(camera);
+	    if(i != NULL)
+	      {
+		//fill user's input with i's values
+	      }
 	  }
-	  }
-	*/
+	
 	
 	if(event->type == SDL_MOUSEMOTION)
 	{

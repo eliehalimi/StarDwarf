@@ -63,6 +63,8 @@ void move_camera(struct camera *camera, const struct vector *translation);
 
 void dolly_rotation(struct camera *camera, float rotZ, float rotX);
 
+struct item *selecting_item(struct camera *camera);
+
 struct vector *selecting_position(struct camera *camera);
 
 # endif
