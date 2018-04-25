@@ -313,6 +313,22 @@ void dolly_rotation(struct camera *camera, float rotZ, float rotX)
 	freeMat(invT);
 }
 
+struct item *selecting_item(struct camera *camera)
+{
+  struct item *selected = NULL;
+  for(struct list *l = camera->projections.next; l != NULL; l = l->next)
+    {
+      struct projection *p = CONTAINER_OF_(struct projection, next, l);
+      float x = camera->mouse_x - p->postion.values[0];
+      float y = camera->mouse_y - p->postion.values[1];
+      if(x * x + y * y <= p->size * p->size)
+	selected = i;
+    }
+  if(selected == NULL)
+    return NULL
+  return selected->item;
+}
+
 
 struct vector *selecting_position(struct camera *camera)
 {

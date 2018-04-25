@@ -146,7 +146,17 @@ int camera_event(struct camera *camera, SDL_Event *event)
 	  {
 	    camera->event_type = SELECTED;
 	  }
-
+	/*
+	  else if(camera->event_type == NOTMOVING && left click of the mouse is pressed)
+	  {
+	  struct item *i = selecting item(camera);
+	  if(i != NULL)
+	  {
+	  fill user's input with i's values
+	  }
+	  }
+	*/
+	
 	if(event->type == SDL_MOUSEMOTION)
 	{
 		camera->mouse_x = event->button.x;
