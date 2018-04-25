@@ -4,34 +4,41 @@
 
 #include "save.h"
 #include "../Physic/physic.h"
-/*
-void save_system(struct system *system) //name if several systems in one simulation 
+
+void save_system(struct system *system) 
 {
-	//assert(system != NULL);
+	assert(system != NULL);
+	assert(system->delta_time > 0.0f);
+	assert(system->nb_dimension > 0);
 
 	FILE *f = fopen("system.txt", "w+");
 	assert(f != NULL);
 	
-	fwrite(&system,sizeof(system), sizeof(char), f);
-}*/
-/*
-struct system *load_system(char *path)
-{
-	FILE *f = fopen(path, "w+");
-	assert(f != NULL);
-
-	struct system *s = malloc(sizeof(struct system));
+	char *str;
 	
-	int i = 0;
-	char buf[1];
-	size_t c;
-	while( (c = fread(&buf, 1, 1, f)) > 0)
-	{	
-		i++;
+	float size;
+	float mass;
+	float nbdimension;
+	struct vector *pos; 
+	struct vector *velocity; //WILL ADD IT TO THE LOAD_SYSTEM function
+
+
+	for (struct list *l = system->items.next; l != NULL; l = l->next)
+	{
+		struct item *i = CONTAINER_OF_(struct item, list, l);
+		size = i->size;
+		mass = item->mass;
+		nbdimension = item->nb_dimension;
+		pos = i->position.values;
+		velocity = i->velocity.values;
+	
+		sprintf(stdout, "%f, %f, %f", size, mass, nbdimension); 
+
+		//WILL MAKE IT PRINT INTO FILE DESCRIPTOR (system.txt);
 	}
-	return s;
 }
-*/
+
+
 struct system *load_system(char *path)
 {
 	FILE *f = fopen(path, "r");
