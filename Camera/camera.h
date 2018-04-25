@@ -17,6 +17,10 @@
 # define CREATING 3
 # define SELECTED 4
 
+
+# define WINDOW_W 1280
+# define WINDOW_H 720
+
 struct camera
 {
 	struct vector position;

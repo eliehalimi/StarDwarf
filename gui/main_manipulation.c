@@ -9,8 +9,10 @@
 # include "draw_item.h"
 # include "hash_table.h"
 # include "../save/save.h"
-void init_system(int w, int h, struct htable *text_list)
+
+struct system *init_system(int w, int h, struct htable *text_list)
 {
+  struct system *sys;
   struct item *item = NULL;
   struct item *item2 = NULL;
   struct item *item3 = NULL;
@@ -101,7 +103,9 @@ void init_system(int w, int h, struct htable *text_list)
     }
   item->rect = NULL;
   puts("Finished Drawing");
+  return sys;
 }
+
 void init_draw_list(struct htable *draw_list)
 {
   add_htable(draw_list, "startmenu", malloc(sizeof(int)));  

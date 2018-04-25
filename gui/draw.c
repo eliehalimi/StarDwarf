@@ -81,28 +81,26 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       button_draw(access_htable(button_list, "item_radius")->value, renderer);
       button_draw(access_htable(button_list, "delete")->value, renderer);
       button_draw(access_htable(button_list, "add")->value, renderer);
-      if(!*((int *)(access_htable(draw_list, "pausemenu")->value)))
+      if(sys != NULL)
 	{
-	  update_system(sys);
-	  struct vector *v = selecting_position(sys->camera);
-	  if(v != NULL)
+	  if(!*((int *)(access_htable(draw_list, "pausemenu")->value)))
 	    {
-	      struct item *i = new_item(v);
-	      free_vector(v);
-
-	      i->size = 100;
-	      i->mass  = 100000000000000.0f;
-
-	      push_item(sys, i);
+	      update_system(sys);
+	      struct vector *v = selecting_position(sys->camera);
+	      if(v != NULL)
+		{
+		  struct item *i = new_item(v);
+		  free_vector(v);
+		  
+		  i->size = 100;
+		  i->mass  = 100000000000000.0f;
+		  
+		  push_item(sys, i);
+		}
 	    }
+	  
+	  Draw_from_camera(sys->camera, renderer);
 	}
-      Draw_from_camera(sys->camera, renderer);
-		
-      float tab[] = {0, 0};
-      struct vector *trans = new_vector(2, tab);
-
-      move_camera(sys->camera, trans);
-
       display_text(renderer, text_list, "intro", 60, 0, 255, 31);
       display_text(renderer, text_list, "item_name", 1080, 70, 0, 25);
       display_text(renderer, text_list, "item_x", 1100, 132, 0, 17);
@@ -126,7 +124,7 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
 }
 
 
-void button_active(int w, int h, int *quit, struct system *sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list)
+void button_active(int w, int h, int *quit, struct system **sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list)
 {
   if (((struct button *)(access_htable(button_list, "quit")->value))->active)
     *quit = 1;
@@ -175,7 +173,7 @@ void button_active(int w, int h, int *quit, struct system *sys, struct htable *b
       ((struct text *)(access_htable(text_list, "name")->value))->active = 0;
 
       //initialize system here
-      init_system(w, h, text_list);
+      *sys = init_system(w, h, text_list);
     }
   else if (((struct button *)(access_htable(button_list, "item_name")->value))->active)
       init_textinput(text_list, "item_name", 15);
@@ -271,7 +269,8 @@ void button_active(int w, int h, int *quit, struct system *sys, struct htable *b
       ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 1;
       *((int *)(access_htable(draw_list, "startmenu")->value))= 1;
       *((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
-      free_system(sys);
+      free_system(*sys);
+      *sys = NULL;
       *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
     }
   else if (((struct button *)(access_htable(button_list, "load")->value))->active)
@@ -285,7 +284,7 @@ void button_active(int w, int h, int *quit, struct system *sys, struct htable *b
 		
       ((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 0;
       ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;   
-      sys = load_system("../save/system.txt");
+      *sys = load_system("../save/system.txt");
       *((int *)(access_htable(draw_list, "mainmenu")->value)) = 1;
 
     }
@@ -293,6 +292,6 @@ void button_active(int w, int h, int *quit, struct system *sys, struct htable *b
     {
       ((struct button *)(access_htable(button_list, "add")->value))->active = 0;
       ((struct button *)(access_htable(button_list, "add")->value))->prelight = 1;
-      sys->camera->event_type = CREATING;
+      (*sys)->camera->event_type = CREATING;
     }
 }

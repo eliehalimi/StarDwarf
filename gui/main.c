@@ -16,7 +16,6 @@
 # define WINDOW_W 1280
 # define WINDOW_H 720
 
-struct system *sys = NULL;
 void text_event(SDL_Event e, struct htable *text_list, struct htable *button_list, char *name, int size)
 {
   if (((struct text *)(access_htable(text_list, name)->value))->active)  
@@ -25,6 +24,7 @@ void text_event(SDL_Event e, struct htable *text_list, struct htable *button_lis
 int main()
 {
 	SDL_Event e;
+	struct system *sys = NULL;
 	struct htable *button_list = create_htable(20);
 	struct htable *window_list = create_htable(10);
 	struct htable *img_list = create_htable(40);
@@ -46,8 +46,8 @@ int main()
 		{
 			if (e.type == SDL_QUIT)
 				quit = 1;
-		       
-			button_active(WINDOW_W, WINDOW_H, &quit, sys, button_list, window_list, draw_list, text_list);
+			
+			button_active(WINDOW_W, WINDOW_H, &quit, &sys, button_list, window_list, draw_list, text_list);
 			if (((struct text *)(access_htable(text_list, "name")->value))->active)  
 			  textinput(e,(struct text *)(access_htable(text_list, "name")->value), 25, NULL);
 			text_event(e, text_list, button_list, "item_name", 10);

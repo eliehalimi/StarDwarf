@@ -191,11 +191,11 @@ struct vector *mult_vector(struct matrix *mat, struct vector *vect)
 
 struct matrix *transpose(const struct matrix *mat)
 {
-  struct matrix *new = newMat(mat->col, mat->line);
+	struct matrix *new = newMat(mat->col, mat->line);
 
-  for(size_t i = 0; (int) i < mat->line; ++i)
-    for(size_t j = 0; (int) j < mat->col; ++j)
-      set(new, j, i, get(mat, i, j));
-  
-  return new;
+	for(size_t i = 0; (int) i < mat->line; ++i)
+		for(size_t j = 0; (int) j < mat->col; ++j)
+			set(new, j, i, get(mat, i, j));
+
+	return new;
 }
