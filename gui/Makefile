@@ -1,7 +1,7 @@
 
 ## Simple SDL mini code
 
-CC=clang
+CC=gcc
 
 CPPFLAGS= `pkg-config --cflags sdl2` -MMD
 CFLAGS= -Wall -Wextra -std=c99 -g #-fsanitize=address  #-Werror 
