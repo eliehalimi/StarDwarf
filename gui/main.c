@@ -121,8 +121,8 @@ void draw()
 		if (draw_loadmenu)
 		{
 			struct system *sys = new_system(3);
-			sys = load_system("../save/system.txt", sys);	
 			sys->camera = new_camera(WINDOW_W /2, WINDOW_H /2);
+			sys = load_system("../save/system.txt", sys);
 			sys->delta_time = 0.1f;
 			update_system(sys);	
 		}
