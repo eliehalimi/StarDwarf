@@ -319,9 +319,9 @@ struct item *selecting_item(struct camera *camera)
   for(struct list *l = camera->projections.next; l != NULL; l = l->next)
     {
       struct projection *p = CONTAINER_OF_(struct projection, next, l);
-      float x = camera->mouse_x - p->position.values[0];
-      float y = camera->mouse_y - p->position.values[1];
-      if(x * x + y * y <= p->size * p->size)
+      float x = camera->mouse_x - p->position.values[0] - camera->center_X;
+      float y = camera->mouse_y - p->position.values[1] - camera->center_Y;
+      if(x * x + y * y <= p->size * p->size / 4)
 	selected = p->item;
     }
   

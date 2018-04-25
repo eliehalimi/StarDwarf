@@ -116,9 +116,6 @@ int camera_event(struct camera *camera, SDL_Event *event)
 {
 	if(!camera || !event) return 0;
 
-	if(event->type == SDL_MOUSEBUTTONDOWN)
-	  printf("%i\n", event->button.button);
-	
 	if(event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_RIGHT)
 	{
 		camera->event_type = ROTATING;
@@ -156,6 +153,7 @@ int camera_event(struct camera *camera, SDL_Event *event)
 	    if(i != NULL)
 	      {
 		//fill user's input with i's values
+		printf("%p\n", i);
 	      }
 	  }
 	
