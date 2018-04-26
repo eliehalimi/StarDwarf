@@ -9,7 +9,7 @@ void save_system(struct system *system)
 {
 	assert(system != NULL);
 	assert(system->delta_time > 0.0f);
-	assert(system->nb_dimension > 0);
+	assert(system->nb_dimension == 3);
 
 	FILE *f = fopen("system.txt", "w+");
 	assert(f != NULL);
@@ -27,13 +27,15 @@ void save_system(struct system *system)
 	{
 		struct item *i = CONTAINER_OF_(struct item, list, l);
 		size = i->size;
-		mass = item->mass;
-		nbdimension = item->nb_dimension;
-		pos = i->position.values;
-		velocity = i->velocity.values;
+		mass = i->mass;
+		nbdimension = i->nb_dimension;
+		pos = &i->position;
+		velocity = &i->velocity;
 	
-		sprintf(stdout, "%f, %f, %f", size, mass, nbdimension); 
-
+		printf("%f, %f, %f\n pos = %f %f %f\nvel = %f %f %f", size, mass, nbdimension,
+		       pos->values[0], pos->values[1], pos->values[2],
+		       velocity->values[0], velocity->values[1], velocity->values[2]); 
+		
 		//WILL MAKE IT PRINT INTO FILE DESCRIPTOR (system.txt);
 	}
 }
