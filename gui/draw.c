@@ -267,11 +267,17 @@ void button_active(int w, int h, int *quit, struct system **sys, struct htable *
       ((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 0;
       ((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 1;
       ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 1;
+
+      ((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 0;
+      ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 0;
+      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->visible = 0;
+      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 0;
       *((int *)(access_htable(draw_list, "startmenu")->value))= 1;
       *((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
       free_system(*sys);
       *sys = NULL;
       *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
+
     }
   else if (((struct button *)(access_htable(button_list, "load")->value))->active)
     {

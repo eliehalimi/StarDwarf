@@ -126,7 +126,7 @@ void DrawProj(struct projection *proj, SDL_Renderer *renderer, float offset_X, f
 
         new_x = x + (proj->size / 2 * cos(0));
         new_y = y - (proj->size / 2 * sin(0));
-
+	
         SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
@@ -141,10 +141,13 @@ void Draw_from_camera(struct camera *camera, SDL_Renderer *renderer)
                 struct projection *p = CONTAINER_OF_(struct projection, next, l);
 
                 if(p->shown)
+		  {
                         DrawProj(p, renderer, camera->center_X, camera->center_Y);
+			//Draw_vector(camera, &p->item->position, &p->item->velocity, renderer);
+		  }
         }
 }
-/*
+
 void Draw_vector(struct camera *camera, struct vector *origin, struct vector *relative, SDL_Renderer *renderer)
 {
   assert(camera != NULL);
@@ -154,23 +157,31 @@ void Draw_vector(struct camera *camera, struct vector *origin, struct vector *re
   assert(origin->size == 3);
   assert(relative->size == 3);
 
-
-  struct vector *absolue = add_vector(origin, clone_vector(relative));
+  struct vector *or = sub_vector(&camera->position, clone_vector(origin));
+  struct vector *absolue = add_vector(or, clone_vector(relative));
 
   struct vector *Vx = &camera->Vx;
   struct vector *Vy = &camera->Vy;
   struct vector *Vz = sub_vector(&camera->position, clone_vector(&camera->origin));
   scalar_product_vector(1.0f / magnitude_vector(Vz), Vz);
 
-  float x1 = inner_product(origin, Vx);
-  float y1  = inner_product(origin, Vy);
+  float x1 = inner_product(or, Vx);
+  float y1  = inner_product(or, Vy);
   
   float x2  = inner_product(absolue, Vx);
   float y2  = inner_product(absolue, Vy);
 
-  float ratioO = inner_product(origin, Vz) / (inner_product(origin, Vz) + camera->depth);
+  struct vector *po = scalar_product_vector(inner_product(or, Vz),
+					   clone_vector(or));
+ 
+ struct vector *pa = scalar_product_vector(inner_product(absolue, Vz),
+					   clone_vector(absolue));
+ 
+ float distance = magnitude_vector(po);
+ float ratioO = camera->depth / (camera->depth + distance);
 
-  float ratioA = inner_product(absolue, Vz) / (inner_product(absolue, Vz) + camera->depth);
+  printf("%f\n", ratioO);
+  float ratioA = 
 
   x1 *= ratioO;
   y1 *= ratioO;
@@ -178,18 +189,11 @@ void Draw_vector(struct camera *camera, struct vector *origin, struct vector *re
   x2 *= ratioA;
   y2 *= ratioA;
   
-  //float mag = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-  float mag = magnitude_vector(relative);
-  
-  float yp = y2 - (y2 - y1) * 0.1f;
-
-  float xp1 = x1 + (x2 - x1) * 0.1f * mag;
-  float xp2 = x1 - (x2 - x1) * 0.1f * mag;
-  
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
   SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
   
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
 }
-*/
+
