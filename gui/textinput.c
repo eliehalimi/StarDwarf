@@ -14,8 +14,8 @@ struct text *get_text(struct htable *text_list, char *name)
 }
 void text_to_input(struct text *input, char * text)
 {
-  free(input->text); 
-  input->text = malloc(20*sizeof(char));                                
+  //free(input->text); 
+  //input->text = malloc(20*sizeof(char));                                
   *(input->text) = '\0';
   size_t i = 0;
   for (; i < 15 && text[i] != '\0'; i++)
