@@ -90,7 +90,7 @@ void button_active(int w, int h, int *quit, struct system **sys, struct htable *
 struct system *init_system(int w, int h, struct htable *text_list) ;
 
 //draw.c
-void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list,  struct htable *draw_list, struct htable *text_list, struct system *sys);
+void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list,  struct htable *draw_list, struct htable *text_list);
 
 //camera
 int camera_event(struct camera *camera, SDL_Event *event, struct item **selected);

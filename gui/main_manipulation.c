@@ -80,17 +80,20 @@ struct system *init_system(int w, int h, struct htable *text_list)
       item->mass  = 200000000000000.0f;
       item->color[1] = 0;
       item->color[2] = 0;
+      strncpy(item->label, "test", 16);
       
       item2 = new_item(position2);
       item2->size = 10;
       item2->mass = 1000000000000.0f;
       item2->color[0] = 0;
       item2->color[2] = 0;
+      strncpy(item2->label, "asteroid", 16);
       
       item3 = new_item(position3);
       item3->size = 100;
       item3->mass = 100000000000000.0f;
       item3->color[0] = 0;
+      strncpy(item3->label, "cyan planet", 16);
       
       //adding item to list of items in system
       push_item(sys, item);
