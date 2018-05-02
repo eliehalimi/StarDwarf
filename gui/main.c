@@ -109,6 +109,10 @@ int main()
 			button_event(access_htable(button_list, "reset")->value, &e, access_htable(draw_list, "pausemenu")->value);
 			button_event(access_htable(button_list, "saveandquit")->value, &e, access_htable(draw_list, "pausemenu")->value);
 
+			window_event(access_htable(window_list, "loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value);
+			button_event(access_htable(button_list, "x_loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value);
+			button_event(access_htable(button_list, "start_loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value);
+
 			if(sys)
 			{
 				camera_event(sys->camera, &e, &selected);
