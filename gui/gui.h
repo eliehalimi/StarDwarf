@@ -65,6 +65,9 @@ int button_draw(struct button *button, SDL_Renderer *renderer);
 void clean(struct htable *button_list, struct htable *window_list, struct htable  *img_list, struct htable *draw_list, struct htable *text_list);
 
 //text input
+void item_to_input(struct htable *text_list, struct item *item);
+struct text *get_text(struct htable *text_list, char *name);
+void input_to_item(struct htable *text_list, struct item *item);
 void display_text(SDL_Renderer *renderer, struct htable *text_list, char *name, int x, int h, int rgb, int size);
 void textinput(SDL_Event e, struct text *text, int maxchr, struct button *button);
 void init_textinput(struct htable *text_list, char *name, int size);
