@@ -33,7 +33,7 @@ int button_draw(struct button *button, SDL_Renderer *renderer)
 }
 
 
-void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, struct system *sys)
+void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list)
 {
   SDL_RenderClear(renderer);
   if (*((int *)(access_htable(draw_list, "startmenu")->value)))
@@ -81,26 +81,7 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       button_draw(access_htable(button_list, "item_radius")->value, renderer);
       button_draw(access_htable(button_list, "delete")->value, renderer);
       button_draw(access_htable(button_list, "add")->value, renderer);
-      if(sys != NULL)
-	{
-	  if(!*((int *)(access_htable(draw_list, "pausemenu")->value)))
-	    {
-	      update_system(sys);
-	      struct vector *v = selecting_position(sys->camera);
-	      if(v != NULL)
-		{
-		  struct item *i = new_item(v);
-		  free_vector(v);
-		  
-		  i->size = 100;
-		  i->mass  = 100000000000000.0f;
-		  
-		  push_item(sys, i);
-		}
-	    }
-	  
-	  Draw_from_camera(sys->camera, renderer);
-	}
+
       display_text(renderer, text_list, "intro", 60, 0, 255, 31);
       display_text(renderer, text_list, "item_name", 1080, 70, 0, 25);
       display_text(renderer, text_list, "item_x", 1100, 132, 0, 17);
@@ -119,8 +100,6 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       button_draw(access_htable(button_list, "resume")->value, renderer);
       button_draw(access_htable(button_list, "quit_mainmenu")->value, renderer);
     }
-
-  SDL_RenderPresent(renderer);
 }
 
 

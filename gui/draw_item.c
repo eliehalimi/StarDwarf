@@ -181,7 +181,7 @@ void Draw_vector(struct camera *camera, struct vector *origin, struct vector *re
  float ratioO = camera->depth / (camera->depth + distance);
 
   printf("%f\n", ratioO);
-  float ratioA = 
+  float ratioA = 0.0f;
 
   x1 *= ratioO;
   y1 *= ratioO;
