@@ -186,6 +186,7 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	add_htable(button_list, "item_vz", malloc(sizeof(struct button)));
 	add_htable(button_list, "add", malloc(sizeof(struct button)));
 	add_htable(button_list, "delete", malloc(sizeof(struct button)));
+	add_htable(button_list, "start_mainmenu", malloc(sizeof(struct button)));
 
 	add_htable(window_list, "mainmenu", malloc(sizeof(struct window)));
 	add_htable(window_list, "itemsmenu", malloc(sizeof(struct window)));
@@ -228,9 +229,11 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	button_new(access_htable(button_list, "item_vx")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 340, access_htable(window_list, "mainmenu")->value);
 	button_new(access_htable(button_list, "item_vy")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 368, access_htable(window_list, "mainmenu")->value);
 	button_new(access_htable(button_list, "item_vz")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 396, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "add")->value, access_htable(img_list,"add_selected")->value, access_htable(img_list,"add_unselected")->value, 1090, 610, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "add")->value, access_htable(img_list,"add_selected")->value, access_htable(img_list,"add_unselected")->value, 1090, 560, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "start_mainmenu")->value, access_htable(img_list,"start_mainmenu_selected")->value, access_htable(img_list,"start_mainmenu_unselected")->value, 1090, 610, access_htable(window_list, "mainmenu")->value);
 	button_new(access_htable(button_list, "delete")->value, access_htable(img_list,"delete_selected")->value, access_htable(img_list,"delete_unselected")->value, 1090, 660, access_htable(window_list, "mainmenu")->value);
 	
+
 	
 	window_new(access_htable(window_list, "pausemenu")->value, access_htable(img_list,"pausemenu")->value, 400, 80, 739, 300);
 	button_new(access_htable(button_list, "resume")->value, access_htable(img_list,"resume_selected")->value, access_htable(img_list,"resume_unselected")->value, 520, 110, access_htable(window_list, "pausemenu")->value);

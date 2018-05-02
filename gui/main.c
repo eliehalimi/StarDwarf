@@ -92,6 +92,7 @@ int main()
 			button_event(access_htable(button_list, "item_radius")->value, &e, access_htable(draw_list, "mainmenu")->value);
 			button_event(access_htable(button_list, "add")->value, &e, access_htable(draw_list, "mainmenu")->value);
 			button_event(access_htable(button_list, "delete")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			button_event(access_htable(button_list, "start_mainmenu")->value, &e, access_htable(draw_list, "mainmenu")->value);
 
 
 			button_event(access_htable(button_list, "pause")->value, &e, access_htable(draw_list, "mainmenu")->value);

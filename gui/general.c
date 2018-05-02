@@ -170,6 +170,9 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   r += image_new(access_htable(img_list, "add_unselected")->value, "add_unselected.png", renderer);
   r += image_new(access_htable(img_list, "delete_selected")->value, "delete_selected.png", renderer);
   r += image_new(access_htable(img_list, "delete_unselected")->value, "delete_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "start_mainmenu_selected")->value, "start_mainmenu_selected.png", renderer);
+  r += image_new(access_htable(img_list, "start_mainmenu_unselected")->value, "start_mainmenu_unselected.png", renderer);
+
   
   if (r)
     {

@@ -81,6 +81,7 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       button_draw(access_htable(button_list, "item_radius")->value, renderer);
       button_draw(access_htable(button_list, "delete")->value, renderer);
       button_draw(access_htable(button_list, "add")->value, renderer);
+      button_draw(access_htable(button_list, "start_mainmenu")->value, renderer);
 
       display_text(renderer, text_list, "intro", 60, 0, 255, 31);
       display_text(renderer, text_list, "item_name", 1080, 70, 0, 25);
