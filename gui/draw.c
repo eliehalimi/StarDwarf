@@ -52,7 +52,7 @@ int slider_draw(struct slider *slider, SDL_Renderer *renderer)
 
 
 
-void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list)
+void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct system *sys)
 {
   
   if (*((int *)(access_htable(draw_list, "startmenu")->value)))
@@ -89,7 +89,10 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
     {
       
       //window_draw(access_htable(window_list, "mainmenu")->value, renderer);
+      if (sys)
+	Draw_from_camera(sys->camera, renderer);
       window_draw(access_htable(window_list, "itemsmenu")->value, renderer);
+
       button_draw(access_htable(button_list, "item_name")->value, renderer);
       button_draw(access_htable(button_list, "item_x")->value, renderer);
       button_draw(access_htable(button_list, "item_y")->value, renderer);
@@ -119,7 +122,6 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       display_text(renderer, text_list, "item_vy", 1095, 370, 0, 17);
       display_text(renderer, text_list, "item_vz", 1095, 399, 0, 17);
     }
-  
   if (*((int *)(access_htable(draw_list, "pausemenu")->value)))
     {
       window_draw(access_htable(window_list, "pausemenu")->value, renderer);

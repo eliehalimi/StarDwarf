@@ -115,7 +115,7 @@ int main()
 		}
 		
 		SDL_RenderClear(renderer);
-		draw(renderer, button_list, window_list, draw_list, text_list, slider_list);
+		draw(renderer, button_list, window_list, draw_list, text_list, slider_list, sys);
 		if(sys != NULL)
 		{
 			if(selected != NULL)
@@ -143,7 +143,7 @@ int main()
 			      }
 			  }
 			
-			Draw_from_camera(sys->camera, renderer);
+			//			Draw_from_camera(sys->camera, renderer);
 		}
 		SDL_RenderPresent(renderer);
 
