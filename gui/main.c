@@ -25,6 +25,7 @@ int main()
 {
 	SDL_Event e;
 	struct system *sys = NULL;
+	struct system *reset_sys = NULL;
 	struct item *selected = NULL;
 	struct htable *button_list = create_htable(20);
 	struct htable *slider_list = create_htable(3);	
@@ -52,7 +53,7 @@ int main()
 			if (e.type == SDL_QUIT)
 				quit = 1;
 
-			button_active(WINDOW_W, WINDOW_H, &quit, &sys, button_list, window_list, draw_list, text_list, &simulation_state);
+			button_active(WINDOW_W, WINDOW_H, &quit, &sys, &reset_sys, button_list, window_list, draw_list, text_list, &simulation_state);
 			if (((struct text *)(access_htable(text_list, "name")->value))->active)  
 				textinput(e,(struct text *)(access_htable(text_list, "name")->value), 25, NULL);
 			text_event(e, text_list, button_list, "item_name", 10);

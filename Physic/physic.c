@@ -154,7 +154,8 @@ void push_item(struct system *system, struct item *item)
 {
 	assert(system != NULL);
 	assert(item != NULL);
-
+	assert(system->camera != NULL);
+	
 	item->list.next = system->items.next;
 	system->items.next = &item->list;
 	system->nb_item += 1;
@@ -187,4 +188,34 @@ struct item *remove_item(struct system *system, struct item *item)
 		}
 	}
 	return NULL;
+}
+
+
+struct item *clone_item(const struct item *item)
+{
+  struct item *res = new_item(&item->position);
+  res->mass = item->mass;
+  res->size = item->size;
+  strncpy(res->label, item->label, 15);
+  //strncpy(res->color, item->color, 4);
+  res->color[0] = item->color[0];
+  res->color[1] = item->color[1];
+  res->color[2] = item->color[2];
+  res->color[3] = item->color[3];
+  memcpy(res->velocity.values, item->velocity.values, sizeof(float) * item->nb_dimension);
+  return res;
+}
+
+struct system *clone_system(const struct system *system)
+{
+  struct system *res = new_system(system->nb_dimension);
+  res->camera = new_camera(system->camera->center_X, system->camera->center_Y);
+  res->delta_time = system->delta_time;
+
+  for(struct list *l = system->items.next; l != NULL; l = l->next)
+    {
+      struct item *i = CONTAINER_OF_(struct item, list, l);
+      push_item(res, clone_item(i));
+    }
+  return res;
 }

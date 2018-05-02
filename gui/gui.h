@@ -117,7 +117,7 @@ void init_textinput(struct htable *text_list, char *name, int size);
 //supporting main
 void init_lists(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list,  struct htable *draw_list, struct htable *text_list, struct htable *slider_list);
 
-void button_active(int w, int h, int *quit, struct system **sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, int *state);
+void button_active(int w, int h, int *quit, struct system **sys, struct system **reset_sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, int *state);
 
 struct system *init_system(int w, int h, struct htable *text_list) ;
 

@@ -12,14 +12,14 @@
 struct item
 {
 	size_t nb_dimension;
-	double mass, elec_charge, size;
+	double mass, size;
 	char label[16];
 	char color[4];
 	struct vector position, velocity, force;
 	struct list user_force;                       //VECTOR LIST (sentinel)
 	struct list list;                             //ITEM LIST (pointer to next)
-	SDL_Texture *texture;
-	SDL_Rect *rect;
+        SDL_Texture *texture;
+  	SDL_Rect *rect;
 	struct projection *proj;
 };
 
@@ -53,5 +53,9 @@ void push_item(struct system *system, struct item *item);
 
 // Remove an item to the system
 struct item *remove_item(struct system *system, struct item *item);
+
+struct item *clone_item(const struct item *item);
+
+struct system *clone_system(const struct system *system);
 
 # endif

@@ -134,7 +134,7 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
 }
 
 
-void button_active(int w, int h, int *quit, struct system **sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, int *state)
+void button_active(int w, int h, int *quit, struct system **sys, struct system **reset_sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, int *state)
 {
   if (((struct button *)(access_htable(button_list, "quit")->value))->active)
     *quit = 1;
@@ -258,10 +258,29 @@ void button_active(int w, int h, int *quit, struct system **sys, struct htable *
       if(*state == SIMULATION_PROGRESS)
 	*state = SIMULATION_PAUSE;
     }
-  else if (((struct button *)(access_htable(button_list, "start_mainmenu")->value))->active)
+  else if (((struct button *)(access_htable(button_list, "reset")->value))->active && *state != SIMULATION_EDIT)
+    {
+      ((struct button *)(access_htable(button_list, "reset")->value))->active = 0;
+      ((struct button *)(access_htable(button_list, "reset")->value))->prelight = 0;
+      
+      struct list *l = (*sys)->camera->projections.next;  
+      (*sys)->camera->projections.next = (*reset_sys)->camera->projections.next;
+      (*reset_sys)->camera->projections.next = l;
+
+      struct camera *c = (*sys)->camera;
+      (*sys)->camera = (*reset_sys)->camera;
+      (*reset_sys)->camera = c;
+
+      free_system(*sys);
+      *sys = *reset_sys;
+
+      *state = SIMULATION_EDIT;
+    }
+  else if (((struct button *)(access_htable(button_list, "start_mainmenu")->value))->active && *state == SIMULATION_EDIT)
     {
       ((struct button *)(access_htable(button_list, "start_mainmenu")->value))->active = 0;
       ((struct button *)(access_htable(button_list, "start_mainmenu")->value))->prelight = 0;
+      *reset_sys = clone_system(*sys);
       *state = SIMULATION_PROGRESS;
     }
 
