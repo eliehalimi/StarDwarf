@@ -102,16 +102,16 @@ int main()
 			if(sys)
 			{
 				camera_event(sys->camera, &e, &selected);
-				if(selected != NULL)
-				{
-					item_to_input(text_list, selected);
-					selected = NULL;
-				}
 			}
 		}
 		draw(renderer, button_list, window_list, draw_list, text_list);
 		if(sys != NULL)
 		{
+			if(selected != NULL)
+			{
+				item_to_input(text_list, selected);
+				
+			}
 			if(!*((int *)(access_htable(draw_list, "pausemenu")->value)))
 			{
 				update_system(sys);
