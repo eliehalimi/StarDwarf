@@ -259,7 +259,13 @@ void clean(struct htable *button_list, struct htable *window_list, struct htable
   free((struct text *)(access_htable(text_list, "item_vy")->value));
   free(((struct text *)(access_htable(text_list, "item_vz")->value))->text);
   free((struct text *)(access_htable(text_list, "item_vz")->value));
-  
+
+  //  free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->maxvalue);
+  // free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->minvalue);
+  // free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->bar);
+  //free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->unselected);
+  //free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->selected);
+
   SDL_StopTextInput();
 
   SDL_DestroyWindow(window);

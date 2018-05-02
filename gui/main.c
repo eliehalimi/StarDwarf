@@ -99,7 +99,7 @@ int main()
 			button_event(access_htable(button_list, "delete")->value, &e, access_htable(draw_list, "mainmenu")->value);
 			button_event(access_htable(button_list, "start_mainmenu")->value, &e, access_htable(draw_list, "mainmenu")->value);
 
-			slider_event(access_htable(slider_list, "timelapse")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			slider_event(access_htable(slider_list, "timelapse")->value, &e, access_htable(draw_list, "mainmenu")->value, sys);
 
 			button_event(access_htable(button_list, "pause")->value, &e, access_htable(draw_list, "mainmenu")->value);
 

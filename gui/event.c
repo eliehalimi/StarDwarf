@@ -10,7 +10,7 @@
 # define SPEEDROTATION 0.01f
 # define SPEEDTRANSLATION 1
 
-int slider_new(struct slider *slider, struct image *bar, struct image *selected, struct image *unselected, int horizontal, int x, int y, struct window *window)
+int slider_new(struct slider *slider, struct image *bar, struct image *selected, struct image *unselected, int horizontal, int x, int y, struct window *window, void *maxvalue, void *minvalue)
 {
   if (!slider) return -1;
   slider->active = 0;
@@ -28,6 +28,8 @@ int slider_new(struct slider *slider, struct image *bar, struct image *selected,
   else
     slider->maxlength = bar->h;
   slider->curlength = 0;
+  slider->maxvalue = maxvalue;
+  slider->minvalue = minvalue;
   
   slider->window = window;
   slider->bar = bar;
@@ -37,7 +39,7 @@ int slider_new(struct slider *slider, struct image *bar, struct image *selected,
 }
 
 
-int slider_event(struct slider *slider, SDL_Event *event, int *draw)
+int slider_event(struct slider *slider, SDL_Event *event, int *draw, struct system *sys)
 {
   slider->event = slider->window->event;
   if (!slider || !slider->event || !event) return 0;
@@ -72,7 +74,8 @@ int slider_event(struct slider *slider, SDL_Event *event, int *draw)
 		  slider->curlength = slider->rect_token.y - slider->rect_bar.y;
 		  slider->mousepos = event->button.y;
 
-		}	    
+		}
+	  //	  sys->delta_time = *(float *)slider->minvalue + (*(float *)slider->maxvalue - *(float *)slider->maxvalue)*(slider->curlength/slider->maxlength);
 	}
       else if (event->type == SDL_MOUSEBUTTONUP && PointInRect(event->motion.x, event->motion.y, &slider->rect_token))
 	{
@@ -89,19 +92,25 @@ int slider_event(struct slider *slider, SDL_Event *event, int *draw)
 	}
   return 1;
 }
-int window_new(struct window *window, struct image *bg, int x, int y, int w, int h)
+int window_new(struct window *window, struct image *bg, int x, int y, int w, int h, struct window *parent)
 {
   if (!window) return -1;
+  window->parent = parent;
   window->bg = bg;
   MakeRect(&window->rect, x, y, w, h);
   window->visible = 0;
-  window->event = 0;
+  if (window->parent)
+    window->event = window->parent->event;
+  else
+    window->event = 0;
   return 0;
 }
 
 int window_event(struct window *window, SDL_Event *event, int *draw)
 {
   if (!window || !window->event || !event) return 0;
+  if (window->parent)
+    window->event = window->parent->event;
   if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_EXPOSED)
     *draw = 1;
   if (event->type == SDL_MOUSEBUTTONDOWN && PointInRect(event->button.x, event->button.y, &window->rect))

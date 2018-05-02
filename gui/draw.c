@@ -252,9 +252,10 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
     {
       ((struct button *)(access_htable(button_list, "pause")->value))->active = 0;
       ((struct button *)(access_htable(button_list, "pause")->value))->prelight = 0;
-      ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
       ((struct window *)(access_htable(window_list, "pausemenu")->value))->visible = 1;
       ((struct window *)(access_htable(window_list, "pausemenu")->value))->event = 1;
+      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 0;
+ 
       *((int *)(access_htable(draw_list, "pausemenu")->value)) = 1;
       if(*state == SIMULATION_PROGRESS)
 	*state = SIMULATION_PAUSE;
@@ -293,8 +294,12 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct window *)(access_htable(window_list, "pausemenu")->value))->visible = 0;
       ((struct window *)(access_htable(window_list, "pausemenu")->value))->event = 0;
       ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 1;
+      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 1;
+ 
       *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
     }
+
+  
   else if (((struct button *)(access_htable(button_list, "quit_mainmenu")->value))->active)
     {
       ((struct button *)(access_htable(button_list, "quit_mainmenu")->value))->active = 0;

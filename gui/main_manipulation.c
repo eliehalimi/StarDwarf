@@ -198,49 +198,51 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	add_htable(button_list, "saveandquit", malloc(sizeof(struct button)));
 	add_htable(window_list, "pausemenu", malloc(sizeof(struct window)));
 
-	window_new(access_htable(window_list, "startmenu")->value, access_htable(img_list, "startmenu")->value, 0, 0, w, h);
+	window_new(access_htable(window_list, "startmenu")->value, access_htable(img_list, "startmenu")->value, 0, 0, w, h, NULL);
 	button_new(access_htable(button_list, "new")->value, access_htable(img_list,"new_selected")->value, access_htable(img_list, "new_unselected")->value, 400, 320, access_htable(window_list, "startmenu")->value);
 	button_new(access_htable(button_list, "load")->value, access_htable(img_list,"load_selected")->value, access_htable(img_list,"load_unselected")->value, 400, 415, access_htable(window_list, "startmenu")->value);
 	button_new(access_htable(button_list, "option")->value, access_htable(img_list,"options_selected")->value, access_htable(img_list,"options_unselected")->value, 400, 510, access_htable(window_list, "startmenu")->value);
 	button_new(access_htable(button_list, "quit")->value, access_htable(img_list,"quit_selected")->value, access_htable(img_list,"quit_unselected")->value, 400, 605, access_htable(window_list, "startmenu")->value);
 
 	
-	window_new(access_htable(window_list, "optionmenu")->value, access_htable(img_list,"optionmenu")->value, 0, 0, w, h);
+	window_new(access_htable(window_list, "optionmenu")->value, access_htable(img_list,"optionmenu")->value, 0, 0, w, h, NULL);
 	button_new(access_htable(button_list, "credit")->value, access_htable(img_list,"credit_selected")->value, access_htable(img_list,"credit_unselected")->value, 400, 300, access_htable(window_list, "optionmenu")->value);
 	button_new(access_htable(button_list, "volume")->value, access_htable(img_list,"volume_selected")->value, access_htable(img_list,"volume_unselected")->value, 400, 400, access_htable(window_list, "optionmenu")->value);
 	button_new(access_htable(button_list, "back_optionmenu")->value, access_htable(img_list,"back_selected")->value, access_htable(img_list,"back_unselected")->value,400,600, access_htable(window_list, "optionmenu")->value);
 
 	
-	window_new(access_htable(window_list, "creditmenu")->value, access_htable(img_list,"creditmenu")->value, 0, 0, w, h);
+	window_new(access_htable(window_list, "creditmenu")->value, access_htable(img_list,"creditmenu")->value, 0, 0, w, h, NULL);
 	button_new(access_htable(button_list, "back_creditmenu")->value, access_htable(img_list,"back_selected")->value, access_htable(img_list,"back_unselected")->value, 400, 600, access_htable(window_list, "creditmenu")->value);
 
 	
-	window_new(access_htable(window_list, "namemenu")->value, access_htable(img_list,"namemenu")->value, 260, 200, 739, 300);
+	window_new(access_htable(window_list, "namemenu")->value, access_htable(img_list,"namemenu")->value, 260, 200, 739, 300, NULL);
 	button_new(access_htable(button_list, "x")->value, access_htable(img_list,"x_selected")->value, access_htable(img_list,"x_unselected")->value, 945, 205, access_htable(window_list, "namemenu")->value);
 	button_new(access_htable(button_list, "start")->value, access_htable(img_list,"start_selected")->value, access_htable(img_list,"start_unselected")->value, 500, 400, access_htable(window_list, "namemenu")->value);
 
 	
-	window_new(access_htable(window_list, "mainmenu")->value, access_htable(img_list,"mainmenu")->value, 0, 0, w, h);
-	window_new(access_htable(window_list, "itemsmenu")->value, access_htable(img_list,"itemsmenu")->value, 1053, 44, 227,676);
+	window_new(access_htable(window_list, "mainmenu")->value, access_htable(img_list,"mainmenu")->value, 0, 0, w, h, NULL);
+	window_new(access_htable(window_list, "itemsmenu")->value, access_htable(img_list,"itemsmenu")->value, 1053, 44, 227,676, access_htable(window_list, "mainmenu")->value);
 	button_new(access_htable(button_list, "pause")->value, access_htable(img_list,"pause_selected")->value, access_htable(img_list,"pause_unselected")->value, 0, 0, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "item_name")->value, access_htable(img_list,"item_namebox_selected")->value, access_htable(img_list,"item_namebox_unselected")->value, 1073, 68, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "item_x")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1095, 130, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "item_y")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1095, 158, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "item_z")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1095, 186, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "item_mass")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 239, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "item_radius")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 289, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "item_vx")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 340, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "item_vy")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 368, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "item_vz")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 396, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "add")->value, access_htable(img_list,"add_selected")->value, access_htable(img_list,"add_unselected")->value, 1090, 565, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "start_mainmenu")->value, access_htable(img_list,"start_mainmenu_selected")->value, access_htable(img_list,"start_mainmenu_unselected")->value, 1090, 610, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "delete")->value, access_htable(img_list,"delete_selected")->value, access_htable(img_list,"delete_unselected")->value, 1090, 660, access_htable(window_list, "mainmenu")->value);
-	slider_new(access_htable(slider_list, "timelapse")->value, access_htable(img_list,"timelapse")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 1060, 440, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "reset")->value, access_htable(img_list,"reset_selected")->value, access_htable(img_list,"reset_unselected")->value, 1080, 510, access_htable(window_list, "mainmenu")->value);
+	button_new(access_htable(button_list, "item_name")->value, access_htable(img_list,"item_namebox_selected")->value, access_htable(img_list,"item_namebox_unselected")->value, 1073, 68, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "item_x")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1095, 130, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "item_y")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1095, 158, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "item_z")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1095, 186, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "item_mass")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 239, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "item_radius")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 289, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "item_vx")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 340, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "item_vy")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 368, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "item_vz")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1090, 396, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "add")->value, access_htable(img_list,"add_selected")->value, access_htable(img_list,"add_unselected")->value, 1090, 565, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "start_mainmenu")->value, access_htable(img_list,"start_mainmenu_selected")->value, access_htable(img_list,"start_mainmenu_unselected")->value, 1090, 610, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "delete")->value, access_htable(img_list,"delete_selected")->value, access_htable(img_list,"delete_unselected")->value, 1090, 660, access_htable(window_list, "itemsmenu")->value);
+	float maxval = 1.0f, minval = 0.1f;
+	slider_new(access_htable(slider_list, "timelapse")->value, access_htable(img_list,"timelapse")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 1060, 440, access_htable(window_list, "itemsmenu")->value, &maxval, &minval);
+
+	button_new(access_htable(button_list, "reset")->value, access_htable(img_list,"reset_selected")->value, access_htable(img_list,"reset_unselected")->value, 1080, 510, access_htable(window_list, "itemsmenu")->value);
 	
 
 	
-	window_new(access_htable(window_list, "pausemenu")->value, access_htable(img_list,"pausemenu")->value, 0, 44, 227,676);
+	window_new(access_htable(window_list, "pausemenu")->value, access_htable(img_list,"pausemenu")->value, 0, 44, 227,676, access_htable(window_list, "mainmenu")->value);
 	button_new(access_htable(button_list, "resume")->value, access_htable(img_list,"resume_selected")->value, access_htable(img_list,"resume_unselected")->value, 30, 70, access_htable(window_list, "pausemenu")->value);
 	button_new(access_htable(button_list, "saveandquit")->value, access_htable(img_list,"saveandquit_selected")->value, access_htable(img_list,"saveandquit_unselected")->value, 15, 210, access_htable(window_list, "pausemenu")->value);
 

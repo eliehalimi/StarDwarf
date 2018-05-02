@@ -31,6 +31,8 @@ struct slider{
   int horizontal;
   int maxlength;
   int curlength;
+  void *maxvalue;
+  void *minvalue;
   
   struct window *window;
   struct image *bar;
@@ -78,12 +80,12 @@ int image_new(struct image *img, char *fname, SDL_Renderer* renderer);
 
 SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list);
 
-int slider_new(struct slider *slider, struct image *bar, struct image *selected, struct image *unselected, int horizontal, int x, int y, struct window *window);
-int slider_event(struct slider *slider, SDL_Event *event, int *draw);
+int slider_new(struct slider *slider, struct image *bar, struct image *selected, struct image *unselected, int horizontal, int x, int y, struct window *window, void *maxvalue, void *minvalue);
+int slider_event(struct slider *slider, SDL_Event *event, int *draw, struct system *sys);
 
 int slider_draw(struct slider *slider, SDL_Renderer *renderer);
 
-int window_new(struct window *window, struct image *bg, int x, int y, int w, int h);
+int window_new(struct window *window, struct image *bg, int x, int y, int w, int h, struct window *parent);
 
 int window_event(struct window *window, SDL_Event *event, int *draw);
 
