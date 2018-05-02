@@ -112,7 +112,7 @@ int button_event(struct button *button, SDL_Event *event, int *draw)
   return 1;
 }
 
-int camera_event(struct camera *camera, SDL_Event *event)
+int camera_event(struct camera *camera, SDL_Event *event, struct item **selected)
 {
 	if(!camera || !event) return 0;
 
@@ -150,11 +150,7 @@ int camera_event(struct camera *camera, SDL_Event *event)
 	else if(camera->event_type == NOTMOVING && event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_LEFT)
 	  {
 	    struct item *i = selecting_item(camera);
-	    if(i != NULL)
-	      {
-		//fill user's input with i's values
-		printf("%p\n", i);
-	      }
+	    *selected = i;
 	  }
 	
 	

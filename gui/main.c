@@ -25,6 +25,7 @@ int main()
 {
 	SDL_Event e;
 	struct system *sys = NULL;
+	struct item *selected = NULL;
 	struct htable *button_list = create_htable(20);
 	struct htable *window_list = create_htable(10);
 	struct htable *img_list = create_htable(40);
@@ -99,7 +100,14 @@ int main()
 			button_event(access_htable(button_list, "quit_mainmenu")->value, &e, access_htable(draw_list, "pausemenu")->value);
 			button_event(access_htable(button_list, "resume")->value, &e, access_htable(draw_list, "pausemenu")->value);
 			if(sys)
-			  camera_event(sys->camera, &e);
+			  {
+			    camera_event(sys->camera, &e, &selected);
+			    if(selected != NULL)
+			      {
+				printf("%p\n", selected);
+				item_to_input(text_list, selected);
+			      }
+			  }
 			
 		}
 		draw(renderer, button_list, window_list, draw_list, text_list, sys);

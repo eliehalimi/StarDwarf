@@ -5,7 +5,8 @@
 # include "../Physic/libvector.h"
 # include "../Camera/camera.h"
 # include "hash_table.h"
-extern struct system *sys;
+
+//extern struct system *sys;
 struct image{
   SDL_Texture *texture;
   int w;
@@ -61,16 +62,25 @@ int button_new(struct button *button, struct image *selected, struct image *unse
 int button_event(struct button *button, SDL_Event *event, int *draw);
 
 int button_draw(struct button *button, SDL_Renderer *renderer);
-  
+
 void clean(struct htable *button_list, struct htable *window_list, struct htable  *img_list, struct htable *draw_list, struct htable *text_list);
+
+
 
 //text input
 void item_to_input(struct htable *text_list, struct item *item);
+
 struct text *get_text(struct htable *text_list, char *name);
+
 void input_to_item(struct htable *text_list, struct item *item);
+
 void display_text(SDL_Renderer *renderer, struct htable *text_list, char *name, int x, int h, int rgb, int size);
+
 void textinput(SDL_Event e, struct text *text, int maxchr, struct button *button);
+
 void init_textinput(struct htable *text_list, char *name, int size);
+
+
 
 //supporting main
 void init_lists(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list,  struct htable *draw_list, struct htable *text_list);
@@ -83,6 +93,6 @@ struct system *init_system(int w, int h, struct htable *text_list) ;
 void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list,  struct htable *draw_list, struct htable *text_list, struct system *sys);
 
 //camera
-int camera_event(struct camera *camera, SDL_Event *event);
+int camera_event(struct camera *camera, SDL_Event *event, struct item **selected);
 
 # endif
