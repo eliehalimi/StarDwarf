@@ -10,6 +10,85 @@
 # define SPEEDROTATION 0.01f
 # define SPEEDTRANSLATION 1
 
+int slider_new(struct slider *slider, struct image *bar, struct image *selected, struct image *unselected, int horizontal, int x, int y, struct window *window)
+{
+  if (!slider) return -1;
+  slider->active = 0;
+  slider->prelight = 0;
+  slider->event = window->event;
+  slider->visible = window->visible;
+ 
+  MakeRect(&slider->rect_bar, x, y, bar->w, bar->h);
+  MakeRect(&slider->rect_token, x, y+7, selected->w, selected->h);
+
+  slider->mousedown = 0;
+  slider->horizontal = horizontal;
+  if (horizontal)
+    slider->maxlength = bar->w;
+  else
+    slider->maxlength = bar->h;
+  slider->curlength = 0;
+  
+  slider->window = window;
+  slider->bar = bar;
+  slider->selected = selected;
+  slider->unselected = unselected;
+  return 0;
+}
+
+
+int slider_event(struct slider *slider, SDL_Event *event, int *draw)
+{
+  slider->event = slider->window->event;
+  if (!slider || !slider->event || !event) return 0;
+ 
+  if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_EXPOSED)
+    *draw = 1;
+  if (event->type == SDL_MOUSEBUTTONDOWN&& PointInRect(event->button.x, event->button.y, &slider->rect_token))
+    {
+      slider->mousepos = event->button.x;
+      slider->mousedown = 1;
+      slider->active = 1;
+      slider->prelight = 1;
+      *draw = 1;
+    }
+  else if (event->type == SDL_MOUSEMOTION && slider->mousedown && PointInRect(event->button.x, event->button.y, &slider->rect_token))
+	{
+          slider->prelight = 1;
+	  *draw = 1;
+	  if (slider->horizontal)
+	    {
+	      if (event->button.x - slider->rect_bar.x > 0 && event->button.x - slider->rect_bar.x < slider->maxlength)
+		{
+		  slider->rect_token.x = slider->rect_token.x + event->button.x - slider->mousepos;
+		  slider->curlength = slider->rect_token.x - slider->rect_bar.x;
+		  slider->mousepos = event->button.x;
+		}
+	    }
+	  else
+	      if (event->button.y - slider->rect_bar.y > 0 && event->button.y - slider->rect_bar.y < slider->maxlength)
+		{
+		  slider->rect_token.y = slider->rect_token.y + event->button.y - slider->mousepos;
+		  slider->curlength = slider->rect_token.y - slider->rect_bar.y;
+		  slider->mousepos = event->button.y;
+
+		}	    
+	}
+      else if (event->type == SDL_MOUSEBUTTONUP && PointInRect(event->motion.x, event->motion.y, &slider->rect_token))
+	{
+	  slider->mousedown = 0;
+	  slider->prelight = 1;
+	  *draw = 1;
+	}
+      else if (!PointInRect(event->motion.x, event->motion.y, &slider->rect_token))
+	{
+	  slider->mousedown = 0;
+	  slider->prelight = 0;
+	  slider->active = 0;
+	  *draw = 1;  
+	}
+  return 1;
+}
 int window_new(struct window *window, struct image *bg, int x, int y, int w, int h)
 {
   if (!window) return -1;

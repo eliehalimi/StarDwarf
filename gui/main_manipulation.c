@@ -150,7 +150,7 @@ void init_text_list(struct htable *text_list)
   init_text(text_list, "item_vy", 20, 1);
   init_text(text_list, "item_vz", 20, 1);
 }
-void init_lists(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list)
+void init_lists(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list)
 {
   
         init_draw_list(draw_list);
@@ -187,12 +187,15 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	add_htable(button_list, "add", malloc(sizeof(struct button)));
 	add_htable(button_list, "delete", malloc(sizeof(struct button)));
 	add_htable(button_list, "start_mainmenu", malloc(sizeof(struct button)));
+	add_htable(slider_list, "timelapse", malloc(sizeof(struct slider)));
 
 	add_htable(window_list, "mainmenu", malloc(sizeof(struct window)));
 	add_htable(window_list, "itemsmenu", malloc(sizeof(struct window)));
 	
 	add_htable(button_list, "resume", malloc(sizeof(struct button)));
 	add_htable(button_list, "quit_mainmenu", malloc(sizeof(struct button)));
+	add_htable(button_list, "reset", malloc(sizeof(struct button)));
+	add_htable(button_list, "saveandquit", malloc(sizeof(struct button)));
 	add_htable(window_list, "pausemenu", malloc(sizeof(struct window)));
 
 	window_new(access_htable(window_list, "startmenu")->value, access_htable(img_list, "startmenu")->value, 0, 0, w, h);
@@ -232,12 +235,16 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	button_new(access_htable(button_list, "add")->value, access_htable(img_list,"add_selected")->value, access_htable(img_list,"add_unselected")->value, 1090, 560, access_htable(window_list, "mainmenu")->value);
 	button_new(access_htable(button_list, "start_mainmenu")->value, access_htable(img_list,"start_mainmenu_selected")->value, access_htable(img_list,"start_mainmenu_unselected")->value, 1090, 610, access_htable(window_list, "mainmenu")->value);
 	button_new(access_htable(button_list, "delete")->value, access_htable(img_list,"delete_selected")->value, access_htable(img_list,"delete_unselected")->value, 1090, 660, access_htable(window_list, "mainmenu")->value);
+	slider_new(access_htable(slider_list, "timelapse")->value, access_htable(img_list,"timelapse")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 1060, 450, access_htable(window_list, "mainmenu")->value);
 	
 
 	
-	window_new(access_htable(window_list, "pausemenu")->value, access_htable(img_list,"pausemenu")->value, 400, 80, 739, 300);
-	button_new(access_htable(button_list, "resume")->value, access_htable(img_list,"resume_selected")->value, access_htable(img_list,"resume_unselected")->value, 520, 110, access_htable(window_list, "pausemenu")->value);
-	button_new(access_htable(button_list, "quit_mainmenu")->value, access_htable(img_list,"quit_mainmenu_selected")->value, access_htable(img_list,"quit_mainmenu_unselected")->value, 520, 560, access_htable(window_list, "pausemenu")->value);
+	window_new(access_htable(window_list, "pausemenu")->value, access_htable(img_list,"pausemenu")->value, 0, 44, 227,676);
+	button_new(access_htable(button_list, "resume")->value, access_htable(img_list,"resume_selected")->value, access_htable(img_list,"resume_unselected")->value, 30, 70, access_htable(window_list, "pausemenu")->value);
+	button_new(access_htable(button_list, "reset")->value, access_htable(img_list,"reset_selected")->value, access_htable(img_list,"reset_unselected")->value, 30, 140, access_htable(window_list, "pausemenu")->value);
+	button_new(access_htable(button_list, "saveandquit")->value, access_htable(img_list,"saveandquit_selected")->value, access_htable(img_list,"saveandquit_unselected")->value, 15, 210, access_htable(window_list, "pausemenu")->value);
+
+	button_new(access_htable(button_list, "quit_mainmenu")->value, access_htable(img_list,"quit_mainmenu_selected")->value, access_htable(img_list,"quit_mainmenu_unselected")->value, 30, 280, access_htable(window_list, "pausemenu")->value);
 
 
 	((struct button *)(access_htable(button_list, "item_name")->value))->textbox = 1;

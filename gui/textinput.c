@@ -17,7 +17,7 @@ void text_to_input(struct text *input, char * text)
   //free(input->text); 
   //input->text = malloc(20*sizeof(char));                                
   size_t i = 0;
-  for (; i < 15 && text[i] != '\0'; i++)
+  for (; i < 12 && text[i] != '\0'; i++)
     input->text[i] = text[i];
   input->nbchar = i;
   input->active = 1;
@@ -39,42 +39,42 @@ void item_to_input(struct htable *text_list, struct item *item)
   name->nbchar = get_nbchar(name->text);
 
   struct text *mass = get_text(text_list, "item_mass");
-  gcvt(item->mass, 15, mass->text);
+  gcvt(item->mass, 10, mass->text);
   mass->active = 1;
   mass->nbchar = get_nbchar(mass->text);
 
   struct text *radius = get_text(text_list, "item_radius");
-  gcvt(item->size, 15, radius->text);
+  gcvt(item->size, 12, radius->text);
   radius->active = 1;
   radius->nbchar = get_nbchar(radius->text);
   
   struct text *x = get_text(text_list, "item_x");
-  gcvt(item->position.values[0], 15, x->text);
+  gcvt(item->position.values[0], 12, x->text);
   x->active = 1;
   x->nbchar = get_nbchar(x->text);
 
   struct text *y = get_text(text_list, "item_y");
-  gcvt(item->position.values[1], 15, y->text);
+  gcvt(item->position.values[1], 12, y->text);
   y->active = 1;
   y->nbchar = get_nbchar(y->text);
 
   struct text *z = get_text(text_list, "item_z");
-  gcvt(item->position.values[2], 15, z->text);
+  gcvt(item->position.values[2], 12, z->text);
   z->active = 1;
   z->nbchar = get_nbchar(z->text);
 
   struct text *vx = get_text(text_list, "item_vx");
-  gcvt(item->velocity.values[0], 15, vx->text);
+  gcvt(item->velocity.values[0], 12, vx->text);
   vx->active = 1;
   vx->nbchar = get_nbchar(vx->text);
 
   struct text *vy = get_text(text_list, "item_vy");
-  gcvt(item->velocity.values[1], 15, vy->text);
+  gcvt(item->velocity.values[1], 12, vy->text);
   vy->active = 1;
   vy->nbchar = get_nbchar(vy->text);
 
   struct text *vz = get_text(text_list, "item_vz");
-  gcvt(item->velocity.values[2], 15, vz->text);
+  gcvt(item->velocity.values[2], 12, vz->text);
   vz->active = 1;
   vz->nbchar = get_nbchar(vz->text);
 

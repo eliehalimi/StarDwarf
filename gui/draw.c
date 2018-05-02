@@ -31,9 +31,28 @@ int button_draw(struct button *button, SDL_Renderer *renderer)
     RenderImage(renderer, button->unselected, button->rect.x, button->rect.y, NULL);
   return 1;
 }
+int slider_draw(struct slider *slider, SDL_Renderer *renderer)
+{
+  slider->visible = slider->window->visible;
+  if (!slider || !slider->visible || !renderer) return 0;
+  RenderImage(renderer, slider->bar, slider->rect_bar.x, slider->rect_bar.y, NULL);
+  if (!slider->selected)
+    printf("image is NULL \n");
+  if (!slider->unselected)
+    printf("image is NULL \n");
+  if (!slider->bar)
+    printf("image is NULL \n");
+  
+  if (slider->prelight)
+    RenderImage(renderer, slider->selected, slider->rect_token.x, slider->rect_token.y, NULL);
+  else
+    RenderImage(renderer, slider->unselected, slider->rect_token.x, slider->rect_token.y, NULL);
+  return 1;
+}
 
 
-void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list)
+
+void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list)
 {
   
   if (*((int *)(access_htable(draw_list, "startmenu")->value)))
@@ -84,7 +103,11 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       button_draw(access_htable(button_list, "delete")->value, renderer);
       button_draw(access_htable(button_list, "add")->value, renderer);
       button_draw(access_htable(button_list, "start_mainmenu")->value, renderer);
-      
+
+
+      slider_draw(access_htable(slider_list, "timelapse")->value, renderer);
+
+
       display_text(renderer, text_list, "intro", 60, 0, 255, 31);
       display_text(renderer, text_list, "item_name", 1080, 70, 0, 25);
       display_text(renderer, text_list, "item_x", 1100, 132, 0, 17);
@@ -102,6 +125,9 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       window_draw(access_htable(window_list, "pausemenu")->value, renderer);
       button_draw(access_htable(button_list, "resume")->value, renderer);
       button_draw(access_htable(button_list, "quit_mainmenu")->value, renderer);
+      button_draw(access_htable(button_list, "reset")->value, renderer);
+      button_draw(access_htable(button_list, "saveandquit")->value, renderer);
+
     }
 }
 
@@ -158,23 +184,23 @@ void button_active(int w, int h, int *quit, struct system **sys, struct htable *
       *sys = init_system(w, h, text_list);
     }
   else if (((struct button *)(access_htable(button_list, "item_name")->value))->active)
-      init_textinput(text_list, "item_name", 15);
+    init_textinput(text_list, "item_name", 15);
   else if (((struct button *)(access_htable(button_list, "item_x")->value))->active)
-      init_textinput(text_list, "item_x", 15);
+    init_textinput(text_list, "item_x", 15);
   else if (((struct button *)(access_htable(button_list, "item_y")->value))->active)
-      init_textinput(text_list, "item_y", 15);
+    init_textinput(text_list, "item_y", 15);
   else if (((struct button *)(access_htable(button_list, "item_z")->value))->active)
-      init_textinput(text_list, "item_z", 15);
+    init_textinput(text_list, "item_z", 15);
   else if (((struct button *)(access_htable(button_list, "item_mass")->value))->active)
-      init_textinput(text_list, "item_mass", 15);
+    init_textinput(text_list, "item_mass", 15);
   else if (((struct button *)(access_htable(button_list, "item_radius")->value))->active)
-      init_textinput(text_list, "item_radius", 15);
+    init_textinput(text_list, "item_radius", 15);
   else if (((struct button *)(access_htable(button_list, "item_vx")->value))->active)
     init_textinput(text_list, "item_vx", 15);
   else if (((struct button *)(access_htable(button_list, "item_vy")->value))->active)
-      init_textinput(text_list, "item_vy", 15);
+    init_textinput(text_list, "item_vy", 15);
   else if (((struct button *)(access_htable(button_list, "item_vz")->value))->active)
-      init_textinput(text_list, "item_vz", 15);
+    init_textinput(text_list, "item_vz", 15);
   else if (((struct button *)(access_htable(button_list, "option")->value))->active)
     {
       ((struct button *)(access_htable(button_list, "option")->value))->active = 0;
@@ -266,7 +292,30 @@ void button_active(int w, int h, int *quit, struct system **sys, struct htable *
       free_system(*sys);
       *sys = NULL;
       *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
+    }
 
+  
+  else if (((struct button *)(access_htable(button_list, "saveandquit")->value))->active)
+    {
+      ((struct button *)(access_htable(button_list, "quit_mainmenu")->value))->active = 0;
+      ((struct button *)(access_htable(button_list, "quit_mainmenu")->value))->prelight = 0;
+      ((struct window *)(access_htable(window_list, "pausemenu")->value))->visible = 0;
+      ((struct window *)(access_htable(window_list, "pausemenu")->value))->event = 0;
+      ((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 0;
+      ((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 1;
+      ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 1;
+
+      ((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 0;
+      ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 0;
+      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->visible = 0;
+      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 0;
+      *((int *)(access_htable(draw_list, "startmenu")->value))= 1;
+      *((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
+      *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
+      //save here
+
+      free_system(*sys);
+      *sys = NULL;
     }
   else if (((struct button *)(access_htable(button_list, "load")->value))->active)
     {

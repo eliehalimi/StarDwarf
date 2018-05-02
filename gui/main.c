@@ -27,20 +27,22 @@ int main()
 	struct system *sys = NULL;
 	struct item *selected = NULL;
 	struct htable *button_list = create_htable(20);
+	struct htable *slider_list = create_htable(3);	
 	struct htable *window_list = create_htable(10);
 	struct htable *img_list = create_htable(40);
 	struct htable *draw_list = create_htable(10);
 	struct htable *text_list = create_htable(10);
 
 	int simulation_state = SIMULATION_EDIT;
-	
-	SDL_Renderer *renderer = init("Kurt Russel's teapot - StarDwarf",1280, 720, button_list, window_list, img_list, draw_list, text_list);
+
+	SDL_Renderer *renderer = init("Kurt Russel's teapot - StarDwarf",1280, 720, button_list, window_list, img_list, draw_list, text_list, slider_list);
 	if (!renderer) return 1;
-	init_lists(WINDOW_W, WINDOW_H, button_list, window_list, img_list, draw_list, text_list);
+	init_lists(WINDOW_W, WINDOW_H, button_list, window_list, img_list, draw_list, text_list, slider_list);
 	int quit = 0;
 	TTF_Init();
 	((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 1;
 	((struct window *)(access_htable(window_list, "startmenu")->value))->event = 1;
+	
 	SDL_StartTextInput();
 	while (!quit)
 	{
@@ -96,20 +98,24 @@ int main()
 			button_event(access_htable(button_list, "delete")->value, &e, access_htable(draw_list, "mainmenu")->value);
 			button_event(access_htable(button_list, "start_mainmenu")->value, &e, access_htable(draw_list, "mainmenu")->value);
 
+			slider_event(access_htable(slider_list, "timelapse")->value, &e, access_htable(draw_list, "mainmenu")->value);
 
 			button_event(access_htable(button_list, "pause")->value, &e, access_htable(draw_list, "mainmenu")->value);
 
 			window_event(access_htable(window_list, "pausemenu")->value, &e, access_htable(draw_list, "pausemenu")->value);
 			button_event(access_htable(button_list, "quit_mainmenu")->value, &e, access_htable(draw_list, "pausemenu")->value);
 			button_event(access_htable(button_list, "resume")->value, &e, access_htable(draw_list, "pausemenu")->value);
+			button_event(access_htable(button_list, "reset")->value, &e, access_htable(draw_list, "pausemenu")->value);
+			button_event(access_htable(button_list, "saveandquit")->value, &e, access_htable(draw_list, "pausemenu")->value);
+
 			if(sys)
 			{
 				camera_event(sys->camera, &e, &selected);
 			}
 		}
-
+		
 		SDL_RenderClear(renderer);
-		draw(renderer, button_list, window_list, draw_list, text_list);
+		draw(renderer, button_list, window_list, draw_list, text_list, slider_list);
 		if(sys != NULL)
 		{
 			if(selected != NULL)
@@ -143,7 +149,7 @@ int main()
 
 
 	}
-	clean(button_list, window_list, img_list, draw_list, text_list);
+	clean(button_list, window_list, img_list, draw_list, text_list, slider_list);
 	return 0;
 }
 
