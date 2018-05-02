@@ -122,7 +122,10 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   add_htable(img_list, "token_slider_selected", malloc(sizeof(struct image)));
   add_htable(img_list, "token_slider_unselected", malloc(sizeof(struct image)));
 
-  
+
+  add_htable(img_list, "loadmenu", malloc(sizeof(struct image)));
+
+
 
   
   
@@ -181,7 +184,9 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   r += image_new(access_htable(img_list, "start_mainmenu_unselected")->value, "start_mainmenu_unselected.png", renderer);
   r += image_new(access_htable(img_list, "timelapse")->value, "timelapse.png", renderer);
   r += image_new(access_htable(img_list, "token_slider_unselected")->value, "token_slider_unselected.png", renderer);
-    r += image_new(access_htable(img_list, "token_slider_selected")->value, "token_slider_selected.png", renderer);
+  r += image_new(access_htable(img_list, "token_slider_selected")->value, "token_slider_selected.png", renderer);
+
+  r += image_new(access_htable(img_list, "loadmenu")->value, "loadmenu.png", renderer);
   
   if (r)
     {
@@ -225,6 +230,9 @@ void clean(struct htable *button_list, struct htable *window_list, struct htable
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "pausemenu")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "resume_selected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "resume_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "saveandquit_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "saveandquit_unselected")->value)->texture);
+
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "quit_mainmenu_selected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "quit_mainmenu_unselected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "itemsmenu")->value)->texture);
@@ -238,7 +246,16 @@ void clean(struct htable *button_list, struct htable *window_list, struct htable
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "add_unselected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "delete_selected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "delete_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "start_mainmenu_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "start_mainmenu_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "reset_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "reset_unselected")->value)->texture);  
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "token_slider_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "token_slider_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "timelapse")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "loadmenu")->value)->texture);
 
+  
   free(((struct text *)(access_htable(text_list, "name")->value))->text);
   free((struct text *)(access_htable(text_list, "name")->value));
   free(((struct text *)(access_htable(text_list, "intro")->value))->text);

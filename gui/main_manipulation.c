@@ -235,8 +235,10 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	button_new(access_htable(button_list, "add")->value, access_htable(img_list,"add_selected")->value, access_htable(img_list,"add_unselected")->value, 1090, 565, access_htable(window_list, "itemsmenu")->value);
 	button_new(access_htable(button_list, "start_mainmenu")->value, access_htable(img_list,"start_mainmenu_selected")->value, access_htable(img_list,"start_mainmenu_unselected")->value, 1090, 610, access_htable(window_list, "itemsmenu")->value);
 	button_new(access_htable(button_list, "delete")->value, access_htable(img_list,"delete_selected")->value, access_htable(img_list,"delete_unselected")->value, 1090, 660, access_htable(window_list, "itemsmenu")->value);
-	float maxval = 1.0f, minval = 0.1f;
-	slider_new(access_htable(slider_list, "timelapse")->value, access_htable(img_list,"timelapse")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 1060, 440, access_htable(window_list, "itemsmenu")->value, &maxval, &minval);
+	float *maxval =malloc(sizeof(float)), *minval = malloc(sizeof(float));
+	*maxval = 2.0f;
+	*minval = 0.1f;
+	slider_new(access_htable(slider_list, "timelapse")->value, access_htable(img_list,"timelapse")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 1060, 440, access_htable(window_list, "itemsmenu")->value, maxval, minval);
 
 	button_new(access_htable(button_list, "reset")->value, access_htable(img_list,"reset_selected")->value, access_htable(img_list,"reset_unselected")->value, 1080, 510, access_htable(window_list, "itemsmenu")->value);
 	
