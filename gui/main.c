@@ -106,6 +106,7 @@ int main()
 			      {
 				printf("%p\n", selected);
 				item_to_input(text_list, selected);
+				selected = NULL;
 			      }
 			  }
 			

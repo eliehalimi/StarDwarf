@@ -99,6 +99,12 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   add_htable(img_list, "quit_mainmenu_unselected", malloc(sizeof(struct image)));
   add_htable(img_list, "resume_selected", malloc(sizeof(struct image)));
   add_htable(img_list, "resume_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "saveandquit_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "saveandquit_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "reset_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "reset_unselected", malloc(sizeof(struct image)));
+  
+  
   add_htable(img_list, "itemsmenu", malloc(sizeof(struct image)));
   add_htable(img_list, "item_namebox_selected", malloc(sizeof(struct image)));
   add_htable(img_list, "item_namebox_unselected", malloc(sizeof(struct image)));
@@ -109,6 +115,15 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   add_htable(img_list, "delete_selected", malloc(sizeof(struct image)));
   add_htable(img_list, "delete_unselected", malloc(sizeof(struct image)));
 
+  add_htable(img_list, "start_mainmenu_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "start_mainmenu_unselected", malloc(sizeof(struct image)));
+  add_htable(img_list, "timelapse", malloc(sizeof(struct image)));
+  add_htable(img_list, "token_slider_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "token_slider_unselected", malloc(sizeof(struct image)));
+
+  
+
+  
   
   int r = 0;
   r += image_new(access_htable(img_list, "startmenu")->value, "startmenu.png", renderer);

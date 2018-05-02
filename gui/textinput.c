@@ -14,29 +14,72 @@ struct text *get_text(struct htable *text_list, char *name)
 }
 void text_to_input(struct text *input, char * text)
 {
-  free(input->text); 
-  input->text = malloc(20*sizeof(char));                                
-  *(input->text) = '\0';
+  //free(input->text); 
+  //input->text = malloc(20*sizeof(char));                                
+  //*(input->text) = '\0';
   size_t i = 0;
   for (; i < 15 && text[i] != '\0'; i++)
     input->text[i] = text[i];
   input->nbchar = i;
-  for (; i < 25; i++)
+  input->active = 1;
+  for (; i < 20; i++)
     input->text[i] = '\0';
+}
+int get_nbchar(char *text)
+{
+  size_t i = 0;
+  for (; i < sizeof(text) && text[i] != '\0'; ++i);
+  //  printf("%s \n", text);
+  return (int) i;
 }
 void item_to_input(struct htable *text_list, struct item *item)
 {
-  text_to_input(get_text(text_list, "item_name"), item->label);
-  gcvt(item->mass, 15, get_text(text_list, "item_mass")->text);
-  gcvt(item->size, 15, get_text(text_list, "item_radius")->text);
+  struct text *name = get_text(text_list, "item_name");
+  text_to_input(name, item->label);
+  name->active = 1;
+  name->nbchar = get_nbchar(name->text);
 
-  gcvt(item->position.values[0], 15, get_text(text_list, "item_x")->text);
-  gcvt(item->position.values[1], 15, get_text(text_list, "item_y")->text);
-  gcvt(item->position.values[2], 15, get_text(text_list, "item_z")->text);
+  struct text *mass = get_text(text_list, "item_mass");
+  gcvt(item->mass, 15, mass->text);
+  mass->active = 1;
+  mass->nbchar = get_nbchar(mass->text);
 
-  gcvt(item->velocity.values[0], 15, get_text(text_list, "item_vx")->text);
-  gcvt(item->velocity.values[1], 15, get_text(text_list, "item_vy")->text);
-  gcvt(item->velocity.values[2], 15, get_text(text_list, "item_vz")->text);
+  struct text *radius = get_text(text_list, "item_radius");
+  gcvt(item->size, 15, radius->text);
+  radius->active = 1;
+  radius->nbchar = get_nbchar(radius->text);
+  
+  struct text *x = get_text(text_list, "item_x");
+  gcvt(item->position.values[0], 15, x->text);
+  x->active = 1;
+  x->nbchar = get_nbchar(x->text);
+
+  struct text *y = get_text(text_list, "item_y");
+  gcvt(item->position.values[1], 15, y->text);
+  y->active = 1;
+  y->nbchar = get_nbchar(y->text);
+
+  struct text *z = get_text(text_list, "item_z");
+  gcvt(item->position.values[2], 15, z->text);
+  z->active = 1;
+  z->nbchar = get_nbchar(z->text);
+
+  struct text *vx = get_text(text_list, "item_vx");
+  gcvt(item->velocity.values[0], 15, vx->text);
+  vx->active = 1;
+  vx->nbchar = get_nbchar(vx->text);
+
+  struct text *vy = get_text(text_list, "item_vy");
+  gcvt(item->velocity.values[1], 15, vy->text);
+  vy->active = 1;
+  vy->nbchar = get_nbchar(vy->text);
+
+  struct text *vz = get_text(text_list, "item_vz");
+  gcvt(item->velocity.values[2], 15, vz->text);
+  vz->active = 1;
+  vz->nbchar = get_nbchar(vz->text);
+
+ 
 }
 
 void input_to_item(struct htable *text_list, struct item *item)
