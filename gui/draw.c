@@ -106,6 +106,7 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       button_draw(access_htable(button_list, "delete")->value, renderer);
       button_draw(access_htable(button_list, "add")->value, renderer);
       button_draw(access_htable(button_list, "start_mainmenu")->value, renderer);
+      button_draw(access_htable(button_list, "reset")->value, renderer);
 
 
       slider_draw(access_htable(slider_list, "timelapse")->value, renderer);
@@ -121,13 +122,13 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       display_text(renderer, text_list, "item_vx", 1095, 342, 0, 17);
       display_text(renderer, text_list, "item_vy", 1095, 370, 0, 17);
       display_text(renderer, text_list, "item_vz", 1095, 399, 0, 17);
+
     }
   if (*((int *)(access_htable(draw_list, "pausemenu")->value)))
     {
       window_draw(access_htable(window_list, "pausemenu")->value, renderer);
       button_draw(access_htable(button_list, "resume")->value, renderer);
       button_draw(access_htable(button_list, "quit_mainmenu")->value, renderer);
-      button_draw(access_htable(button_list, "reset")->value, renderer);
       button_draw(access_htable(button_list, "saveandquit")->value, renderer);
 
     }
