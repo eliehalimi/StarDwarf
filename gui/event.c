@@ -82,7 +82,6 @@ int button_event(struct button *button, SDL_Event *event, int *draw)
 	  button->input = 1;
 	  *draw = 1;
 	}
-      
       else if (button->input && event->type == SDL_MOUSEBUTTONDOWN && !PointInRect(event->button.x, event->button.y,&button->rect))
 	{
 	  button->active = 0;

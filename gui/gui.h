@@ -6,6 +6,10 @@
 # include "../Camera/camera.h"
 # include "hash_table.h"
 
+# define SIMULATION_EDIT 0
+# define SIMULATION_PROGRESS 1
+# define SIMULATION_PAUSE 2
+
 //extern struct system *sys;
 struct image{
   SDL_Texture *texture;
@@ -85,7 +89,7 @@ void init_textinput(struct htable *text_list, char *name, int size);
 //supporting main
 void init_lists(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list,  struct htable *draw_list, struct htable *text_list);
 
-void button_active(int w, int h, int *quit, struct system **sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list);
+void button_active(int w, int h, int *quit, struct system **sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, int *state);
 
 struct system *init_system(int w, int h, struct htable *text_list) ;
 

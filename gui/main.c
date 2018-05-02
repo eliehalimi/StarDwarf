@@ -32,6 +32,8 @@ int main()
 	struct htable *draw_list = create_htable(10);
 	struct htable *text_list = create_htable(10);
 
+	int simulation_state = SIMULATION_EDIT;
+	
 	SDL_Renderer *renderer = init("Kurt Russel's teapot - StarDwarf",1280, 720, button_list, window_list, img_list, draw_list, text_list);
 	if (!renderer) return 1;
 	init_lists(WINDOW_W, WINDOW_H, button_list, window_list, img_list, draw_list, text_list);
@@ -48,7 +50,7 @@ int main()
 			if (e.type == SDL_QUIT)
 				quit = 1;
 
-			button_active(WINDOW_W, WINDOW_H, &quit, &sys, button_list, window_list, draw_list, text_list);
+			button_active(WINDOW_W, WINDOW_H, &quit, &sys, button_list, window_list, draw_list, text_list, &simulation_state);
 			if (((struct text *)(access_htable(text_list, "name")->value))->active)  
 				textinput(e,(struct text *)(access_htable(text_list, "name")->value), 25, NULL);
 			text_event(e, text_list, button_list, "item_name", 10);
@@ -105,6 +107,8 @@ int main()
 				camera_event(sys->camera, &e, &selected);
 			}
 		}
+
+		SDL_RenderClear(renderer);
 		draw(renderer, button_list, window_list, draw_list, text_list);
 		if(sys != NULL)
 		{
@@ -113,22 +117,26 @@ int main()
 				item_to_input(text_list, selected);
 				
 			}
-			if(!*((int *)(access_htable(draw_list, "pausemenu")->value)))
-			{
-				update_system(sys);
-				struct vector *v = selecting_position(sys->camera);
-				if(v != NULL)
-				{
-					struct item *i = new_item(v);
-					free_vector(v);
+			if(simulation_state == SIMULATION_PROGRESS)
+			  update_system(sys);
 
-					i->size = 100;
-					i->mass  = 100000000000000.0f;
-
-					push_item(sys, i);
-				}
-			}
-
+			
+			if(simulation_state == SIMULATION_EDIT)
+			  {
+			    struct vector *v = selecting_position(sys->camera);
+			    
+			    if(v != NULL)
+			      {
+				struct item *i = new_item(v);
+			      free_vector(v);
+			      
+			      i->size = 100;
+			      i->mass  = 100000000000000.0f;
+			      
+			      push_item(sys, i);
+			      }
+			  }
+			
 			Draw_from_camera(sys->camera, renderer);
 		}
 		SDL_RenderPresent(renderer);
