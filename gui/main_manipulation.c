@@ -117,6 +117,7 @@ void init_draw_list(struct htable *draw_list)
   add_htable(draw_list, "namemenu", malloc(sizeof(int)));
   add_htable(draw_list, "mainmenu", malloc(sizeof(int)));
   add_htable(draw_list, "pausemenu", malloc(sizeof(int)));
+  add_htable(draw_list, "loadmenu", malloc(sizeof(int)));
   
   *((int *)(access_htable(draw_list, "startmenu")->value)) = 1;
   *((int *)(access_htable(draw_list, "creditmenu")->value)) = 0;
@@ -124,6 +125,7 @@ void init_draw_list(struct htable *draw_list)
   *((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
   *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
   *((int *)(access_htable(draw_list, "optionmenu")->value)) = 0;  
+  *((int *)(access_htable(draw_list, "loadmenu")->value)) = 0;  
 }
 
 void init_text(struct htable *text_list, char *name, int size, int item)
@@ -197,7 +199,11 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	add_htable(button_list, "reset", malloc(sizeof(struct button)));
 	add_htable(button_list, "saveandquit", malloc(sizeof(struct button)));
 	add_htable(window_list, "pausemenu", malloc(sizeof(struct window)));
+	add_htable(button_list, "x_loadmenu", malloc(sizeof(struct button)));
+	add_htable(button_list, "start_loadmenu", malloc(sizeof(struct button)));
+	add_htable(window_list, "loadmenu", malloc(sizeof(struct window)));
 
+	
 	window_new(access_htable(window_list, "startmenu")->value, access_htable(img_list, "startmenu")->value, 0, 0, w, h, NULL);
 	button_new(access_htable(button_list, "new")->value, access_htable(img_list,"new_selected")->value, access_htable(img_list, "new_unselected")->value, 400, 320, access_htable(window_list, "startmenu")->value);
 	button_new(access_htable(button_list, "load")->value, access_htable(img_list,"load_selected")->value, access_htable(img_list,"load_unselected")->value, 400, 415, access_htable(window_list, "startmenu")->value);
@@ -235,8 +241,10 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	button_new(access_htable(button_list, "add")->value, access_htable(img_list,"add_selected")->value, access_htable(img_list,"add_unselected")->value, 1090, 565, access_htable(window_list, "itemsmenu")->value);
 	button_new(access_htable(button_list, "start_mainmenu")->value, access_htable(img_list,"start_mainmenu_selected")->value, access_htable(img_list,"start_mainmenu_unselected")->value, 1090, 610, access_htable(window_list, "itemsmenu")->value);
 	button_new(access_htable(button_list, "delete")->value, access_htable(img_list,"delete_selected")->value, access_htable(img_list,"delete_unselected")->value, 1090, 660, access_htable(window_list, "itemsmenu")->value);
-	float maxval = 1.0f, minval = 0.1f;
-	slider_new(access_htable(slider_list, "timelapse")->value, access_htable(img_list,"timelapse")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 1060, 440, access_htable(window_list, "itemsmenu")->value, &maxval, &minval);
+	float *maxval =malloc(sizeof(float)), *minval = malloc(sizeof(float));
+	*maxval = 2.0f;
+	*minval = 0.1f;
+	slider_new(access_htable(slider_list, "timelapse")->value, access_htable(img_list,"timelapse")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 1060, 440, access_htable(window_list, "itemsmenu")->value, maxval, minval);
 
 	button_new(access_htable(button_list, "reset")->value, access_htable(img_list,"reset_selected")->value, access_htable(img_list,"reset_unselected")->value, 1080, 510, access_htable(window_list, "itemsmenu")->value);
 	
@@ -247,6 +255,10 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	button_new(access_htable(button_list, "saveandquit")->value, access_htable(img_list,"saveandquit_selected")->value, access_htable(img_list,"saveandquit_unselected")->value, 15, 210, access_htable(window_list, "pausemenu")->value);
 
 	button_new(access_htable(button_list, "quit_mainmenu")->value, access_htable(img_list,"quit_mainmenu_selected")->value, access_htable(img_list,"quit_mainmenu_unselected")->value, 30, 280, access_htable(window_list, "pausemenu")->value);
+
+	window_new(access_htable(window_list, "loadmenu")->value, access_htable(img_list,"loadmenu")->value, 259, 80, 763, 575, NULL);
+	button_new(access_htable(button_list, "x_loadmenu")->value, access_htable(img_list,"x_selected")->value, access_htable(img_list,"x_unselected")->value, 968, 80, access_htable(window_list, "loadmenu")->value);
+	button_new(access_htable(button_list, "start_loadmenu")->value, access_htable(img_list,"start_selected")->value, access_htable(img_list,"start_unselected")->value, 510, 570, access_htable(window_list, "loadmenu")->value);
 
 
 	((struct button *)(access_htable(button_list, "item_name")->value))->textbox = 1;

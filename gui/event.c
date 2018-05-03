@@ -60,10 +60,12 @@ int slider_event(struct slider *slider, SDL_Event *event, int *draw, struct syst
 	  *draw = 1;
 	  if (slider->horizontal)
 	    {
-	      if (event->button.x - slider->rect_bar.x > 0 && event->button.x - slider->rect_bar.x < slider->maxlength)
-		{
-		  slider->rect_token.x = slider->rect_token.x + event->button.x - slider->mousepos;
+	      int x = slider->rect_token.x + event->button.x - slider->mousepos;
+	      if (x >= slider->rect_bar.x && x <= slider->rect_bar.x + slider->rect_bar.w - slider->rect_token.w)
+		{  
+		  slider->rect_token.x = x; 
 		  slider->curlength = slider->rect_token.x - slider->rect_bar.x;
+		  
 		  slider->mousepos = event->button.x;
 		}
 	    }
@@ -75,8 +77,10 @@ int slider_event(struct slider *slider, SDL_Event *event, int *draw, struct syst
 		  slider->mousepos = event->button.y;
 
 		}
-	  printf("%f\n", sys->delta_time);
-	  sys->delta_time = *(float *)slider->minvalue + (*(float *)slider->maxvalue - *(float *)slider->maxvalue)*(slider->curlength/slider->maxlength);
+	  float minv = *(float *)slider->minvalue;
+	  float maxv = *(float *)slider->maxvalue;
+	  float ratio = (float )slider->curlength/slider->maxlength;
+	  sys->delta_time = minv + (maxv-minv)*ratio;	  
 	}
       else if (event->type == SDL_MOUSEBUTTONUP && PointInRect(event->motion.x, event->motion.y, &slider->rect_token))
 	{
