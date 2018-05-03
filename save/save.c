@@ -49,7 +49,7 @@ struct system *load_system(char *path)
 	struct system *s = new_system(2);
 	s->delta_time = 0.1f;
 	char line[255];
-	s->camera = new_camera(WINDOW_H / 2, WINDOW_W / 2);
+	s->camera = new_camera(WINDOW_W / 2, WINDOW_H / 2);
 	
 	while(fgets(line, sizeof(line), f) != NULL)
 	{
@@ -83,7 +83,6 @@ struct system *load_system(char *path)
 		const struct vector *position = new_vector(3, values);
 		struct item *item = new_item(position);
 		item->size = z;
-		item->mass = 100000000000000.0f;
 		item->mass = 100000000000.0f; // there is an assertion in the update update to check the mass -> you need to initialize it
 		push_item(s, item);
 		printf("x= %f, y=%f, size=%d\n", x, y, z); 

@@ -287,7 +287,7 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
     }
 
   //for these 2, maybe add an event for when click 
-  else if (((struct button *)(access_htable(button_list, "resume")->value))->active)
+  else if (((struct button *)(access_htable(button_list, "resume")->value))->active && *state == SIMULATION_PAUSE)
     {
       ((struct button *)(access_htable(button_list, "resume")->value))->active = 0;
       ((struct button *)(access_htable(button_list, "resume")->value))->prelight = 1;
@@ -297,6 +297,7 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 1;
  
       *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
+      *state = SIMULATION_PROGRESS;
     }
 
   

@@ -75,7 +75,8 @@ int slider_event(struct slider *slider, SDL_Event *event, int *draw, struct syst
 		  slider->mousepos = event->button.y;
 
 		}
-	  //	  sys->delta_time = *(float *)slider->minvalue + (*(float *)slider->maxvalue - *(float *)slider->maxvalue)*(slider->curlength/slider->maxlength);
+	  printf("%f\n", sys->delta_time);
+	  sys->delta_time = *(float *)slider->minvalue + (*(float *)slider->maxvalue - *(float *)slider->maxvalue)*(slider->curlength/slider->maxlength);
 	}
       else if (event->type == SDL_MOUSEBUTTONUP && PointInRect(event->motion.x, event->motion.y, &slider->rect_token))
 	{
