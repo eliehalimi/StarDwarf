@@ -5,7 +5,7 @@
 # include "../Physic/libvector.h"
 # include "../Camera/camera.h"
 # include "hash_table.h"
-
+# include "list.h"
 # define SIMULATION_EDIT 0
 # define SIMULATION_PROGRESS 1
 # define SIMULATION_PAUSE 2
@@ -80,8 +80,9 @@ int image_new(struct image *img, char *fname, SDL_Renderer* renderer);
 
 SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list);
 
-int slider_new(struct slider *slider, struct image *bar, struct image *selected, struct image *unselected, int horizontal, int x, int y, struct window *window, void *maxvalue, void *minvalue);
-int slider_event(struct slider *slider, SDL_Event *event, int *draw, struct system *sys);
+int slider_new(struct slider *slider, struct image *bar, struct image *selected, struct image *unselected, int horizontal, int x, int y, int token_pos, struct window *window, void *maxvalue, void *minvalue);
+
+int slider_event(struct slider *slider, SDL_Event *event, int *draw);
 
 int slider_draw(struct slider *slider, SDL_Renderer *renderer);
 
@@ -114,17 +115,19 @@ void textinput(SDL_Event e, struct text *text, int maxchr, struct button *button
 
 void init_textinput(struct htable *text_list, char *name, int size);
 
+void get_files(struct list_char *files);
 
+void display_files(SDL_Renderer *renderer, struct list_char *files, struct slider *scrollbar);
 
 //supporting main
 void init_lists(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list,  struct htable *draw_list, struct htable *text_list, struct htable *slider_list);
 
-void button_active(int w, int h, int *quit, struct system **sys, struct system **reset_sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, int *state);
-
 struct system *init_system(int w, int h, struct htable *text_list) ;
 
 //draw.c
-void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list,  struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct system *sys);
+
+void button_active(int w, int h, int *quit, struct system **sys, struct system **reset_sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, struct list_char *files, int *state);
+void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list,  struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct system *sys, struct list_char *files);
 
 //camera
 int camera_event(struct camera *camera, SDL_Event *event, struct item **selected);

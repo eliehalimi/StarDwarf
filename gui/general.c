@@ -1,16 +1,17 @@
-# include <stdio.h>                                                                      
-# include <stdlib.h>                                                                     
-# include <SDL2/SDL.h>                                                                   
-# include <SDL2/SDL_ttf.h>                                                               
-# include <SDL2/SDL_image.h>                                                             
-# include <err.h>                                                                        
-# include <unistd.h>                                                                     
-# include "gui.h"                                                                        
-# include "draw_item.h"                                                                  
-# include "hash_table.h"                                                                 
+# include <stdio.h>
+# include <stdlib.h>                                                      
+# include <SDL2/SDL.h>                                                  
+# include <SDL2/SDL_ttf.h>                                 
+# include <SDL2/SDL_image.h>                              
+# include <err.h>                                  
+# include <unistd.h>                                    
+# include "gui.h"                                          
+# include "draw_item.h"                                           
+# include "hash_table.h"                                             
 # include "../save/save.h" 
-SDL_Window *window;                                                                     
-SDL_Renderer *renderer;  
+SDL_Window *window;                               
+SDL_Renderer *renderer;
+
 int MakeRect(SDL_Rect *rect, int x, int y, int w, int h)
 {
   if (!rect) return -1;
@@ -122,9 +123,10 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   add_htable(img_list, "token_slider_selected", malloc(sizeof(struct image)));
   add_htable(img_list, "token_slider_unselected", malloc(sizeof(struct image)));
 
-
   add_htable(img_list, "loadmenu", malloc(sizeof(struct image)));
-
+  add_htable(img_list, "scrollbar", malloc(sizeof(struct image)));
+  add_htable(img_list, "token_scrollbar_selected", malloc(sizeof(struct image)));
+  add_htable(img_list, "token_scrollbar_unselected", malloc(sizeof(struct image)));
 
 
   
@@ -187,6 +189,9 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   r += image_new(access_htable(img_list, "token_slider_selected")->value, "token_slider_selected.png", renderer);
 
   r += image_new(access_htable(img_list, "loadmenu")->value, "loadmenu.png", renderer);
+  r += image_new(access_htable(img_list, "scrollbar")->value, "scrollbar.png", renderer);
+  r += image_new(access_htable(img_list, "token_scrollbar_unselected")->value, "token_scrollbar_unselected.png", renderer);
+  r += image_new(access_htable(img_list, "token_scrollbar_selected")->value, "token_scrollbar_selected.png", renderer);
   
   if (r)
     {
@@ -253,8 +258,12 @@ void clean(struct htable *button_list, struct htable *window_list, struct htable
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "token_slider_selected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "token_slider_unselected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "timelapse")->value)->texture);
+  
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "loadmenu")->value)->texture);
-
+    SDL_DestroyTexture(((struct image *)access_htable(img_list, "token_scrollbar_selected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "token_scrollbar_unselected")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "scrollbar")->value)->texture);
+  
   
   free(((struct text *)(access_htable(text_list, "name")->value))->text);
   free((struct text *)(access_htable(text_list, "name")->value));
@@ -274,15 +283,29 @@ void clean(struct htable *button_list, struct htable *window_list, struct htable
   free((struct text *)(access_htable(text_list, "item_vx")->value));
   free(((struct text *)(access_htable(text_list, "item_vy")->value))->text);
   free((struct text *)(access_htable(text_list, "item_vy")->value));
+
   free(((struct text *)(access_htable(text_list, "item_vz")->value))->text);
   free((struct text *)(access_htable(text_list, "item_vz")->value));
+  
+  free(((struct text *)(access_htable(text_list, "name_loadmenu")->value))->text);
+  free((struct text *)(access_htable(text_list, "name_loadmenu")->value));
+  free(((struct text *)(access_htable(text_list, "warning_loadmenu")->value))->text);
+  free((struct text *)(access_htable(text_list, "warning_loadmenu")->value));
 
+  
   free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->maxvalue);
   free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->minvalue);
   free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->bar);
   free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->unselected);
   free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->selected);
 
+    free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->maxvalue);
+  free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->minvalue);
+  free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->bar);
+  free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->unselected);
+  free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->selected);
+
+  
   SDL_StopTextInput();
 
   SDL_DestroyWindow(window);

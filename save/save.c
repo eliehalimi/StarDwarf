@@ -11,10 +11,10 @@ void save_system(struct system *system)
 	assert(system->delta_time > 0.0f);
 	assert(system->nb_dimension == 3);
 
-	FILE *f = fopen("system.txt", "w+");
+	FILE *f = fopen("save_files/system.txt", "w+");
 	assert(f != NULL);
 	
-	char *str;
+	//char *str;
 	
 	float size;
 	float mass;
@@ -88,6 +88,7 @@ struct system *load_system(char *path)
 		push_item(s, item);
 		printf("x= %f, y=%f, size=%d\n", x, y, z); 
 	}
+	fclose(f);
 	return s;
 	
 }

@@ -21,6 +21,18 @@ void text_event(SDL_Event e, struct htable *text_list, struct htable *button_lis
 	if (((struct text *)(access_htable(text_list, name)->value))->active)  
 		textinput(e,(struct text *)(access_htable(text_list, name)->value), size, access_htable(button_list, name)->value);
 }
+
+void timelapse( struct slider *slider, struct system *sys)
+{
+  if (slider->mousedown)
+    {
+      float minv = *(float *)slider->minvalue;                         
+      float maxv = *(float *)slider->maxvalue;                         
+      float ratio = (float )slider->curlength/slider->maxlength;       
+      sys->delta_time = minv + (maxv-minv)*ratio; 
+    }
+
+}
 int main()
 {
 	SDL_Event e;
@@ -33,7 +45,7 @@ int main()
 	struct htable *img_list = create_htable(40);
 	struct htable *draw_list = create_htable(10);
 	struct htable *text_list = create_htable(10);
-
+	struct list_char *files = list_create();
 	int simulation_state = SIMULATION_EDIT;
 
 	SDL_Renderer *renderer = init("Kurt Russel's teapot - StarDwarf",1280, 720, button_list, window_list, img_list, draw_list, text_list, slider_list);
@@ -51,9 +63,9 @@ int main()
 		while (SDL_PollEvent(&e))
 		{
 			if (e.type == SDL_QUIT)
-				quit = 1;
+			  quit = 1;
+			button_active(WINDOW_W, WINDOW_H, &quit, &sys, &reset_sys, button_list, window_list, draw_list, text_list, files, &simulation_state);
 
-			button_active(WINDOW_W, WINDOW_H, &quit, &sys, &reset_sys, button_list, window_list, draw_list, text_list, &simulation_state);
 			if (((struct text *)(access_htable(text_list, "name")->value))->active)  
 				textinput(e,(struct text *)(access_htable(text_list, "name")->value), 25, NULL);
 			text_event(e, text_list, button_list, "item_name", 10);
@@ -99,8 +111,8 @@ int main()
 			button_event(access_htable(button_list, "delete")->value, &e, access_htable(draw_list, "mainmenu")->value);
 			button_event(access_htable(button_list, "start_mainmenu")->value, &e, access_htable(draw_list, "mainmenu")->value);
 
-			slider_event(access_htable(slider_list, "timelapse")->value, &e, access_htable(draw_list, "mainmenu")->value, sys);
-
+			slider_event(access_htable(slider_list, "timelapse")->value, &e, access_htable(draw_list, "mainmenu")->value);
+			timelapse(access_htable(slider_list, "timelapse")->value, sys);
 			button_event(access_htable(button_list, "pause")->value, &e, access_htable(draw_list, "mainmenu")->value);
 
 			window_event(access_htable(window_list, "pausemenu")->value, &e, access_htable(draw_list, "pausemenu")->value);
@@ -112,7 +124,11 @@ int main()
 			window_event(access_htable(window_list, "loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value);
 			button_event(access_htable(button_list, "x_loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value);
 			button_event(access_htable(button_list, "start_loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value);
-
+			slider_event(access_htable(slider_list, "scrollbar")->value, &e, access_htable(draw_list, "loadmenu")->value);
+			if (((struct text *)(access_htable(text_list, "name_loadmenu")->value))->active)
+			  {
+				textinput(e,(struct text *)(access_htable(text_list, "name_loadmenu")->value), 25, NULL);
+			  }
 			if(sys)
 			{
 				camera_event(sys->camera, &e, &selected);
@@ -120,7 +136,8 @@ int main()
 		}
 		
 		SDL_RenderClear(renderer);
-		draw(renderer, button_list, window_list, draw_list, text_list, slider_list, sys);
+		draw(renderer, button_list, window_list, draw_list, text_list, slider_list, sys, files);
+
 		if(sys != NULL)
 		{
 			if(selected != NULL)
@@ -152,9 +169,10 @@ int main()
 		}
 		SDL_RenderPresent(renderer);
 
-
 	}
 	clean(button_list, window_list, img_list, draw_list, text_list, slider_list);
+	if (files)
+	  free_list(files);
 	return 0;
 }
 

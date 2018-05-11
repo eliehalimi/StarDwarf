@@ -52,9 +52,9 @@ int slider_draw(struct slider *slider, SDL_Renderer *renderer)
 
 
 
-void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct system *sys)
+void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct system *sys, struct list_char *files)
 {
-  
+
   if (*((int *)(access_htable(draw_list, "startmenu")->value)))
     {
       window_draw(access_htable(window_list, "startmenu")->value, renderer);
@@ -88,13 +88,22 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
     {
       window_draw(access_htable(window_list, "loadmenu")->value, renderer);
       button_draw(access_htable(button_list, "start_loadmenu")->value, renderer);
+      slider_draw(access_htable(slider_list, "scrollbar")->value, renderer);
+
       button_draw(access_htable(button_list, "x_loadmenu")->value, renderer);
+      display_files(renderer, files, access_htable(slider_list, "scrollbar")->value);
+      display_text(renderer, text_list, "name_loadmenu", 320, 485, 255, 35);
+      if (*((int *)(access_htable(draw_list, "warning_loadmenu")->value)))
+	display_text(renderer, text_list, "warning_loadmenu", 550, 420, 255, 30);
+      
     }
   
   if (*((int *)(access_htable(draw_list, "mainmenu")->value)))
     {
       
       //window_draw(access_htable(window_list, "mainmenu")->value, renderer);
+      window_draw(access_htable(window_list, "mainmenu")->value, renderer);
+
       if (sys)
 	Draw_from_camera(sys->camera, renderer);
       window_draw(access_htable(window_list, "itemsmenu")->value, renderer);
@@ -140,7 +149,7 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
 }
 
 
-void button_active(int w, int h, int *quit, struct system **sys, struct system **reset_sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, int *state)
+void button_active(int w, int h, int *quit, struct system **sys, struct system **reset_sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, struct list_char* files, int *state)
 {
   if (((struct button *)(access_htable(button_list, "quit")->value))->active)
     *quit = 1;
@@ -358,7 +367,9 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct window *)(access_htable(window_list, "loadmenu")->value))->event = 1;
       ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
       *((int *)(access_htable(draw_list, "loadmenu")->value)) = 1;
-
+      init_textinput(text_list, "name_loadmenu", 30);
+      removeall_list(files);
+      get_files(files);
     }
   else if (((struct button *)(access_htable(button_list, "x_loadmenu")->value))->active)        
     {                                                                             
@@ -368,23 +379,34 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct window *)(access_htable(window_list, "loadmenu")->value))->event = 0;
       ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 1;
       *((int *)(access_htable(draw_list, "loadmenu")->value)) = 0;
+
     }
 
   else if (((struct button *)(access_htable(button_list, "start_loadmenu")->value))->active)
     {
       ((struct button *)(access_htable(button_list, "start_loadmenu")->value))->active = 0;
       ((struct button *)(access_htable(button_list, "start_loadmenu")->value))->prelight = 0;
-      ((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 1;
-      ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 1;
-      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->visible = 1;
-      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 1;
-      ((struct window *)(access_htable(window_list, "loadmenu")->value))->visible = 0;
-      ((struct window *)(access_htable(window_list, "loadmenu")->value))->event = 0;   
-      ((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 0;
-      ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;   
-      *sys = load_system("../save/system.txt");
-      *((int *)(access_htable(draw_list, "mainmenu")->value)) = 1;
-
+      if (list_find(files, ((struct text *)access_htable(text_list, "name_loadmenu")->value)->text))
+	{
+	  ((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 1;
+	  ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 1;
+	  ((struct window *)(access_htable(window_list, "itemsmenu")->value))->visible = 1;
+	  ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 1;
+	  ((struct window *)(access_htable(window_list, "loadmenu")->value))->visible = 0;
+	  ((struct window *)(access_htable(window_list, "loadmenu")->value))->event = 0;   
+	  ((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 0;
+	  ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
+	  *((int *)(access_htable(draw_list, "loadmenu")->value)) = 0;
+	  *sys = load_system("../save/save_files/system.txt");
+	  *((int *)(access_htable(draw_list, "mainmenu")->value)) = 1;
+	}
+      else
+	{
+	  *((int *)(access_htable(draw_list, "warning_loadmenu")->value)) = 1;
+	  init_textinput(text_list, "warning_loadmenu", 200);
+	  struct text *warning = (struct text *)(access_htable(text_list, "warning_loadmenu")->value);
+	    sprintf(warning->text, "invalid name");
+	}
     }
   
   else if (((struct button *)(access_htable(button_list, "add")->value))->active)
@@ -392,5 +414,5 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct button *)(access_htable(button_list, "add")->value))->active = 0;
       ((struct button *)(access_htable(button_list, "add")->value))->prelight = 1;
       (*sys)->camera->event_type = CREATING;
-    }
+    }   
 }
