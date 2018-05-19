@@ -1,31 +1,22 @@
-# include <stdio.h>
-# include <stdlib.h>                                                      
-# include <SDL2/SDL.h>                                                  
-# include <SDL2/SDL_ttf.h>                                 
-# include <SDL2/SDL_image.h>                              
-# include <err.h>                                  
-# include <unistd.h>                                    
 # include "gui.h"                                          
-# include "draw_item.h"                                           
-# include "hash_table.h"                                             
-# include "../save/save.h" 
+
 SDL_Window *window;                               
-SDL_Renderer *renderer;
+//SDL_Renderer *renderer;
 
 int MakeRect(SDL_Rect *rect, int x, int y, int w, int h)
 {
   if (!rect) return -1;
-  rect->x = x;
-  rect->y = y;
-  rect->w = w;
-  rect->h = h;
+  rect->x = x;  rect->y = y;  rect->w = w;  rect->h = h;
   return 1;
 }
-
-//check as if the point belonging to particular region 
 int PointInRect(int x, int y, SDL_Rect *rect)
 {
   return x >= rect->x && x < (rect->x + rect->w) && y >= rect->y && y < rect->y + rect->h;
+}
+
+int PointInRect_Circle(int x, int y, SDL_Rect *rect)
+{
+  return x >= rect->x-rect->w/2 && x < (rect->x + rect->w/2) && y >= rect->y-rect->h/2 && y < rect->y + rect->h/2;
 }
 int RenderImage(SDL_Renderer *renderer, struct image *img, int x, int y, SDL_Rect *rect)
 {
@@ -67,7 +58,7 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
     }
   IMG_Init(IMG_INIT_JPG|IMG_INIT_PNG);
   window = SDL_CreateWindow(title, srect.w/2 - w/2, srect.h/2-h/2,w,h,SDL_WINDOW_SHOWN);
-  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
   add_htable(img_list, "startmenu", malloc(sizeof(struct image)));
   add_htable(img_list, "optionmenu", malloc(sizeof(struct image)));
@@ -195,13 +186,13 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   
   if (r)
     {
-      clean(button_list, window_list, img_list, draw_list, text_list, slider_list);
+      clean(renderer, button_list, window_list, img_list, draw_list, text_list, slider_list);
       return NULL;
     }
   return renderer;
 }
 
-void clean(struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list)
+void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list)
 { 
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "startmenu")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "new_selected")->value)->texture);
@@ -266,46 +257,23 @@ void clean(struct htable *button_list, struct htable *window_list, struct htable
   
   
   free(((struct text *)(access_htable(text_list, "name")->value))->text);
-  free((struct text *)(access_htable(text_list, "name")->value));
   free(((struct text *)(access_htable(text_list, "intro")->value))->text);
-  free((struct text *)(access_htable(text_list, "intro")->value));
   free(((struct text *)(access_htable(text_list, "item_name")->value))->text);
-  free((struct text *)(access_htable(text_list, "item_name")->value));
   free(((struct text *)(access_htable(text_list, "item_x")->value))->text);
-  free((struct text *)(access_htable(text_list, "item_x")->value));
   free(((struct text *)(access_htable(text_list, "item_y")->value))->text);
-  free((struct text *)(access_htable(text_list, "item_y")->value));
   free(((struct text *)(access_htable(text_list, "item_z")->value))->text);
-  free((struct text *)(access_htable(text_list, "item_z")->value));
   free(((struct text *)(access_htable(text_list, "item_radius")->value))->text);
-  free((struct text *)(access_htable(text_list, "item_mass")->value));
+  free(((struct text *)(access_htable(text_list, "item_mass")->value))->text);
   free(((struct text *)(access_htable(text_list, "item_vx")->value))->text);
-  free((struct text *)(access_htable(text_list, "item_vx")->value));
   free(((struct text *)(access_htable(text_list, "item_vy")->value))->text);
-  free((struct text *)(access_htable(text_list, "item_vy")->value));
-
-  free(((struct text *)(access_htable(text_list, "item_vz")->value))->text);
-  free((struct text *)(access_htable(text_list, "item_vz")->value));
-  
+  free(((struct text *)(access_htable(text_list, "item_vz")->value))->text);  
   free(((struct text *)(access_htable(text_list, "name_loadmenu")->value))->text);
-  free((struct text *)(access_htable(text_list, "name_loadmenu")->value));
   free(((struct text *)(access_htable(text_list, "warning_loadmenu")->value))->text);
-  free((struct text *)(access_htable(text_list, "warning_loadmenu")->value));
-
-  
   free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->maxvalue);
-  free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->minvalue);
-  free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->bar);
-  free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->unselected);
-  free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->selected);
-
-    free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->maxvalue);
+  free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->minvalue);      
+  free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->maxvalue);
   free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->minvalue);
-  free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->bar);
-  free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->unselected);
-  free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->selected);
 
-  
   SDL_StopTextInput();
 
   SDL_DestroyWindow(window);
@@ -314,8 +282,10 @@ void clean(struct htable *button_list, struct htable *window_list, struct htable
   free_htable(img_list);
   free_htable(button_list);
   free_htable(window_list);
+
   free_htable(draw_list);
   free_htable(slider_list);
+  free_htable(text_list);
   
   TTF_Quit();
   IMG_Quit();

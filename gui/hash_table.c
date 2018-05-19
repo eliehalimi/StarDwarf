@@ -66,7 +66,7 @@ int add_htable(struct htable *htable, char *key, void *value)
 	  htable->tab[i]->value = NULL;
 	  htable->tab[i]->next = NULL;
 	}
-      for (size_t i = 0; i < htable->capacity / 2; ++i)
+      for (size_t i = 0; i < htable->capacity / 2 ; ++i)
 	{
 	  struct pair *cur = tab_old[i];
 	  struct pair *next = NULL;
@@ -111,6 +111,7 @@ void clear_htable(struct htable *htable)
       for (;cur != NULL;)
 	{
 	  next = cur->next;
+	  free(cur->value);
 	  free(cur);
 	  cur = next;
 	}

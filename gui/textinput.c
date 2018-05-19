@@ -1,14 +1,6 @@
 # define _DEFAULT_SOURCE
-# include <stdio.h>
-# include <stdlib.h>
-# include <SDL2/SDL.h>
-# include <SDL2/SDL_ttf.h>
-# include <SDL2/SDL_image.h>
-# include <dirent.h>
-# include <err.h>
-# include <unistd.h>
 # include "gui.h"
-# include "../Physic/physic.h"
+
 struct text *get_text(struct htable *text_list, char *name)
 {
   return (struct text *)(access_htable(text_list, name)->value);
