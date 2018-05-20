@@ -6,6 +6,11 @@
 # include "../Camera/camera.h"
 # include "hash_table.h"
 
+# define WINDOW_W 1280
+# define WINDOW_H 720
+# define ITEM_MENU_WIDTH 227
+# define ITEM_MENU_HEIGHT 676
+
 # define SIMULATION_EDIT 0
 # define SIMULATION_PROGRESS 1
 # define SIMULATION_PAUSE 2

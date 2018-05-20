@@ -29,7 +29,8 @@ struct system
 	size_t nb_dimension;
 	size_t nb_item;
 	float timelapse, delta_time;
-	struct camera *camera; 
+	struct camera *camera;
+  struct item *selected;
 };
 
 struct item *new_item(const struct vector *postion);

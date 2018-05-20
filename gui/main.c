@@ -13,8 +13,6 @@
 # include "../save/save.h"
 # include "hash_table.h"
 
-# define WINDOW_W 1280
-# define WINDOW_H 720
 
 void text_event(SDL_Event e, struct htable *text_list, struct htable *button_list, char *name, int size)
 {
@@ -26,7 +24,6 @@ int main()
 	SDL_Event e;
 	struct system *sys = NULL;
 	struct system *reset_sys = NULL;
-	struct item *selected = NULL;
 	struct htable *button_list = create_htable(20);
 	struct htable *slider_list = create_htable(3);	
 	struct htable *window_list = create_htable(10);
@@ -115,7 +112,9 @@ int main()
 
 			if(sys)
 			{
-				camera_event(sys->camera, &e, &selected);
+				camera_event(sys->camera, &e, &sys->selected);
+				if(sys->selected != NULL)
+				  item_to_input(text_list, sys->selected);
 			}
 		}
 		
@@ -123,9 +122,12 @@ int main()
 		draw(renderer, button_list, window_list, draw_list, text_list, slider_list, sys);
 		if(sys != NULL)
 		{
-			if(selected != NULL)
+			if(sys->selected != NULL)
 			{
-				item_to_input(text_list, selected);
+			  if(simulation_state == SIMULATION_PROGRESS)
+				item_to_input(text_list, sys->selected);
+			  else
+			    input_to_item(text_list, sys->selected);
 				
 			}
 			if(simulation_state == SIMULATION_PROGRESS)
@@ -139,12 +141,12 @@ int main()
 			    if(v != NULL)
 			      {
 				struct item *i = new_item(v);
-			      free_vector(v);
+				free_vector(v);
 			      
-			      i->size = 100;
-			      i->mass  = 100000000000000.0f;
-			      
-			      push_item(sys, i);
+				i->size = 100;
+				i->mass  = 100000000000000.0f;
+				
+				push_item(sys, i);
 			      }
 			  }
 			

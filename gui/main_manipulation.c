@@ -227,7 +227,8 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 
 	
 	window_new(access_htable(window_list, "mainmenu")->value, access_htable(img_list,"mainmenu")->value, 0, 0, w, h, NULL);
-	window_new(access_htable(window_list, "itemsmenu")->value, access_htable(img_list,"itemsmenu")->value, 1053, 44, 227,676, access_htable(window_list, "mainmenu")->value);
+	window_new(access_htable(window_list, "itemsmenu")->value, access_htable(img_list,"itemsmenu")->value,
+		   1053, 44, ITEM_MENU_WIDTH, ITEM_MENU_HEIGHT, access_htable(window_list, "mainmenu")->value);
 	button_new(access_htable(button_list, "pause")->value, access_htable(img_list,"pause_selected")->value, access_htable(img_list,"pause_unselected")->value, 0, 0, access_htable(window_list, "mainmenu")->value);
 	button_new(access_htable(button_list, "item_name")->value, access_htable(img_list,"item_namebox_selected")->value, access_htable(img_list,"item_namebox_unselected")->value, 1073, 68, access_htable(window_list, "itemsmenu")->value);
 	button_new(access_htable(button_list, "item_x")->value, access_htable(img_list,"item_posbox_selected")->value, access_htable(img_list,"item_posbox_unselected")->value, 1095, 130, access_htable(window_list, "itemsmenu")->value);

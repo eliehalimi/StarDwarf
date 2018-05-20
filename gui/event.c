@@ -239,7 +239,8 @@ int camera_event(struct camera *camera, SDL_Event *event, struct item **selected
 	    camera->event_type = SELECTED;
 	  }
 	
-	else if(camera->event_type == NOTMOVING && event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_LEFT)
+	else if(camera->event_type == NOTMOVING && event->type == SDL_MOUSEBUTTONDOWN && event->button.button == SDL_BUTTON_LEFT
+		&& camera->mouse_x < WINDOW_W - ITEM_MENU_WIDTH)
 	  {
 	    struct item *i = selecting_item(camera);
 	    *selected = i;

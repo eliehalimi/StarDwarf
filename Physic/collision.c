@@ -30,6 +30,8 @@ int collide(struct system *system, struct item *i1, struct item *i2)
 
 			if (m1 > m2) //i1 is a planet
 			{
+			  if(system->selected == i2)
+			    system->selected = NULL;
 				//m1v1 + m2v2 = (m1+m2)v1'
 				memcpy(i1->velocity.values, v->values, sizeof(float)* v->size);
 				i1->mass += i2->mass;
@@ -39,6 +41,8 @@ int collide(struct system *system, struct item *i1, struct item *i2)
 			}
 			else
 			{
+			  if(system->selected == i1)
+			    system->selected = NULL;
 				memcpy(i2->velocity.values, v->values, sizeof(float)*v->size);
 				i2->mass += i1->mass;
 				
@@ -46,6 +50,7 @@ int collide(struct system *system, struct item *i1, struct item *i2)
 				free_item(remove_item(system, i1));
 
 			}
+			return 0;
 		}
 		else //collision bwt 2 planets or 2 asteroids
 		{
