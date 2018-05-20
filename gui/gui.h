@@ -34,8 +34,8 @@ struct image{
 };
 
 struct music{
-  Mix_Music *texture;
-  Mix_Chunk *sound;
+  Mix_Music *bg;//background music
+  Mix_Chunk *se;//sound effect
 };
 
 struct palette{
@@ -121,13 +121,13 @@ void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *wi
 //event.c
 SDL_Color * init_palette_value(int length, int max, int min);
 int palette_new(struct palette *p, struct window *window, int x, int y, int w, int h, int r, int picker_pos);
-int palette_event(struct palette *p, SDL_Event *event, int *draw);
+int palette_event(struct palette *p, SDL_Event *event, int *draw, struct music *music);
 int slider_new(struct slider *slider, struct image *bar, struct image *selected, struct image *unselected, int horizontal, int x, int y, int token_pos, struct window *window, void *maxvalue, void *minvalue);
-int slider_event(struct slider *slider, SDL_Event *event, int *draw);
+int slider_event(struct slider *slider, SDL_Event *event, int *draw, struct music *music);
 int window_new(struct window *window, struct image *bg, int x, int y, int w, int h, struct window *parent);
 int window_event(struct window *window, SDL_Event *event, int *draw);
 int button_new(struct button *button, struct image *selected, struct image *unselected, int x, int y, struct window *window);
-int button_event(struct button *button, SDL_Event *event, int *draw);
+int button_event(struct button *button, SDL_Event *event, int *draw, struct music *music);
 
 
 
