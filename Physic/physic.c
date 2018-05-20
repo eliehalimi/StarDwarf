@@ -211,11 +211,14 @@ struct system *clone_system(const struct system *system)
   struct system *res = new_system(system->nb_dimension);
   res->camera = new_camera(system->camera->center_X, system->camera->center_Y);
   res->delta_time = system->delta_time;
-
+  
   for(struct list *l = system->items.next; l != NULL; l = l->next)
     {
       struct item *i = CONTAINER_OF_(struct item, list, l);
-      push_item(res, clone_item(i));
+      struct item *c = clone_item(i);
+      if(system->selected == i)
+	res->selected = c;
+      push_item(res, c);
     }
   return res;
 }

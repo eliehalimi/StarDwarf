@@ -1,13 +1,4 @@
-# include <stdlib.h>
-# include <SDL2/SDL.h>
-# include <SDL2/SDL_image.h>
-# include <SDL2/SDL_ttf.h>
-# include <err.h>
-# include <unistd.h>
 # include "gui.h"
-# include "hash_table.h"
-# include "draw_item.h" 
-# include "../save/save.h" 
 
 int window_draw(struct window *window, SDL_Renderer *renderer)
 {
@@ -35,6 +26,11 @@ int slider_draw(struct slider *slider, SDL_Renderer *renderer)
 {
   slider->visible = slider->window->visible;
   if (!slider || !slider->visible || !renderer) return 0;
+  if (slider->horizontal)
+    slider->rect_token.x = slider->curlength + slider->rect_bar.x;
+  else
+    slider->rect_token.y = slider->curlength + slider->rect_bar.y;
+      
   RenderImage(renderer, slider->bar, slider->rect_bar.x, slider->rect_bar.y, NULL);
   if (!slider->selected)
     printf("image is NULL \n");
@@ -49,12 +45,43 @@ int slider_draw(struct slider *slider, SDL_Renderer *renderer)
     RenderImage(renderer, slider->unselected, slider->rect_token.x, slider->rect_token.y, NULL);
   return 1;
 }
-
-
-
-void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct system *sys)
+int palette_draw(struct palette *p, SDL_Renderer *renderer)
 {
+  p->visible = p->window->visible;
+  if (!p || !p->visible || !renderer) return 0;
+  p->rect_picker.x = p->pos + p->rect_palette.x;
+  int x = p->rect_palette.x, y = p->rect_palette.y, w = p->rect_palette.w, h = p->rect_palette.h;
+  for (int i = 0; i < w; ++i)
+    {
+      SDL_SetRenderDrawColor(renderer, p->color[i].r, p->color[i].g, p->color[i].b, 255);
+      SDL_RenderDrawLine(renderer, x + i, y, x + i, y + h);
+    }
+  int px = p->rect_picker.x, py = p->rect_picker.y, r = p->r;  
+  int new_x = 0, new_y = 0, old_x = px + r, old_y = py;
+  SDL_SetRenderDrawColor(renderer, p->color[p->pos].r, p->color[p->pos].g, p->color[p->pos].b, 255);
+  int square = r * r;
+  for (int i = - r; i < r; ++i)
+    for (int j = - r; j < r; ++j)
+      if (i*i + j*j <= square)
+	{
+	  new_x = px+i;
+	  new_y = py+j;
+	  SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+	  old_x = new_x;
+	  old_y = new_y;
+	}
+  new_x = px + r*cos(0);
+  new_y = py - r*sin(0);
+  SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
   
+  return 1;
+}
+
+
+
+void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct palette *p, struct system *sys, struct list_char *files)
+{
+
   if (*((int *)(access_htable(draw_list, "startmenu")->value)))
     {
       window_draw(access_htable(window_list, "startmenu")->value, renderer);
@@ -88,13 +115,22 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
     {
       window_draw(access_htable(window_list, "loadmenu")->value, renderer);
       button_draw(access_htable(button_list, "start_loadmenu")->value, renderer);
+      slider_draw(access_htable(slider_list, "scrollbar")->value, renderer);
+
       button_draw(access_htable(button_list, "x_loadmenu")->value, renderer);
+      display_files(renderer, files, access_htable(slider_list, "scrollbar")->value);
+      display_text(renderer, text_list, "name_loadmenu", 320, 485, 255, 35);
+      if (*((int *)(access_htable(draw_list, "warning_loadmenu")->value)))
+	display_text(renderer, text_list, "warning_loadmenu", 550, 420, 255, 30);
+      
     }
   
   if (*((int *)(access_htable(draw_list, "mainmenu")->value)))
     {
       
       //window_draw(access_htable(window_list, "mainmenu")->value, renderer);
+      window_draw(access_htable(window_list, "mainmenu")->value, renderer);
+
       if (sys)
 	Draw_from_camera(sys->camera, renderer);
       window_draw(access_htable(window_list, "itemsmenu")->value, renderer);
@@ -116,7 +152,7 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
 
 
       slider_draw(access_htable(slider_list, "timelapse")->value, renderer);
-
+      palette_draw(p, renderer);
 
       display_text(renderer, text_list, "intro", 60, 0, 255, 31);
       display_text(renderer, text_list, "item_name", 1080, 70, 0, 25);
@@ -140,7 +176,7 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
 }
 
 
-void button_active(int w, int h, int *quit, struct system **sys, struct system **reset_sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, int *state)
+void button_active(int w, int h, int *quit, struct system **sys, struct system **reset_sys, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list,struct htable *slider_list,  struct list_char* files, int *state, struct palette *p)
 {
   if (((struct button *)(access_htable(button_list, "quit")->value))->active)
     *quit = 1;
@@ -187,7 +223,8 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       *((int *)(access_htable(draw_list, "mainmenu")->value)) = 1;
       *((int *)(access_htable(draw_list, "namemenu")->value)) = 0;
       ((struct text *)(access_htable(text_list, "name")->value))->active = 0;
-
+      ((struct slider *)(access_htable(slider_list, "timelapse")->value))->curlength = 0;
+      p->pos = 0;
       //initialize system here
       *sys = init_system(w, h, text_list);
     }
@@ -267,6 +304,8 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
     }
   else if (((struct button *)(access_htable(button_list, "reset")->value))->active && *state != SIMULATION_EDIT)
     {
+      
+      ((struct slider *)(access_htable(slider_list, "timelapse")->value))->curlength = 0;
       ((struct button *)(access_htable(button_list, "reset")->value))->active = 0;
       ((struct button *)(access_htable(button_list, "reset")->value))->prelight = 0;
       
@@ -320,6 +359,7 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 0;
       ((struct window *)(access_htable(window_list, "itemsmenu")->value))->visible = 0;
       ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 0;
+      
       *((int *)(access_htable(draw_list, "startmenu")->value))= 1;
       *((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
       free_system(*sys);
@@ -359,7 +399,10 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct window *)(access_htable(window_list, "loadmenu")->value))->event = 1;
       ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
       *((int *)(access_htable(draw_list, "loadmenu")->value)) = 1;
-
+      init_textinput(text_list, "name_loadmenu", 30);
+      removeall_list(files);
+      get_files(files);
+      ((struct slider *)(access_htable(slider_list, "scrollbar")->value))->curlength = 0;
     }
   else if (((struct button *)(access_htable(button_list, "x_loadmenu")->value))->active)        
     {                                                                             
@@ -375,17 +418,29 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
     {
       ((struct button *)(access_htable(button_list, "start_loadmenu")->value))->active = 0;
       ((struct button *)(access_htable(button_list, "start_loadmenu")->value))->prelight = 0;
-      ((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 1;
-      ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 1;
-      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->visible = 1;
-      ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 1;
-      ((struct window *)(access_htable(window_list, "loadmenu")->value))->visible = 0;
-      ((struct window *)(access_htable(window_list, "loadmenu")->value))->event = 0;   
-      ((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 0;
-      ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;   
-      *sys = load_system("../save/system.txt");
-      *((int *)(access_htable(draw_list, "mainmenu")->value)) = 1;
-
+      if (list_find(files, ((struct text *)access_htable(text_list, "name_loadmenu")->value)->text))
+	{
+	  ((struct window *)(access_htable(window_list, "mainmenu")->value))->visible = 1;
+	  ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 1;
+	  ((struct window *)(access_htable(window_list, "itemsmenu")->value))->visible = 1;
+	  ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 1;
+	  ((struct window *)(access_htable(window_list, "loadmenu")->value))->visible = 0;
+	  ((struct window *)(access_htable(window_list, "loadmenu")->value))->event = 0;   
+	  ((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 0;
+	  ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
+	  *((int *)(access_htable(draw_list, "loadmenu")->value)) = 0;
+	  *sys = load_system("../save/save_files/system.txt");
+	  *((int *)(access_htable(draw_list, "mainmenu")->value)) = 1;
+	  p->pos = 0;
+	  ((struct slider *)(access_htable(slider_list, "timelapse")->value))->curlength = 0;   
+	}
+      else
+	{
+	  *((int *)(access_htable(draw_list, "warning_loadmenu")->value)) = 1;
+	  init_textinput(text_list, "warning_loadmenu", 200);
+	  struct text *warning = (struct text *)(access_htable(text_list, "warning_loadmenu")->value);
+	    sprintf(warning->text, "invalid name");
+	}
     }
   
   else if (((struct button *)(access_htable(button_list, "add")->value))->active)
@@ -393,5 +448,5 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct button *)(access_htable(button_list, "add")->value))->active = 0;
       ((struct button *)(access_htable(button_list, "add")->value))->prelight = 1;
       (*sys)->camera->event_type = CREATING;
-    }
+    }   
 }

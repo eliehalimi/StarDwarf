@@ -2,14 +2,8 @@
 #define _DRAW_ITEM_H
 
 #include "SDL.h"
-#include <SDL2/SDL.h>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <SDL2/SDL_image.h>
 #include <assert.h>
-#include "../Physic/physic.h"
-//#include "../Camera/camera.h"
 
 int DrawCircle(struct item *item, SDL_Renderer *renderer);
 

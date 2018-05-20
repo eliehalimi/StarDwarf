@@ -1,13 +1,6 @@
 # define _DEFAULT_SOURCE
-# include <stdio.h>
-# include <stdlib.h>
-# include <SDL2/SDL.h>
-# include <SDL2/SDL_ttf.h>
-# include <SDL2/SDL_image.h>
-# include <err.h>
-# include <unistd.h>
 # include "gui.h"
-# include "../Physic/physic.h"
+
 struct text *get_text(struct htable *text_list, char *name)
 {
   return (struct text *)(access_htable(text_list, name)->value);
@@ -112,7 +105,7 @@ void display_text(SDL_Renderer *renderer, struct htable *text_list, char *name, 
   if (!text->item || text->nbchar > 0)
     {
       SDL_Rect pos;                                                        
-      MakeRect(&pos, x, h, 400, 400);
+      MakeRect(&pos, x, h, 700, 700);
       SDL_Color fcolor;                  
       fcolor.r = rgb; fcolor.g  = rgb; fcolor.b  =rgb;                    
       TTF_Font *font;
@@ -155,4 +148,53 @@ void init_textinput(struct htable *text_list, char *name, int size)
       text->nbchar = 0;
     }
   text->active = 1;
+}
+
+void get_files(struct list_char *files)
+{      
+  DIR *d;                                     
+  struct dirent *dir;                           
+  d = opendir("../save/save_files/");                               
+  if (d)                           
+    {                                           
+      while ((dir = readdir (d)) != NULL)
+	{
+          char *name = strtok(dir->d_name, ".");
+          char *format = strtok(NULL, ".");        
+          if (format && strcmp(format, "txt") == 0)
+	    {
+	      list_push(files, name);
+	    }
+        }
+      closedir (d);                          
+    }                                        
+  else                                       
+    {                                        
+      assert(0);                   
+    }
+}
+void display_files(SDL_Renderer *renderer, struct list_char *files, struct slider *scrollbar)
+{
+  assert(files != NULL);
+  int screen_nblines = 6;
+  int total_nblines = list_len(files);
+  int first_line = (total_nblines * scrollbar->curlength) / scrollbar->maxlength;
+  //printf("first: %d   total: %ld \n", first_line, list_len(files));
+  int size = 25;
+  for(files = files->next; first_line > 0 && files != NULL; --first_line, files = files->next);
+  SDL_Rect pos;
+  SDL_Color fcolor;                  
+  fcolor.r = 255; fcolor.g  = 255; fcolor.b  =255;     
+  TTF_Font *font = TTF_OpenFont("Lato-Medium.ttf", size);  
+  for (int i = 0; i < screen_nblines && files != NULL; ++i)
+    {
+      MakeRect(&pos, 350, 150 + i*(size+10), 400, 400);
+      SDL_Surface *textSurface = TTF_RenderText_Solid(font, (const char*)files->data, fcolor);
+      SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, textSurface);         
+      SDL_QueryTexture(texture, NULL, NULL, &pos.w, &pos.h);                              
+      SDL_RenderCopy(renderer, texture, NULL, &pos);       
+      SDL_DestroyTexture(texture); 
+      files = files->next;
+    }
+  TTF_CloseFont(font);       
 }
