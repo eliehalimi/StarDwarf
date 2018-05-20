@@ -319,7 +319,6 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
 
       free_system(*sys);
       *sys = *reset_sys;
-
       *state = SIMULATION_EDIT;
     }
   else if (((struct button *)(access_htable(button_list, "start_mainmenu")->value))->active && *state == SIMULATION_EDIT)

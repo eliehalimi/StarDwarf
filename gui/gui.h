@@ -132,9 +132,9 @@ int button_event(struct button *button, SDL_Event *event, int *draw);
 
 
 //text input
-void item_to_input(struct htable *text_list, struct item *item);
+void item_to_input(struct htable *text_list, struct palette *p, struct item *item);
 struct text *get_text(struct htable *text_list, char *name);
-void input_to_item(struct htable *text_list, struct item *item);
+void input_to_item(struct htable *text_list, struct palette *p, struct item *item);
 void display_text(SDL_Renderer *renderer, struct htable *text_list, char *name, int x, int h, int rgb, int size);
 void textinput(SDL_Event e, struct text *text, int maxchr, struct button *button);
 void init_textinput(struct htable *text_list, char *name, int size);

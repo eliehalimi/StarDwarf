@@ -21,6 +21,7 @@ int main()
 {
   SDL_Event e;
   struct system *sys = NULL;
+  struct item *selected = NULL;
   struct system *reset_sys = NULL;
   struct htable *button_list = create_htable(20);
   struct htable *slider_list = create_htable(3);	
@@ -116,7 +117,7 @@ int main()
 	  if (((struct text *)(access_htable(text_list, "name_loadmenu")->value))->active)  
 	    textinput(e,(struct text *)(access_htable(text_list, "name_loadmenu")->value), 25, NULL);
 	  if(sys)
-	    camera_event(sys->camera, &e, &sys->selected);
+	    camera_event(sys->camera, &e, &selected);
 	    
 	}
 		
@@ -125,11 +126,29 @@ int main()
 
       if(sys != NULL)
 	{
-	  if(sys->selected != NULL)
-	      item_to_input(text_list, sys->selected);				
+	  if(reset_sys == sys)
+	    {
+	      if(sys->selected != NULL)
+		item_to_input(text_list, p, sys->selected);
+	      reset_sys = NULL;
+	    }
+	  
+	  if(selected != NULL)
+	    {
+	      sys->selected = selected;
+	      selected = NULL;
+	      item_to_input(text_list, p, sys->selected);
+	    }
+
+	  if(simulation_state == SIMULATION_EDIT && sys->selected != NULL)
+	    input_to_item(text_list, p, sys->selected);
 	   
 	  if(simulation_state == SIMULATION_PROGRESS)
-	    update_system(sys);
+	    {
+	      update_system(sys);
+	      if(sys->selected != NULL)
+		item_to_input(text_list, p, sys->selected);
+	    }
 			
 	  if(simulation_state == SIMULATION_EDIT)
 	    {

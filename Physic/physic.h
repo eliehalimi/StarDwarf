@@ -14,12 +14,12 @@ struct item
 	size_t nb_dimension;
 	double mass, size;
 	char label[16];
-	char color[4];
+	unsigned char color[4];
 	struct vector position, velocity, force;
 	struct list user_force;                       //VECTOR LIST (sentinel)
 	struct list list;                             //ITEM LIST (pointer to next)
-        SDL_Texture *texture;
-  	SDL_Rect *rect;
+	SDL_Texture *texture;
+	SDL_Rect *rect;
 	struct projection *proj;
 };
 
@@ -30,7 +30,7 @@ struct system
 	size_t nb_item;
 	float timelapse, delta_time;
 	struct camera *camera;
-  struct item *selected;
+	struct item *selected;
 };
 
 struct item *new_item(const struct vector *postion);
