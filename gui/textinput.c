@@ -24,7 +24,7 @@ int get_nbchar(char *text)
   //  printf("%s \n", text);
   return (int) i;
 }
-void item_to_input(struct htable *text_list, struct item *item)
+void item_to_input(struct htable *text_list, struct palette *p, struct item *item)
 {
   struct text *name = get_text(text_list, "item_name");
   text_to_input(name, item->label);
@@ -71,10 +71,28 @@ void item_to_input(struct htable *text_list, struct item *item)
   vz->active = 1;
   vz->nbchar = get_nbchar(vz->text);
 
- 
+  float size = p->rect_palette.w / 6;
+  
+  if(item->color[0] == 255 && item->color[2] == 0)
+    p->pos = item->color[1] * size / 255;
+  
+  else if(item->color[1] == 255 && item->color[2] == 0)
+    p->pos = size + (1 - item->color[0]/ 255) * size;
+
+  else if(item->color[1] == 255 && item->color[0] == 0)
+    p->pos = 2 * size + item->color[2] * size / 255;
+
+  else if(item->color[2] == 255 && item->color[0] == 0)
+    p->pos = 3 * size + (1 - item->color[1] / 255) * size;
+
+  else if(item->color[2] == 255 && item->color[1] == 0)
+    p->pos = 4 * size + item->color[0] * size / 255;
+
+  else
+    p->pos = 5 * size + (1 - item->color[2]) * size;
 }
 
-void input_to_item(struct htable *text_list, struct item *item)
+void input_to_item(struct htable *text_list, struct palette *p, struct item *item)
 {
   strncpy(item->label, get_text(text_list, "item_name")->text, 15);
   
@@ -86,17 +104,17 @@ void input_to_item(struct htable *text_list, struct item *item)
   float z = atof(get_text(text_list, "item_z") -> text);
 
   float pos_val[3] = {x,y,z};
-  struct vector *position = new_vector(3, pos_val);
-  memcpy(item->position.values, position->values, sizeof(float)*position->size);
-  free_vector(position);
+  memcpy(item->position.values, pos_val, sizeof(float) * 3);
   
   float vx = atof(get_text(text_list, "item_vx") -> text);
   float vy = atof(get_text(text_list, "item_vy") -> text);
   float vz = atof(get_text(text_list, "item_vz") -> text);
   float v_val[3] = {vx,vy,vz};
-  struct vector *v = new_vector(3, v_val);
-  memcpy(item->velocity.values, v->values, sizeof(float)*v->size);
-  free_vector(v);
+  memcpy(item->velocity.values, v_val, sizeof(float) * 3);
+
+  item->color[0] = p->color[p->pos].r;
+  item->color[1] = p->color[p->pos].g;
+  item->color[2] = p->color[p->pos].b;
 }
 
 void display_text(SDL_Renderer *renderer, struct htable *text_list, char *name, int x, int h, int rgb, int size)

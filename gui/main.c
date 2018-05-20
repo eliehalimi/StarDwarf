@@ -141,7 +141,7 @@ int main()
 	  if(reset_sys == sys)
 	    {
 	      if(sys->selected != NULL)
-		item_to_input(text_list, sys->selected);
+		item_to_input(text_list, p, sys->selected);
 	      reset_sys = NULL;
 	    }
 	  
@@ -149,17 +149,17 @@ int main()
 	    {
 	      sys->selected = selected;
 	      selected = NULL;
-	      item_to_input(text_list, sys->selected);
+	      item_to_input(text_list, p, sys->selected);
 	    }
 
 	  if(simulation_state == SIMULATION_EDIT && sys->selected != NULL)
-	    input_to_item(text_list, sys->selected);
+	    input_to_item(text_list, p, sys->selected);
 	   
 	  if(simulation_state == SIMULATION_PROGRESS)
 	    {
 	      update_system(sys);
 	      if(sys->selected != NULL)
-		item_to_input(text_list, sys->selected);
+		item_to_input(text_list, p, sys->selected);
 	    }
 			
 	  if(simulation_state == SIMULATION_EDIT)

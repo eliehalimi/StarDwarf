@@ -28,32 +28,44 @@ SDL_Color * init_palette_value(int length, int max, int min)
   for (; i < size; ++i)
     {                  
       ratio = (float)i/(float)size;
-      values[i].r = max; values[i].g = min +(Uint8) (max-min)*ratio; values[i].b = min;     
+      values[i].r = max;
+      values[i].g = min +(Uint8) (max-min)*ratio;
+      values[i].b = min;     
     }                                                                                       
   for (; i < 2*size; ++i)                                                                   
     {                                                                                       
       ratio = (float)(i-size)/(float)size;
-      values[i].r = max - (Uint8)(max-min)*ratio; values[i].g = max ; values[i].b = min;
+      values[i].r = max - (Uint8)(max-min)*ratio;
+      values[i].g = max ;
+      values[i].b = min;
     }                                                                                       
   for (; i < 3*size; ++i)                                                                   
     {                                                                                       
       ratio = (float)(i-2*size)/(float)size;                                                
-      values[i].r = min; values[i].g = max; values[i].b = min + (Uint8)(max-min)*ratio;
+      values[i].r = min;
+      values[i].g = max;
+      values[i].b = min + (Uint8)(max-min)*ratio;
     }                                                                                      
   for (; i < 4*size; ++i)                                                                  
     {                                                                                      
       ratio = (float)(i-3*size)/(float)size;                                               
-      values[i].r = min; values[i].g = max - (Uint8)(max-min)*ratio; values[i].b = max;
+      values[i].r = min;
+      values[i].g = max - (Uint8)(max-min)*ratio;
+      values[i].b = max;
     }                                                                                      
   for (; i < 5*size; ++i)                                                                  
     {                                                                                      
       ratio = (float)(i-4*size)/(float)size;                                               
-      values[i].r = min + (Uint8)(max-min)*ratio; values[i].g = min; values[i].b = max;
+      values[i].r = min + (Uint8)(max-min)*ratio;
+      values[i].g = min;
+      values[i].b = max;
     }                                                                                      
   for (; i < 6*size; ++i)                                                                  
     {                                                                                      
       ratio = (float)(i-5*size)/(float)size;                                               
-      values[i].r = max; values[i].g = min; values[i].b = max - (Uint8)(max-min)*ratio;
+      values[i].r = max;
+      values[i].g = min;
+      values[i].b = max - (Uint8)(max-min)*ratio;
     }                                                                                              
   return values;
 }
