@@ -148,7 +148,8 @@ int main()
 	  if(selected != NULL)
 	    {
 	      sys->selected = selected;
-	      selected = NULL;
+	      if(sys->camera->event_type != MOVING_ITEM)
+		selected = NULL;
 	      item_to_input(text_list, p, sys->selected);
 	    }
 
