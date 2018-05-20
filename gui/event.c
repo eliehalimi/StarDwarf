@@ -60,7 +60,7 @@ SDL_Color * init_palette_value(int length, int max, int min)
       values[i].g = min;
       values[i].b = max;
     }                                                                                      
-  for (; i < 6*size; ++i)                                                                  
+  for (; i < length; ++i)                                                                  
     {                                                                                      
       ratio = (float)(i-5*size)/(float)size;                                               
       values[i].r = max;
@@ -290,8 +290,35 @@ int camera_event(struct camera *camera, SDL_Event *event, struct item **selected
 	  {
 	    struct item *i = selecting_item(camera);
 	    *selected = i;
+	    camera->event_type = MOVING_ITEM;
 	  }
+
+	else if(camera->event_type == MOVING_ITEM && event->type == SDL_MOUSEBUTTONUP && event->button.button == SDL_BUTTON_LEFT)
+	  camera->event_type = NOTMOVING;
 	
+	else if(camera->event_type == MOVING_ITEM && event->type == SDL_MOUSEMOTION && *selected != NULL)
+	  {
+	    struct vector *pos = &(*selected)->position;
+	    struct vector *Vz = sub_vector(&camera->position, clone_vector(&camera->origin));
+	    scalar_product_vector(1.0f / magnitude_vector(Vz), Vz);
+
+	    sub_vector(&camera->position, pos);
+
+	    float ratio = camera->depth / (camera->depth + inner_product(Vz, pos));
+
+	    struct vector *Vmx = scalar_product_vector((event->button.x - camera->mouse_x) / ratio, clone_vector(&camera->Vx));
+	    struct vector *Vmy = scalar_product_vector((event->button.y - camera->mouse_y) / ratio, clone_vector(&camera->Vy));
+
+
+	    add_vector(Vmx, pos);
+	    add_vector(Vmy, pos);
+
+	    add_vector(&camera->position, pos);
+	    
+	    free_vector(Vmy);
+	    free_vector(Vmx);
+	    free_vector(Vz);
+	  }
 	
 	if(event->type == SDL_MOUSEMOTION)
 	{

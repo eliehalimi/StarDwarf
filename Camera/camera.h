@@ -16,7 +16,7 @@
 # define TRANSLATING 2
 # define CREATING 3
 # define SELECTED 4
-
+# define MOVING_ITEM 5
 
 # define WINDOW_W 1280
 # define WINDOW_H 720
