@@ -8,6 +8,7 @@
 # include <SDL2/SDL_ttf.h>
 # include <SDL2/SDL.h>
 # include <SDL2/SDL_image.h>
+# include <SDL2/SDL_mixer.h>
 # include "../Physic/physic.h"
 # include "../Physic/libvector.h"
 # include "../Camera/camera.h"
@@ -30,6 +31,11 @@ struct image{
   SDL_Texture *texture;
   int w;
   int h;
+};
+
+struct music{
+  Mix_Music *texture;
+  Mix_Chunk *sound;
 };
 
 struct palette{
@@ -108,9 +114,9 @@ int PointInRect_Circle(int x, int y, SDL_Rect *rect);
 int RenderImage(SDL_Renderer *renderer, struct image *img, int x, int y, SDL_Rect *rect);
 int image_new(struct image *img, char *fname, SDL_Renderer* renderer);
 
-SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list);
+SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct music *music);
 
-void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable  *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list);
+void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable  *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct music *music);
 
 //event.c
 SDL_Color * init_palette_value(int length, int max, int min);

@@ -1,18 +1,4 @@
-# include <stdio.h>
-# include <stdlib.h>
-# include <SDL2/SDL.h>
-# include <SDL2/SDL_ttf.h>
-# include <SDL2/SDL_image.h>
-# include <err.h>
-# include <unistd.h>
 # include "gui.h"
-# include "draw_item.h"
-# include "../Physic/physic.h"
-# include "../Physic/libvector.h"
-# include <string.h>
-# include "../save/save.h"
-# include "hash_table.h"
-
 
 void text_event(SDL_Event e, struct htable *text_list, struct htable *button_list, char *name, int size)
 {
@@ -44,9 +30,11 @@ int main()
   struct htable *text_list = create_htable(10);
   struct list_char *files = list_create();
   struct palette *p = malloc(sizeof(struct palette));
+  struct music *music = malloc(sizeof(struct music));
+
   int simulation_state = SIMULATION_EDIT;
 
-  SDL_Renderer *renderer = init("Kurt Russel's teapot - StarDwarf",1280, 720, button_list, window_list, img_list, draw_list, text_list, slider_list);
+  SDL_Renderer *renderer = init("Kurt Russel's teapot - StarDwarf",1280, 720, button_list, window_list, img_list, draw_list, text_list, slider_list, music);
   if (!renderer) return 1;
   init_lists(WINDOW_W, WINDOW_H, button_list, window_list, img_list, draw_list, text_list, slider_list, p);
   int quit = 0;
@@ -161,7 +149,7 @@ int main()
 	}
       SDL_RenderPresent(renderer);
     }
-  clean(renderer, button_list, window_list, img_list, draw_list, text_list, slider_list);
+  clean(renderer, button_list, window_list, img_list, draw_list, text_list, slider_list, music);
   if (files)
     free_list(files);
   free(p->color);

@@ -46,7 +46,7 @@ int image_new(struct image *img, char *fname, SDL_Renderer* renderer)
   return 0;
 }
 
-SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list)
+SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct music *music)
 {
   SDL_Rect srect;
   SDL_Init(SDL_INIT_EVERYTHING);
@@ -186,13 +186,13 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   
   if (r)
     {
-      clean(renderer, button_list, window_list, img_list, draw_list, text_list, slider_list);
+      clean(renderer, button_list, window_list, img_list, draw_list, text_list, slider_list, music);
       return NULL;
     }
   return renderer;
 }
 
-void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list)
+void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct music *music)
 { 
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "startmenu")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "new_selected")->value)->texture);
@@ -292,4 +292,5 @@ void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *wi
   SDL_Quit();
 
   SDL_RenderClear(renderer);
+  free(music);
 }
