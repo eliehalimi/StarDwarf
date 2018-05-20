@@ -71,25 +71,46 @@ void item_to_input(struct htable *text_list, struct palette *p, struct item *ite
   vz->active = 1;
   vz->nbchar = get_nbchar(vz->text);
 
-  float size = p->rect_palette.w / 6;
-  
+  int size = p->rect_palette.w / 6;
+  int add = 0;
   if(item->color[0] == 255 && item->color[2] == 0)
-    p->pos = item->color[1] * size / 255;
+    p->pos = item->color[1] * size;
+     
   
   else if(item->color[1] == 255 && item->color[2] == 0)
-    p->pos = size + (1 - item->color[0]/ 255) * size;
+    {
+      p->pos = (255 - item->color[0]) * size;
+      add = size;
+    }
 
   else if(item->color[1] == 255 && item->color[0] == 0)
-    p->pos = 2 * size + item->color[2] * size / 255;
+    {
+      p->pos = item->color[2] * size;
+      add = 2 * size;
+    }
 
   else if(item->color[2] == 255 && item->color[0] == 0)
-    p->pos = 3 * size + (1 - item->color[1] / 255) * size;
+    {
+      p->pos = (255 - item->color[1]) * size;
+      add = 3 * size;
+    }
 
   else if(item->color[2] == 255 && item->color[1] == 0)
-    p->pos = 4 * size + item->color[0] * size / 255;
+    {
+      p->pos = item->color[0] * size;
+      add = 4 * size;
+    }
 
   else
-    p->pos = 5 * size + (1 - item->color[2]) * size;
+    {
+      p->pos = (255 - item->color[2]) * size;
+      add = 5 * size;
+    }
+
+  int sup = p->pos % 255 > 127;
+  p->pos = p->pos/255 + sup + add;
+
+  printf("to input : size = %i, pos = %i, r = %i, g = %i, b = %i\n", size, p->pos, item->color[0], item->color[1], item->color[2]);
 }
 
 void input_to_item(struct htable *text_list, struct palette *p, struct item *item)
@@ -115,6 +136,9 @@ void input_to_item(struct htable *text_list, struct palette *p, struct item *ite
   item->color[0] = p->color[p->pos].r;
   item->color[1] = p->color[p->pos].g;
   item->color[2] = p->color[p->pos].b;
+
+  int size = p->rect_palette.w / 6;
+  printf("to item : size = %i, pos = %i, r = %i, g = %i, b = %i\n", size, p->pos, item->color[0], item->color[1], item->color[2]);
 }
 
 void display_text(SDL_Renderer *renderer, struct htable *text_list, char *name, int x, int h, int rgb, int size)

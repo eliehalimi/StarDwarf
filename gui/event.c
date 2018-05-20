@@ -60,7 +60,7 @@ SDL_Color * init_palette_value(int length, int max, int min)
       values[i].g = min;
       values[i].b = max;
     }                                                                                      
-  for (; i < 6*size; ++i)                                                                  
+  for (; i < length; ++i)                                                                  
     {                                                                                      
       ratio = (float)(i-5*size)/(float)size;                                               
       values[i].r = max;
