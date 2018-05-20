@@ -24,9 +24,8 @@ struct item *new_item(const struct vector *position)
 	memcpy(&i->force, v, sizeof(struct vector));
 	free(v);
 
-	for(size_t index = 0; index < 4; index++)
-		i->color[index] = 255;
-	//i->color[3] = 255;
+	i->color[0] = 255;
+	i->color[3] = 255;
 
 	return i;
 }
