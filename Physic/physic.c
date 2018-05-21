@@ -1,4 +1,3 @@
-
 # include <stdlib.h>
 # include <string.h>
 # include <assert.h>
@@ -124,29 +123,33 @@ void update_system(struct system *system)
 	//APPLY GRAVITY
 	for(struct list *l1 = system->items.next; l1 != NULL; l1 = l1->next)
 	{
+	  struct item *destroyed = NULL;
 		for(struct list *l2 = system->items.next; l2 != NULL; l2 = l2->next)
 		{
 			struct item *i1 = CONTAINER_OF_(struct item, list, l1);
 			struct item *i2 = CONTAINER_OF_(struct item, list, l2);
 
-			if(i1 == i2)
+			if(i1 == i2 || i1 == destroyed || i2 == destroyed)
 				continue;
 
 			struct vector *g = gra_force(i1, i2);
 			scalar_product_vector(1/i1->mass, g);
 			add_vector(g, &i1->force);
 			free_vector(g);
-			if(collide(system, i1, i2))
+			//APPLY COLLISION
+			if(collide(system, i1, i2, &destroyed))
 			  {
-			    struct vector *totalVelocity = clone_vector(&i1->velocity);
-			    scalar_product_vector(system->delta_time, totalVelocity);
-			    while(distance(i1,i2) < i1->size / 2 + i2->size / 2)
-			      add_vector(totalVelocity, &i1->position);
-			    free_vector(totalVelocity);
-			    assert(!collide(system, i1, i2));
+			    struct vector *away = sub_vector(&i2->position, clone_vector(&i1->position));
+			    scalar_product_vector(system->delta_time/magnitude_vector(away), away);
+			    while(distance(i1,i2) <= i1->size / 2 + i2->size / 2)
+			      add_vector(away, &i1->position);
+			    free_vector(away);
+			    assert(!collide(system, i1, i2, destroyed));
 			  }
 		}
 	}
+	
+	
 }
 
 void push_item(struct system *system, struct item *item)

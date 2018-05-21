@@ -8,7 +8,7 @@
 # include "forces.h"
 
 
-int collide(struct system *system, struct item *i1, struct item *i2)
+int collide(struct system *system, struct item *i1, struct item *i2, struct item **destroyed)
 {
 	if (distance(i1,i2) < (i1->size / 2 + i2->size / 2))
 	{
@@ -17,6 +17,7 @@ int collide(struct system *system, struct item *i1, struct item *i2)
 		//smallest mass of a planet : 3.301 x 10^23 kg 
 		//biggest mass of a asteroid : 939.3 X 10^18 kg
 		//assume that the mass input is under unit quadrillion kg (10^15)
+	  *destroyed = NULL;
 		float ratio = 0;
 		float m1 = i1->mass, m2 = i2->mass;
 		if (m1>m2)
@@ -38,6 +39,7 @@ int collide(struct system *system, struct item *i1, struct item *i2)
 				
 				add_vector(scalar_product_vector(m2/m1, &i2->velocity), &i1->velocity);
 				free_item(remove_item(system, i2));
+				*destroyed = i2;
 			}
 			else
 			{
@@ -48,7 +50,7 @@ int collide(struct system *system, struct item *i1, struct item *i2)
 				
 				add_vector(scalar_product_vector(m1/m2, &i1->velocity), &i2->velocity);
 				free_item(remove_item(system, i1));
-
+				*destroyed = i1;
 			}
 			return 0;
 		}
