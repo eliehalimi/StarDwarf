@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <err.h>
 
 #include "save.h"
 #include "../Physic/physic.h"
@@ -134,6 +135,11 @@ struct system *load_system(char *path)
 			str = strtok(NULL, " ");
 		
 		}
+		assert(size != 0);
+		assert(mass != 0);
+		if (color0 == 0 && color1 == 0 && color2 == 0)
+			err(1, "can't see planet");
+
 		printf("%f, %f, %f\n%f, %f\n%d, %d, %d\n%d, %d, %d\n",
 				x, y, z, size, mass, color0, color1, color2, velocity0, velocity1, velocity2);
 		position = new_vector(3, val);
