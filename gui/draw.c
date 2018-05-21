@@ -464,12 +464,14 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
 	  ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
 	  *((int *)(access_htable(draw_list, "loadmenu")->value)) = 0;
 
-	 // char *text = (char*) ((struct text *)access_htable(text_list, "name_loadmenu")->value)->text;
-	  //char *path = strcat("../save/save_files/", text);
-	  //puts(path);
-	 // fflush(NULL);
-	 // *sys = load_system(path);
-	  *sys = load_system("../save/save_files/system.txt");
+	  char *text = (char*) ((struct text *)access_htable(text_list, "name_loadmenu")->value)->text;
+	  text = strcat(text, ".txt");
+	  char path[255];
+	  strcpy(path, "../save/save_files/");
+	  strcat(path, text);
+	  puts(path);
+	  *sys = load_system(path);
+	  //*sys = load_system("../save/save_files/system.txt");
 	  *((int *)(access_htable(draw_list, "mainmenu")->value)) = 1;
 	  p->pos = 0;
 	  ((struct slider *)(access_htable(slider_list, "timelapse")->value))->curlength = 0;
