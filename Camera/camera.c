@@ -249,7 +249,7 @@ void zoom_camera(struct camera *camera, float dist)
 
   struct vector *v = sub_vector(&camera->origin, clone_vector(&camera->position));
 
-  if(dist < magnitude_vector(v))
+  if(dist < magnitude_vector(v) || dist > 0)
     {
       scalar_product_vector(dist/magnitude_vector(v), v);
       add_vector(v, &camera->position);

@@ -323,11 +323,10 @@ int camera_event(struct camera *camera, SDL_Event *event, struct item **selected
 	    free_vector(Vmx);
 	    free_vector(Vz);
 	  }
-	else if(camera->event_type == NOTMOVING && event->type == SDL_MOUSEBUTTONDOWN && event->button.button == 4)
+	else if(camera->event_type == NOTMOVING && event->type == SDL_MOUSEWHEEL && event->button.x < 0)
 	  zoom_camera(camera, 30);
-
-	if(event->type == SDL_MOUSEBUTTONDOWN)
-	  printf("%i\n", event->button.button);
+	else if(camera->event_type == NOTMOVING && event->type == SDL_MOUSEWHEEL && event->button.x > 0)
+	  zoom_camera(camera, -30);
 	
 	if(event->type == SDL_MOUSEMOTION)
 	{
