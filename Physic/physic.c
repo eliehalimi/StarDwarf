@@ -123,7 +123,7 @@ void update_system(struct system *system)
 	//APPLY GRAVITY
 	for(struct list *l1 = system->items.next; l1 != NULL; l1 = l1->next)
 	{
-	  struct item *destroyed = NULL;
+		struct item *destroyed = NULL;
 		for(struct list *l2 = system->items.next; l2 != NULL; l2 = l2->next)
 		{
 			struct item *i1 = CONTAINER_OF_(struct item, list, l1);
@@ -138,18 +138,18 @@ void update_system(struct system *system)
 			free_vector(g);
 			//APPLY COLLISION
 			if(collide(system, i1, i2, &destroyed))
-			  {
-			    struct vector *away = sub_vector(&i2->position, clone_vector(&i1->position));
-			    scalar_product_vector(system->delta_time/magnitude_vector(away), away);
-			    while(distance(i1,i2) <= i1->size / 2 + i2->size / 2)
-			      add_vector(away, &i1->position);
-			    free_vector(away);
-			    assert(!collide(system, i1, i2, destroyed));
-			  }
+			{
+				struct vector *away = sub_vector(&i2->position, clone_vector(&i1->position));
+				scalar_product_vector(system->delta_time/magnitude_vector(away), away);
+				while(distance(i1,i2) <= i1->size / 2 + i2->size / 2)
+					add_vector(away, &i1->position);
+				free_vector(away);
+				assert(!collide(system, i1, i2, &destroyed));
+			}
 		}
 	}
-	
-	
+
+
 }
 
 void push_item(struct system *system, struct item *item)
@@ -157,7 +157,7 @@ void push_item(struct system *system, struct item *item)
 	assert(system != NULL);
 	assert(item != NULL);
 	assert(system->camera != NULL);
-	
+
 	item->list.next = system->items.next;
 	system->items.next = &item->list;
 	system->nb_item += 1;
@@ -195,32 +195,32 @@ struct item *remove_item(struct system *system, struct item *item)
 
 struct item *clone_item(const struct item *item)
 {
-  struct item *res = new_item(&item->position);
-  res->mass = item->mass;
-  res->size = item->size;
-  strncpy(res->label, item->label, 15);
-  //strncpy(res->color, item->color, 4);
-  res->color[0] = item->color[0];
-  res->color[1] = item->color[1];
-  res->color[2] = item->color[2];
-  res->color[3] = item->color[3];
-  memcpy(res->velocity.values, item->velocity.values, sizeof(float) * item->nb_dimension);
-  return res;
+	struct item *res = new_item(&item->position);
+	res->mass = item->mass;
+	res->size = item->size;
+	strncpy(res->label, item->label, 15);
+	//strncpy(res->color, item->color, 4);
+	res->color[0] = item->color[0];
+	res->color[1] = item->color[1];
+	res->color[2] = item->color[2];
+	res->color[3] = item->color[3];
+	memcpy(res->velocity.values, item->velocity.values, sizeof(float) * item->nb_dimension);
+	return res;
 }
 
 struct system *clone_system(const struct system *system)
 {
-  struct system *res = new_system(system->nb_dimension);
-  res->camera = new_camera(system->camera->center_X, system->camera->center_Y);
-  res->delta_time = system->delta_time;
-  
-  for(struct list *l = system->items.next; l != NULL; l = l->next)
-    {
-      struct item *i = CONTAINER_OF_(struct item, list, l);
-      struct item *c = clone_item(i);
-      if(system->selected == i)
-	res->selected = c;
-      push_item(res, c);
-    }
-  return res;
+	struct system *res = new_system(system->nb_dimension);
+	res->camera = new_camera(system->camera->center_X, system->camera->center_Y);
+	res->delta_time = system->delta_time;
+
+	for(struct list *l = system->items.next; l != NULL; l = l->next)
+	{
+		struct item *i = CONTAINER_OF_(struct item, list, l);
+		struct item *c = clone_item(i);
+		if(system->selected == i)
+			res->selected = c;
+		push_item(res, c);
+	}
+	return res;
 }

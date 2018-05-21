@@ -17,7 +17,7 @@ int collide(struct system *system, struct item *i1, struct item *i2, struct item
 		//smallest mass of a planet : 3.301 x 10^23 kg 
 		//biggest mass of a asteroid : 939.3 X 10^18 kg
 		//assume that the mass input is under unit quadrillion kg (10^15)
-	  *destroyed = NULL;
+		*destroyed = NULL;
 		float ratio = 0;
 		float m1 = i1->mass, m2 = i2->mass;
 		if (m1>m2)
@@ -31,23 +31,23 @@ int collide(struct system *system, struct item *i1, struct item *i2, struct item
 
 			if (m1 > m2) //i1 is a planet
 			{
-			  if(system->selected == i2)
-			    system->selected = NULL;
+				if(system->selected == i2)
+					system->selected = NULL;
 				//m1v1 + m2v2 = (m1+m2)v1'
 				memcpy(i1->velocity.values, v->values, sizeof(float)* v->size);
 				i1->mass += i2->mass;
-				
+
 				add_vector(scalar_product_vector(m2/m1, &i2->velocity), &i1->velocity);
 				free_item(remove_item(system, i2));
 				*destroyed = i2;
 			}
 			else
 			{
-			  if(system->selected == i1)
-			    system->selected = NULL;
+				if(system->selected == i1)
+					system->selected = NULL;
 				memcpy(i2->velocity.values, v->values, sizeof(float)*v->size);
 				i2->mass += i1->mass;
-				
+
 				add_vector(scalar_product_vector(m1/m2, &i1->velocity), &i2->velocity);
 				free_item(remove_item(system, i1));
 				*destroyed = i1;

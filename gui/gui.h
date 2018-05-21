@@ -144,7 +144,7 @@ void display_files(SDL_Renderer *renderer, struct list_char *files, struct slide
 //main_manipulation.c
 void init_lists(int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list,  struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct palette *p);
 
-struct system *init_system(int w, int h, struct htable *text_list) ;
+struct system *init_system(int w, int h) ;
 
 //draw.c
 

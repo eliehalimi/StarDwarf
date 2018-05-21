@@ -243,7 +243,7 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct slider *)(access_htable(slider_list, "timelapse")->value))->curlength = 0;
       p->pos = 0;
       //initialize system here
-      *sys = init_system(w, h, text_list);
+      *sys = init_system(w, h);
     }
   else if (((struct button *)(access_htable(button_list, "item_name")->value))->active)
     init_textinput(text_list, "item_name", 15);
@@ -494,5 +494,15 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct button *)(access_htable(button_list, "add")->value))->active = 0;
       ((struct button *)(access_htable(button_list, "add")->value))->prelight = 1;
       (*sys)->camera->event_type = CREATING;
+    }   
+  else if (((struct button *)(access_htable(button_list, "delete")->value))->active)
+    {
+      ((struct button *)(access_htable(button_list, "delete")->value))->active = 0;
+      ((struct button *)(access_htable(button_list, "delete")->value))->prelight = 1;
+      if(*sys != NULL && (*sys)->selected != NULL && *state == SIMULATION_EDIT)
+	{
+	  free_item(remove_item(*sys, (*sys)->selected));
+	  (*sys)->selected = NULL;
+	}
     }   
 }
