@@ -1,27 +1,29 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <err.h>
 
 #include "save.h"
 #include "../Physic/physic.h"
 
-void save_system(struct system *system) 
+void save_system(struct system *system, char *name) 
 {
 	assert(system != NULL);
 	assert(system->delta_time > 0.0f);
 	assert(system->nb_dimension == 3);
 
-	FILE *f = fopen("save_files/system.txt", "w+");
+	char path[255];
+	strcpy(path, "../save_files/");
+	strcat(path, name);
+	strcat(path, ".txt");
+	FILE *f = fopen(path, "w+");
 	assert(f != NULL);
-	
-	//char *str;
-	
+		
 	size_t nb_dimension;
        	double mass, size;
-	//char label[16];
-	//char color[4];
+	char label[16];
+	char color[4];
 	struct vector *pos, *velocity;//, *force;
-	struct list user_force;
 	//struct list list;
 	
 	for (struct list *l = system->items.next; l != NULL; l = l->next)
@@ -35,8 +37,7 @@ void save_system(struct system *system)
 		pos = &i->position;
 		velocity = &i->velocity;
 		//force = &i->force;
-		user_force = i->user_force;
-		
+
 		//printf("%f, %f, %f\n pos = %f %f %f\nvel = %f %f %f", size, mass, nb_dimension,
 		  //     pos->values[0], pos->values[1], pos->values[2],
 		    //   velocity->values[0], velocity->values[1], velocity->values[2]); 
@@ -134,6 +135,11 @@ struct system *load_system(char *path)
 			str = strtok(NULL, " ");
 		
 		}
+		assert(size != 0);
+		assert(mass != 0);
+		if (color0 == 0 && color1 == 0 && color2 == 0)
+			err(1, "can't see planet");
+
 		printf("%f, %f, %f\n%f, %f\n%d, %d, %d\n%d, %d, %d\n",
 				x, y, z, size, mass, color0, color1, color2, velocity0, velocity1, velocity2);
 		position = new_vector(3, val);
