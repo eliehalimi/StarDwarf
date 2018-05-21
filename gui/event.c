@@ -21,9 +21,9 @@ int slider_new(struct slider *slider, struct image *bar, struct image *selected,
   slider->selected = selected; slider->unselected = unselected;
   return 0;
 }
-SDL_Color * init_palette_value(int length, int max, int min)                                       
-{                                                                                                  
-  SDL_Color * values = malloc(sizeof(SDL_Color) * length);                                         
+SDL_Color * init_palette_value(int length, int max, int min)                             
+{
+  SDL_Color * values = malloc(sizeof(SDL_Color) * length);
   int i = 0, size = length/6; float ratio;
   for (; i < size; ++i)
     {                  
@@ -31,42 +31,42 @@ SDL_Color * init_palette_value(int length, int max, int min)
       values[i].r = max;
       values[i].g = min +(Uint8) (max-min)*ratio;
       values[i].b = min;     
-    }                                                                                       
-  for (; i < 2*size; ++i)                                                                   
-    {                                                                                       
+    }                                                                                    
+  for (; i < 2*size; ++i)
+    {                     
       ratio = (float)(i-size)/(float)size;
       values[i].r = max - (Uint8)(max-min)*ratio;
       values[i].g = max ;
       values[i].b = min;
-    }                                                                                       
-  for (; i < 3*size; ++i)                                                                   
-    {                                                                                       
-      ratio = (float)(i-2*size)/(float)size;                                                
+    }                     
+  for (; i < 3*size; ++i) 
+    {                     
+      ratio = (float)(i-2*size)/(float)size;  
       values[i].r = min;
       values[i].g = max;
       values[i].b = min + (Uint8)(max-min)*ratio;
-    }                                                                                      
-  for (; i < 4*size; ++i)                                                                  
-    {                                                                                      
-      ratio = (float)(i-3*size)/(float)size;                                               
+    }                                         
+  for (; i < 4*size; ++i)                     
+    {                                         
+      ratio = (float)(i-3*size)/(float)size;  
       values[i].r = min;
       values[i].g = max - (Uint8)(max-min)*ratio;
       values[i].b = max;
-    }                                                                                      
-  for (; i < 5*size; ++i)                                                                  
-    {                                                                                      
-      ratio = (float)(i-4*size)/(float)size;                                               
+    }                                         
+  for (; i < 5*size; ++i)                     
+    {                                                                                    
+      ratio = (float)(i-4*size)/(float)size;                                             
       values[i].r = min + (Uint8)(max-min)*ratio;
       values[i].g = min;
       values[i].b = max;
-    }                                                                                      
-  for (; i < length; ++i)                                                                  
-    {                                                                                      
-      ratio = (float)(i-5*size)/(float)size;                                               
+    }                                         
+  for (; i < length; ++i)                     
+    {                                                                                    
+      ratio = (float)(i-5*size)/(float)size;                                            
       values[i].r = max;
       values[i].g = min;
       values[i].b = max - (Uint8)(max-min)*ratio;
-    }                                                                                              
+    }                                         
   return values;
 }
 
@@ -85,7 +85,7 @@ int palette_new(struct palette *p, struct window *window, int x, int y, int w, i
   return 0;
 }
 
-int palette_event(struct palette *p, SDL_Event *event, int *draw)
+int palette_event(struct palette *p, SDL_Event *event, int *draw, struct music *music)
 {
   p->event = p->window->event;
   if (!p || !p->event || !event) return 0;
@@ -93,6 +93,7 @@ int palette_event(struct palette *p, SDL_Event *event, int *draw)
     *draw = 1;
   if (event->type == SDL_MOUSEBUTTONDOWN && PointInRect_Circle(event->button.x, event->button.y, &p->rect_picker))
     {
+      Mix_PlayChannel(-1, music->se, 0);
       p->mousepos = event->button.x;
       p->mousedown = 1; p->active = 1; *draw = 1;
     }
@@ -118,7 +119,7 @@ int palette_event(struct palette *p, SDL_Event *event, int *draw)
 
 }
 
-int slider_event(struct slider *slider, SDL_Event *event, int *draw)
+int slider_event(struct slider *slider, SDL_Event *event, int *draw, struct music *music)
 {
   slider->event = slider->window->event;
   if (!slider || !slider->event || !event) return 0;
@@ -127,6 +128,7 @@ int slider_event(struct slider *slider, SDL_Event *event, int *draw)
     *draw = 1;
   if (event->type == SDL_MOUSEBUTTONDOWN&& PointInRect(event->button.x, event->button.y, &slider->rect_token))
     {
+      Mix_PlayChannel(-1, music->se, 0);
       if (slider->horizontal)
 	slider->mousepos = event->button.x;
       else
@@ -203,7 +205,7 @@ int button_new(struct button *button, struct image *selected, struct image *unse
   return 0;
 }
 
-int button_event(struct button *button, SDL_Event *event, int *draw)
+int button_event(struct button *button, SDL_Event *event, int *draw, struct music *music)
 {
   button->event = button->window->event;
   if (!button || !button->event || !event) return 0;
@@ -213,6 +215,7 @@ int button_event(struct button *button, SDL_Event *event, int *draw)
     {
       if (event->type == SDL_MOUSEBUTTONDOWN && PointInRect(event->button.x, event->button.y,&button->rect))
 	{
+	  Mix_PlayChannel(-1, music->se, 0);
 	  button->active = 1; button->prelight = 1;*draw = 1;
 	}
       else if (event->type == SDL_MOUSEMOTION && PointInRect(event->motion.x, event->motion.y, &button->rect))
@@ -228,6 +231,7 @@ int button_event(struct button *button, SDL_Event *event, int *draw)
     {
       if (event->type == SDL_MOUSEBUTTONDOWN && PointInRect(event->button.x, event->button.y,&button->rect))
 	{
+	  Mix_PlayChannel(-1, music->se, 0);
 	  button->active = 1; button->prelight = 1; button->input = 1; *draw = 1;
 	}
       else if (button->input && event->type == SDL_MOUSEBUTTONDOWN && !PointInRect(event->button.x, event->button.y,&button->rect))

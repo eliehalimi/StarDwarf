@@ -1,18 +1,4 @@
-# include <stdio.h>
-# include <stdlib.h>
-# include <SDL2/SDL.h>
-# include <SDL2/SDL_ttf.h>
-# include <SDL2/SDL_image.h>
-# include <err.h>
-# include <unistd.h>
 # include "gui.h"
-# include "draw_item.h"
-# include "../Physic/physic.h"
-# include "../Physic/libvector.h"
-# include <string.h>
-# include "../save/save.h"
-# include "hash_table.h"
-
 
 void text_event(SDL_Event e, struct htable *text_list, struct htable *button_list, char *name, int size)
 {
@@ -20,7 +6,7 @@ void text_event(SDL_Event e, struct htable *text_list, struct htable *button_lis
     textinput(e,(struct text *)(access_htable(text_list, name)->value), size, access_htable(button_list, name)->value);
 }
 
-void timelapse( struct slider *slider, struct system *sys)
+void timelapse(struct slider *slider, struct system *sys)
 {
   if (slider->mousedown)
     {
@@ -29,7 +15,26 @@ void timelapse( struct slider *slider, struct system *sys)
       float ratio = (float )slider->curlength/slider->maxlength;       
       sys->delta_time = minv + (maxv-minv)*ratio; 
     }
-
+}
+void volume_music(struct slider *slider)
+{
+  if (slider->mousedown)
+    {
+      int minv = *(int *)slider->minvalue;                         
+      int maxv = *(int *)slider->maxvalue;                         
+      float ratio = (float )slider->curlength/slider->maxlength;       
+      Mix_VolumeMusic(minv + (int)((maxv - minv)*ratio));
+    }
+}
+void volume_effect(struct slider *slider)
+{
+  if (slider->mousedown)
+    {
+      int minv = *(int *)slider->minvalue;                         
+      int maxv = *(int *)slider->maxvalue;                         
+      float ratio = (float )slider->curlength/slider->maxlength;       
+      Mix_Volume(-1, minv + (int)((maxv - minv)*ratio));
+    }
 }
 int main()
 {
@@ -45,9 +50,11 @@ int main()
   struct htable *text_list = create_htable(10);
   struct list_char *files = list_create();
   struct palette *p = malloc(sizeof(struct palette));
+  struct music *music = malloc(sizeof(struct music));
+
   int simulation_state = SIMULATION_EDIT;
 
-  SDL_Renderer *renderer = init("Kurt Russel's teapot - StarDwarf",1280, 720, button_list, window_list, img_list, draw_list, text_list, slider_list);
+  SDL_Renderer *renderer = init("Kurt Russel's teapot - StarDwarf",1280, 720, button_list, window_list, img_list, draw_list, text_list, slider_list, music);
   if (!renderer) return 1;
   init_lists(WINDOW_W, WINDOW_H, button_list, window_list, img_list, draw_list, text_list, slider_list, p);
   int quit = 0;
@@ -78,54 +85,66 @@ int main()
 	  text_event(e, text_list, button_list, "item_vz", 10);
 
 	  window_event(access_htable(window_list, "startmenu")->value, &e, access_htable(draw_list, "startmenu")->value);
-	  button_event(access_htable(button_list, "new")->value, &e, access_htable(draw_list, "startmenu")->value);
-	  button_event(access_htable(button_list, "load")->value, &e, access_htable(draw_list, "startmenu")->value);
-	  button_event(access_htable(button_list, "option")->value, &e, access_htable(draw_list, "startmenu")->value);
-	  button_event(access_htable(button_list, "quit")->value, &e, access_htable(draw_list, "startmenu")->value);
+	  button_event(access_htable(button_list, "new")->value, &e, access_htable(draw_list, "startmenu")->value, music);
+	  button_event(access_htable(button_list, "load")->value, &e, access_htable(draw_list, "startmenu")->value, music);
+	  button_event(access_htable(button_list, "option")->value, &e, access_htable(draw_list, "startmenu")->value, music);
+	  button_event(access_htable(button_list, "quit")->value, &e, access_htable(draw_list, "startmenu")->value, music);
 
 
 	  window_event(access_htable(window_list, "namemenu")->value, &e, access_htable(draw_list, "namemenu")->value);
-	  button_event(access_htable(button_list, "x")->value, &e, access_htable(draw_list, "namemenu")->value);
-	  button_event(access_htable(button_list, "start")->value, &e, access_htable(draw_list, "namemenu")->value);
+	  button_event(access_htable(button_list, "x")->value, &e, access_htable(draw_list, "namemenu")->value, music);
+	  button_event(access_htable(button_list, "start")->value, &e, access_htable(draw_list, "namemenu")->value, music);
 
 	  window_event(access_htable(window_list, "optionmenu")->value, &e, access_htable(draw_list, "optionmenu")->value);
-	  button_event(access_htable(button_list, "credit")->value, &e, access_htable(draw_list, "optionmenu")->value);
-	  button_event(access_htable(button_list, "volume")->value, &e, access_htable(draw_list, "optionmenu")->value);
-	  button_event(access_htable(button_list, "back_optionmenu")->value, &e, access_htable(draw_list, "optionmenu")->value);
+	  button_event(access_htable(button_list, "credit")->value, &e, access_htable(draw_list, "optionmenu")->value, music);
+	  button_event(access_htable(button_list, "volume")->value, &e, access_htable(draw_list, "optionmenu")->value, music);
+	  button_event(access_htable(button_list, "back_optionmenu")->value, &e, access_htable(draw_list, "optionmenu")->value, music);
 
 	  window_event(access_htable(window_list, "creditmenu")->value, &e, access_htable(draw_list, "creditmenu")->value);
-	  button_event(access_htable(button_list, "back_creditmenu")->value, &e, access_htable(draw_list, "creditmenu")->value);
+	  button_event(access_htable(button_list, "back_creditmenu")->value, &e, access_htable(draw_list, "creditmenu")->value, music);
 
+	  window_event(access_htable(window_list, "volumemenu")->value, &e, access_htable(draw_list, "volumemenu")->value);
+	  button_event(access_htable(button_list, "back_volumemenu")->value, &e, access_htable(draw_list, "volumemenu")->value, music);
+	  slider_event(access_htable(slider_list, "music_volumemenu")->value, &e, access_htable(draw_list, "volumemenu")->value, music);
+	  volume_music(access_htable(slider_list, "music_volumemenu")->value);
+	  slider_event(access_htable(slider_list, "effect_volumemenu")->value, &e, access_htable(draw_list, "volumemenu")->value, music);
+	  volume_effect(access_htable(slider_list, "effect_volumemenu")->value);
+	  
 	  window_event(access_htable(window_list, "mainmenu")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "item_name")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "item_x")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "item_y")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "item_z")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "item_vx")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "item_vy")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "item_vz")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "item_mass")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "item_radius")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "add")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "delete")->value, &e, access_htable(draw_list, "mainmenu")->value);
-	  button_event(access_htable(button_list, "start_mainmenu")->value, &e, access_htable(draw_list, "mainmenu")->value);
+	  button_event(access_htable(button_list, "item_name")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
+	  button_event(access_htable(button_list, "item_x")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
+	  button_event(access_htable(button_list, "item_y")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
+	  button_event(access_htable(button_list, "item_z")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
+	  button_event(access_htable(button_list, "item_vx")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
+	  button_event(access_htable(button_list, "item_vy")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
+	  button_event(access_htable(button_list, "item_vz")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
+	  button_event(access_htable(button_list, "item_mass")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
+	  button_event(access_htable(button_list, "item_radius")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
+	  button_event(access_htable(button_list, "add")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
+	  button_event(access_htable(button_list, "delete")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
+	  button_event(access_htable(button_list, "start_mainmenu")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
 
-	  slider_event(access_htable(slider_list, "timelapse")->value, &e, access_htable(draw_list, "mainmenu")->value);
+	  slider_event(access_htable(slider_list, "timelapse")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
 	  timelapse(access_htable(slider_list, "timelapse")->value, sys);
-	  palette_event(p, &e, access_htable(draw_list, "mainmenu")->value);
+	  palette_event(p, &e, access_htable(draw_list, "mainmenu")->value, music);
 			
-	  button_event(access_htable(button_list, "pause")->value, &e, access_htable(draw_list, "mainmenu")->value);
+	  button_event(access_htable(button_list, "pause")->value, &e, access_htable(draw_list, "mainmenu")->value, music);
 
 	  window_event(access_htable(window_list, "pausemenu")->value, &e, access_htable(draw_list, "pausemenu")->value);
-	  button_event(access_htable(button_list, "quit_mainmenu")->value, &e, access_htable(draw_list, "pausemenu")->value);
-	  button_event(access_htable(button_list, "resume")->value, &e, access_htable(draw_list, "pausemenu")->value);
-	  button_event(access_htable(button_list, "reset")->value, &e, access_htable(draw_list, "pausemenu")->value);
-	  button_event(access_htable(button_list, "saveandquit")->value, &e, access_htable(draw_list, "pausemenu")->value);
+	  button_event(access_htable(button_list, "quit_mainmenu")->value, &e, access_htable(draw_list, "pausemenu")->value, music);
+	  button_event(access_htable(button_list, "resume")->value, &e, access_htable(draw_list, "pausemenu")->value, music);
+	  button_event(access_htable(button_list, "reset")->value, &e, access_htable(draw_list, "pausemenu")->value, music);
+	  button_event(access_htable(button_list, "saveandquit")->value, &e, access_htable(draw_list, "pausemenu")->value, music);
+	  
+	  slider_event(access_htable(slider_list, "music_pausemenu")->value, &e, access_htable(draw_list, "pausemenu")->value, music);
+	  volume_music(access_htable(slider_list, "music_pausemenu")->value);
+	  slider_event(access_htable(slider_list, "effect_pausemenu")->value, &e, access_htable(draw_list, "pausemenu")->value, music);
+	  volume_effect(access_htable(slider_list, "music_pausemenu")->value);
 
 	  window_event(access_htable(window_list, "loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value);
-	  button_event(access_htable(button_list, "x_loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value);
-	  button_event(access_htable(button_list, "start_loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value);
-	  slider_event(access_htable(slider_list, "scrollbar")->value, &e, access_htable(draw_list, "loadmenu")->value);
+	  button_event(access_htable(button_list, "x_loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value, music);
+	  button_event(access_htable(button_list, "start_loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value, music);
+	  slider_event(access_htable(slider_list, "scrollbar")->value, &e, access_htable(draw_list, "loadmenu")->value, music);
 	  if (((struct text *)(access_htable(text_list, "name_loadmenu")->value))->active)  
 	    textinput(e,(struct text *)(access_htable(text_list, "name_loadmenu")->value), 25, NULL);
 	  if(sys)
@@ -181,7 +200,7 @@ int main()
 	}
       SDL_RenderPresent(renderer);
     }
-  clean(renderer, button_list, window_list, img_list, draw_list, text_list, slider_list);
+  clean(renderer, button_list, window_list, img_list, draw_list, text_list, slider_list, music);
   if (files)
     free_list(files);
   free(p->color);

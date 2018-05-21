@@ -45,9 +45,32 @@ int image_new(struct image *img, char *fname, SDL_Renderer* renderer)
   SDL_QueryTexture(img->texture, NULL, NULL, &img->w, &img->h);
   return 0;
 }
-
-SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list)
+int init_music(struct music *music)
 {
+  //Initialize SDL_mixer
+  if (Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
+    errx(1,"Could not initialize sdl mixer  %s\n", SDL_GetError());
+
+  music->bg = Mix_LoadMUS("bg.ogg");
+  if(music->bg == NULL)
+    errx(1,"Could not initialize music background: %s\n", SDL_GetError());
+
+  music->se = Mix_LoadWAV( "click.wav" );
+  if(music->se == NULL)
+    errx(1,"Could not initialize sound effect: %s\n", SDL_GetError());
+
+  if( Mix_PlayingMusic() == 0 )
+      if(Mix_PlayMusic(music->bg, -1) == -1)
+	errx(1,"Error while playing music background: %s\n", SDL_GetError());
+
+  Mix_VolumeMusic(MIX_MAX_VOLUME/2);
+  Mix_Volume(-1, MIX_MAX_VOLUME/2);
+  return 1;
+}
+
+SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct music *music)
+{
+    
   SDL_Rect srect;
   SDL_Init(SDL_INIT_EVERYTHING);
   SDL_GetDisplayBounds(0, &srect);
@@ -60,9 +83,15 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   window = SDL_CreateWindow(title, srect.w/2 - w/2, srect.h/2-h/2,w,h,SDL_WINDOW_SHOWN);
   SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
+  init_music(music);
+  
   add_htable(img_list, "startmenu", malloc(sizeof(struct image)));
   add_htable(img_list, "optionmenu", malloc(sizeof(struct image)));
   add_htable(img_list, "creditmenu", malloc(sizeof(struct image)));
+  add_htable(img_list, "volumemenu", malloc(sizeof(struct image)));
+  add_htable(img_list, "music_volumemenu", malloc(sizeof(struct image)));
+  add_htable(img_list, "effect_volumemenu", malloc(sizeof(struct image)));
+  
   add_htable(img_list, "namemenu", malloc(sizeof(struct image)));  
   add_htable(img_list, "new_selected", malloc(sizeof(struct image)));
   add_htable(img_list, "new_unselected", malloc(sizeof(struct image)));
@@ -111,6 +140,9 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   add_htable(img_list, "start_mainmenu_unselected", malloc(sizeof(struct image)));
 
   add_htable(img_list, "timelapse", malloc(sizeof(struct image)));
+  add_htable(img_list, "music_pausemenu", malloc(sizeof(struct image)));
+  add_htable(img_list, "effect_pausemenu", malloc(sizeof(struct image)));
+  
   add_htable(img_list, "token_slider_selected", malloc(sizeof(struct image)));
   add_htable(img_list, "token_slider_unselected", malloc(sizeof(struct image)));
 
@@ -134,6 +166,10 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   r += image_new(access_htable(img_list, "options_unselected")->value, "options_unselected.png", renderer);
   
   r += image_new(access_htable(img_list, "optionmenu")->value, "optionmenu.png", renderer);
+  r += image_new(access_htable(img_list, "volumemenu")->value, "volume.png", renderer);
+  r += image_new(access_htable(img_list, "music_volumemenu")->value, "music_volumemenu.png", renderer);
+  r += image_new(access_htable(img_list, "effect_volumemenu")->value, "effect_volumemenu.png", renderer);
+   
   r += image_new(access_htable(img_list, "credit_selected")->value, "credit_selected.png", renderer);
   r += image_new(access_htable(img_list, "credit_unselected")->value, "credit_unselected.png", renderer);
   r += image_new(access_htable(img_list, "back_selected")->value, "back_selected.png", renderer);
@@ -176,6 +212,8 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   r += image_new(access_htable(img_list, "start_mainmenu_selected")->value, "start_mainmenu_selected.png", renderer);
   r += image_new(access_htable(img_list, "start_mainmenu_unselected")->value, "start_mainmenu_unselected.png", renderer);
   r += image_new(access_htable(img_list, "timelapse")->value, "timelapse.png", renderer);
+  r += image_new(access_htable(img_list, "music_pausemenu")->value, "music_pausemenu.png", renderer);
+  r += image_new(access_htable(img_list, "effect_pausemenu")->value, "effect_pausemenu.png", renderer);
   r += image_new(access_htable(img_list, "token_slider_unselected")->value, "token_slider_unselected.png", renderer);
   r += image_new(access_htable(img_list, "token_slider_selected")->value, "token_slider_selected.png", renderer);
 
@@ -186,13 +224,13 @@ SDL_Renderer* init (char *title, int w, int h, struct htable *button_list, struc
   
   if (r)
     {
-      clean(renderer, button_list, window_list, img_list, draw_list, text_list, slider_list);
+      clean(renderer, button_list, window_list, img_list, draw_list, text_list, slider_list, music);
       return NULL;
     }
   return renderer;
 }
 
-void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list)
+void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *img_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct music *music)
 { 
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "startmenu")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "new_selected")->value)->texture);
@@ -214,6 +252,12 @@ void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *wi
 
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "creditmenu")->value)->texture);
 
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "volumemenu")->value)->texture);
+
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "music_volumemenu")->value)->texture);
+
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "effect_volumemenu")->value)->texture);
+
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "namemenu")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "x_selected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "x_unselected")->value)->texture);
@@ -224,6 +268,7 @@ void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *wi
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "pause_selected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "pause_unselected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "pausemenu")->value)->texture);
+  
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "resume_selected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "resume_unselected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "saveandquit_selected")->value)->texture);
@@ -249,6 +294,8 @@ void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *wi
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "token_slider_selected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "token_slider_unselected")->value)->texture);
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "timelapse")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "music_pausemenu")->value)->texture);
+  SDL_DestroyTexture(((struct image *)access_htable(img_list, "effect_pausemenu")->value)->texture);
   
   SDL_DestroyTexture(((struct image *)access_htable(img_list, "loadmenu")->value)->texture);
     SDL_DestroyTexture(((struct image *)access_htable(img_list, "token_scrollbar_selected")->value)->texture);
@@ -273,7 +320,10 @@ void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *wi
   free(((struct slider *)(access_htable(slider_list, "timelapse")->value))->minvalue);      
   free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->maxvalue);
   free(((struct slider *)(access_htable(slider_list, "scrollbar")->value))->minvalue);
+  free(((struct slider *)(access_htable(slider_list, "music_volumemenu")->value))->maxvalue);
+  free(((struct slider *)(access_htable(slider_list, "music_volumemenu")->value))->minvalue);
 
+  
   SDL_StopTextInput();
 
   SDL_DestroyWindow(window);
@@ -292,4 +342,7 @@ void clean(SDL_Renderer *renderer, struct htable *button_list, struct htable *wi
   SDL_Quit();
 
   SDL_RenderClear(renderer);
+  Mix_FreeMusic(music->bg);
+  free(music);
+  Mix_CloseAudio();
 }

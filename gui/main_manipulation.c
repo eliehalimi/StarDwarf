@@ -110,12 +110,14 @@ void init_draw_list(struct htable *draw_list)
   add_htable(draw_list, "pausemenu", malloc(sizeof(int)));
   add_htable(draw_list, "loadmenu", malloc(sizeof(int)));
   add_htable(draw_list, "warning_loadmenu", malloc(sizeof(int)));
+  add_htable(draw_list, "volumemenu", malloc(sizeof(int)));
 
   *((int *)(access_htable(draw_list, "startmenu")->value)) = 1;
   *((int *)(access_htable(draw_list, "creditmenu")->value)) = 0;
   *((int *)(access_htable(draw_list, "namemenu")->value)) = 0;
   *((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
   *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
+  *((int *)(access_htable(draw_list, "volumemenu")->value)) = 0;
   *((int *)(access_htable(draw_list, "optionmenu")->value)) = 0;  
   *((int *)(access_htable(draw_list, "loadmenu")->value)) = 0;  
   *((int *)(access_htable(draw_list, "warning_loadmenu")->value)) = 0;  
@@ -164,9 +166,14 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	add_htable(button_list, "volume", malloc(sizeof(struct button)));
 	add_htable(button_list, "back_optionmenu", malloc(sizeof(struct button)));
 	add_htable(window_list, "optionmenu", malloc(sizeof(struct window)));
-
+	
 	add_htable(window_list, "creditmenu", malloc(sizeof(struct window)));
 	add_htable(button_list, "back_creditmenu", malloc(sizeof(struct button)));
+
+	add_htable(window_list, "volumemenu", malloc(sizeof(struct window)));
+	add_htable(button_list, "back_volumemenu", malloc(sizeof(struct button)));
+	add_htable(slider_list, "music_volumemenu", malloc(sizeof(struct slider)));
+	add_htable(slider_list, "effect_volumemenu", malloc(sizeof(struct slider)));
 
 	add_htable(button_list, "x", malloc(sizeof(struct button)));
 	add_htable(button_list, "start", malloc(sizeof(struct button)));
@@ -195,6 +202,10 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	add_htable(button_list, "reset", malloc(sizeof(struct button)));
 	add_htable(button_list, "saveandquit", malloc(sizeof(struct button)));
 	add_htable(window_list, "pausemenu", malloc(sizeof(struct window)));
+	add_htable(slider_list, "music_pausemenu", malloc(sizeof(struct slider)));
+	add_htable(slider_list, "effect_pausemenu", malloc(sizeof(struct slider)));
+
+
 	add_htable(button_list, "x_loadmenu", malloc(sizeof(struct button)));
 	add_htable(button_list, "start_loadmenu", malloc(sizeof(struct button)));
 	add_htable(window_list, "loadmenu", malloc(sizeof(struct window)));
@@ -218,7 +229,14 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	window_new(access_htable(window_list, "creditmenu")->value, access_htable(img_list,"creditmenu")->value, 0, 0, w, h, NULL);
 	button_new(access_htable(button_list, "back_creditmenu")->value, access_htable(img_list,"back_selected")->value, access_htable(img_list,"back_unselected")->value, 400, 600, access_htable(window_list, "creditmenu")->value);
 
-	
+	window_new(access_htable(window_list, "volumemenu")->value, access_htable(img_list,"volumemenu")->value, 0, 0, w, h, NULL);
+	button_new(access_htable(button_list, "back_volumemenu")->value, access_htable(img_list,"back_selected")->value, access_htable(img_list,"back_unselected")->value, 400, 600, access_htable(window_list, "volumemenu")->value);
+	int *max1 =malloc(sizeof(int)), *min1 = malloc(sizeof(int));
+	*max1 = MIX_MAX_VOLUME;
+	*min1 = 0;
+	slider_new(access_htable(slider_list, "music_volumemenu")->value, access_htable(img_list,"music_volumemenu")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 480, 220, 28, access_htable(window_list, "volumemenu")->value, max1, min1);
+        slider_new(access_htable(slider_list, "effect_volumemenu")->value, access_htable(img_list,"effect_volumemenu")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 480, 390, 28, access_htable(window_list, "volumemenu")->value, max1, min1);
+
 	window_new(access_htable(window_list, "namemenu")->value, access_htable(img_list,"namemenu")->value, 260, 200, 739, 300, NULL);
 	button_new(access_htable(button_list, "x")->value, access_htable(img_list,"x_selected")->value, access_htable(img_list,"x_unselected")->value, 945, 205, access_htable(window_list, "namemenu")->value);
 	button_new(access_htable(button_list, "start")->value, access_htable(img_list,"start_selected")->value, access_htable(img_list,"start_unselected")->value, 500, 400, access_htable(window_list, "namemenu")->value);
@@ -241,23 +259,25 @@ void init_lists(int w, int h, struct htable *button_list, struct htable *window_
 	float *maxval =malloc(sizeof(float)), *minval = malloc(sizeof(float));
 	*maxval = 4.0f;
 	*minval = 0.1f;
-	slider_new(access_htable(slider_list, "timelapse")->value, access_htable(img_list,"timelapse")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 1060, 430, 7, access_htable(window_list, "itemsmenu")->value, maxval, minval);
-	palette_new(p, access_htable(window_list, "itemsmenu")->value, 1060, 490, 200, 5, 12, 2);
+	slider_new(access_htable(slider_list, "timelapse")->value, access_htable(img_list,"timelapse")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 1060, 432, 7, access_htable(window_list, "itemsmenu")->value, maxval, minval);
+	palette_new(p, access_htable(window_list, "itemsmenu")->value, 1065, 495, 210, 5, 12, 2);
 	
-	button_new(access_htable(button_list, "reset")->value, access_htable(img_list,"reset_selected")->value, access_htable(img_list,"reset_unselected")->value, 1080, 515, access_htable(window_list, "itemsmenu")->value);
+	button_new(access_htable(button_list, "reset")->value, access_htable(img_list,"reset_selected")->value, access_htable(img_list,"reset_unselected")->value, 1090, 517, access_htable(window_list, "itemsmenu")->value);
 
 	button_new(access_htable(button_list, "add")->value, access_htable(img_list,"add_selected")->value, access_htable(img_list,"add_unselected")->value, 1090, 570, access_htable(window_list, "itemsmenu")->value);
 	button_new(access_htable(button_list, "start_mainmenu")->value, access_htable(img_list,"start_mainmenu_selected")->value, access_htable(img_list,"start_mainmenu_unselected")->value, 1090, 615, access_htable(window_list, "itemsmenu")->value);
 	button_new(access_htable(button_list, "delete")->value, access_htable(img_list,"delete_selected")->value, access_htable(img_list,"delete_unselected")->value, 1090, 665, access_htable(window_list, "itemsmenu")->value);
-	
 
 	
 	window_new(access_htable(window_list, "pausemenu")->value, access_htable(img_list,"pausemenu")->value, 0, 44, 227,676, access_htable(window_list, "mainmenu")->value);
-	button_new(access_htable(button_list, "resume")->value, access_htable(img_list,"resume_selected")->value, access_htable(img_list,"resume_unselected")->value, 30, 70, access_htable(window_list, "pausemenu")->value);
-	button_new(access_htable(button_list, "saveandquit")->value, access_htable(img_list,"saveandquit_selected")->value, access_htable(img_list,"saveandquit_unselected")->value, 15, 210, access_htable(window_list, "pausemenu")->value);
+	button_new(access_htable(button_list, "resume")->value, access_htable(img_list,"resume_selected")->value, access_htable(img_list,"resume_unselected")->value, 30, 90, access_htable(window_list, "pausemenu")->value);
+	button_new(access_htable(button_list, "saveandquit")->value, access_htable(img_list,"saveandquit_selected")->value, access_htable(img_list,"saveandquit_unselected")->value, 15, 160, access_htable(window_list, "pausemenu")->value);
+	button_new(access_htable(button_list, "quit_mainmenu")->value, access_htable(img_list,"quit_mainmenu_selected")->value, access_htable(img_list,"quit_mainmenu_unselected")->value, 30, 230, access_htable(window_list, "pausemenu")->value);
 
-	button_new(access_htable(button_list, "quit_mainmenu")->value, access_htable(img_list,"quit_mainmenu_selected")->value, access_htable(img_list,"quit_mainmenu_unselected")->value, 30, 280, access_htable(window_list, "pausemenu")->value);
-
+	slider_new(access_htable(slider_list, "music_pausemenu")->value, access_htable(img_list,"music_pausemenu")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 10, 340, 7, access_htable(window_list, "pausemenu")->value, max1, min1);
+        slider_new(access_htable(slider_list, "effect_pausemenu")->value, access_htable(img_list,"effect_pausemenu")->value, access_htable(img_list,"token_slider_selected")->value, access_htable(img_list,"token_slider_unselected")->value, 1, 10, 400, 7, access_htable(window_list, "pausemenu")->value, max1, min1);	
+	
+	
 	window_new(access_htable(window_list, "loadmenu")->value, access_htable(img_list,"loadmenu")->value, 259, 80, 763, 575, NULL);
 	button_new(access_htable(button_list, "x_loadmenu")->value, access_htable(img_list,"x_selected")->value, access_htable(img_list,"x_unselected")->value, 968, 80, access_htable(window_list, "loadmenu")->value);
 	button_new(access_htable(button_list, "start_loadmenu")->value, access_htable(img_list,"start_selected")->value, access_htable(img_list,"start_unselected")->value, 510, 570, access_htable(window_list, "loadmenu")->value);	

@@ -77,6 +77,16 @@ int palette_draw(struct palette *p, SDL_Renderer *renderer)
   return 1;
 }
 
+void set_volumemusic_position(struct slider *slider)
+{
+  float ratio = (float) Mix_VolumeMusic(-1)/(float)MIX_MAX_VOLUME;
+  slider->curlength = (int)(slider->maxlength*ratio);
+}
+void set_volumeeffect_position(struct slider *slider)
+{
+  float ratio = (float) Mix_Volume(-1, -1)/(float)MIX_MAX_VOLUME;
+  slider->curlength = (int)(slider->maxlength*ratio);
+}
 
 
 void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *window_list, struct htable *draw_list, struct htable *text_list, struct htable *slider_list, struct palette *p, struct system *sys, struct list_char *files)
@@ -89,8 +99,7 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       button_draw(access_htable(button_list, "load")->value, renderer);
       button_draw(access_htable(button_list, "option")->value, renderer);
       button_draw(access_htable(button_list, "quit")->value, renderer);
-    }
-  
+    }  
   if (*((int *)(access_htable(draw_list, "optionmenu")->value)))
     {
       window_draw(access_htable(window_list, "optionmenu")->value, renderer);
@@ -98,11 +107,17 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       button_draw(access_htable(button_list, "volume")->value, renderer);
       button_draw(access_htable(button_list, "back_optionmenu")->value, renderer);
     }
-  
   if (*((int *)(access_htable(draw_list, "creditmenu")->value)))
     {
       window_draw(access_htable(window_list, "creditmenu")->value, renderer);
       button_draw(access_htable(button_list, "back_creditmenu")->value, renderer);
+    }
+  if (*((int *)(access_htable(draw_list, "volumemenu")->value)))
+    {
+      window_draw(access_htable(window_list, "volumemenu")->value, renderer);
+      button_draw(access_htable(button_list, "back_volumemenu")->value, renderer);
+      slider_draw(access_htable(slider_list, "music_volumemenu")->value, renderer);
+      slider_draw(access_htable(slider_list, "effect_volumemenu")->value, renderer);
     }
   if (*((int *)(access_htable(draw_list, "namemenu")->value)))
     {
@@ -121,13 +136,10 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       display_files(renderer, files, access_htable(slider_list, "scrollbar")->value);
       display_text(renderer, text_list, "name_loadmenu", 320, 485, 255, 35);
       if (*((int *)(access_htable(draw_list, "warning_loadmenu")->value)))
-	display_text(renderer, text_list, "warning_loadmenu", 550, 420, 255, 30);
-      
+	display_text(renderer, text_list, "warning_loadmenu", 550, 420, 255, 30);      
     }
-  
   if (*((int *)(access_htable(draw_list, "mainmenu")->value)))
     {
-      
       //window_draw(access_htable(window_list, "mainmenu")->value, renderer);
       window_draw(access_htable(window_list, "mainmenu")->value, renderer);
 
@@ -172,6 +184,8 @@ void draw(SDL_Renderer *renderer, struct htable *button_list, struct htable *win
       button_draw(access_htable(button_list, "resume")->value, renderer);
       button_draw(access_htable(button_list, "quit_mainmenu")->value, renderer);
       button_draw(access_htable(button_list, "saveandquit")->value, renderer);
+      slider_draw(access_htable(slider_list, "music_pausemenu")->value, renderer);
+      slider_draw(access_htable(slider_list, "effect_pausemenu")->value, renderer);
     }
 }
 
@@ -191,7 +205,8 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       init_textinput(text_list, "name", 30);
     }
   else if (((struct button *)(access_htable(button_list, "x")->value))->active)        
-    {                                                                             
+    {
+      
       ((struct button *)(access_htable(button_list, "x")->value))->active = 0;    
       ((struct button *)(access_htable(button_list, "x")->value))->prelight = 0;  
       ((struct window *)(access_htable(window_list, "namemenu")->value))->visible = 0;
@@ -212,7 +227,9 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct window *)(access_htable(window_list, "namemenu")->value))->event = 0;
       ((struct window *)(access_htable(window_list, "itemsmenu")->value))->visible = 1;
       ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 1;
-
+      set_volumemusic_position(access_htable(slider_list, "music_pausemenu")->value);
+      set_volumeeffect_position(access_htable(slider_list, "effect_pausemenu")->value);
+      
       init_textinput(text_list, "intro", 200);
       struct text *intro = (struct text *)(access_htable(text_list, "intro")->value);
       struct text *name = (struct text *)(access_htable(text_list, "name")->value);
@@ -269,14 +286,27 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
     }
   else if (((struct button *)(access_htable(button_list, "credit")->value))->active)
     {
-      ((struct button *)(access_htable(button_list, "credit")->value))->active = 0;	     
+      
+      ((struct button *)(access_htable(button_list, "credit")->value))->active = 0;	
       ((struct button *)(access_htable(button_list, "credit")->value))->prelight = 0;
       ((struct window *)(access_htable(window_list, "optionmenu")->value))->visible = 0;
       ((struct window *)(access_htable(window_list, "optionmenu")->value))->event = 0;
       ((struct window *)(access_htable(window_list, "creditmenu")->value))->visible = 1;
       ((struct window *)(access_htable(window_list, "creditmenu")->value))->event = 1;
       *((int *)(access_htable(draw_list, "creditmenu")->value)) = 1;
-      *((int *)(access_htable(draw_list, "startmenu")->value)) = 0;
+      *((int *)(access_htable(draw_list, "optionmenu")->value)) = 0;
+    }
+  else if (((struct button *)(access_htable(button_list, "volume")->value))->active)
+    {
+      set_volumemusic_position(access_htable(slider_list, "music_volumemenu")->value);
+      set_volumeeffect_position(access_htable(slider_list, "effect_volumemenu")->value);
+      ((struct button *)(access_htable(button_list, "volume")->value))->active = 0;	 
+      ((struct button *)(access_htable(button_list, "volume")->value))->prelight = 0;
+      ((struct window *)(access_htable(window_list, "optionmenu")->value))->visible = 0;
+      ((struct window *)(access_htable(window_list, "optionmenu")->value))->event = 0;
+      ((struct window *)(access_htable(window_list, "volumemenu")->value))->visible = 1;
+      ((struct window *)(access_htable(window_list, "volumemenu")->value))->event = 1;
+      *((int *)(access_htable(draw_list, "volumemenu")->value)) = 1;
       *((int *)(access_htable(draw_list, "optionmenu")->value)) = 0;
     }
   else if (((struct button *)(access_htable(button_list, "back_creditmenu")->value))->active)
@@ -290,6 +320,18 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       *((int *)(access_htable(draw_list, "creditmenu")->value)) = 0;
       *((int *)(access_htable(draw_list, "optionmenu")->value)) = 1;
     }
+  else if (((struct button *)(access_htable(button_list, "back_volumemenu")->value))->active)
+    {
+      ((struct button *)(access_htable(button_list, "back_volumemenu")->value))->active = 0;
+      ((struct button *)(access_htable(button_list, "back_volumemenu")->value))->prelight = 0;
+      ((struct window *)(access_htable(window_list, "optionmenu")->value))->visible = 1;
+      ((struct window *)(access_htable(window_list, "optionmenu")->value))->event = 1;
+      ((struct window *)(access_htable(window_list, "volumemenu")->value))->visible = 0;
+      ((struct window *)(access_htable(window_list, "volumemenu")->value))->event = 0;
+      *((int *)(access_htable(draw_list, "volumemenu")->value)) = 0;
+      *((int *)(access_htable(draw_list, "optionmenu")->value)) = 1;
+    }
+  
   else if (((struct button *)(access_htable(button_list, "pause")->value))->active)
     {
       ((struct button *)(access_htable(button_list, "pause")->value))->active = 0;
@@ -297,14 +339,12 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       ((struct window *)(access_htable(window_list, "pausemenu")->value))->visible = 1;
       ((struct window *)(access_htable(window_list, "pausemenu")->value))->event = 1;
       ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 0;
- 
       *((int *)(access_htable(draw_list, "pausemenu")->value)) = 1;
       if(*state == SIMULATION_PROGRESS)
 	*state = SIMULATION_PAUSE;
     }
   else if (((struct button *)(access_htable(button_list, "reset")->value))->active && *state != SIMULATION_EDIT)
     {
-      
       ((struct slider *)(access_htable(slider_list, "timelapse")->value))->curlength = 0;
       ((struct button *)(access_htable(button_list, "reset")->value))->active = 0;
       ((struct button *)(access_htable(button_list, "reset")->value))->prelight = 0;
@@ -328,22 +368,17 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
       *reset_sys = clone_system(*sys);
       *state = SIMULATION_PROGRESS;
     }
-
-  //for these 2, maybe add an event for when click 
-  else if (((struct button *)(access_htable(button_list, "resume")->value))->active && *state == SIMULATION_PAUSE)
+  else if (((struct button *)(access_htable(button_list, "resume")->value))->active) //&& *state == SIMULATION_PAUSE)
     {
       ((struct button *)(access_htable(button_list, "resume")->value))->active = 0;
-      ((struct button *)(access_htable(button_list, "resume")->value))->prelight = 1;
+      ((struct button *)(access_htable(button_list, "resume")->value))->prelight = 0;
       ((struct window *)(access_htable(window_list, "pausemenu")->value))->visible = 0;
       ((struct window *)(access_htable(window_list, "pausemenu")->value))->event = 0;
       ((struct window *)(access_htable(window_list, "mainmenu")->value))->event = 1;
       ((struct window *)(access_htable(window_list, "itemsmenu")->value))->event = 1;
- 
       *((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
       *state = SIMULATION_PROGRESS;
     }
-
-  
   else if (((struct button *)(access_htable(button_list, "quit_mainmenu")->value))->active)
     {
       ((struct button *)(access_htable(button_list, "quit_mainmenu")->value))->active = 0;
@@ -428,10 +463,19 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
 	  ((struct window *)(access_htable(window_list, "startmenu")->value))->visible = 0;
 	  ((struct window *)(access_htable(window_list, "startmenu")->value))->event = 0;
 	  *((int *)(access_htable(draw_list, "loadmenu")->value)) = 0;
+
+	 // char *text = (char*) ((struct text *)access_htable(text_list, "name_loadmenu")->value)->text;
+	  //char *path = strcat("../save/save_files/", text);
+	  //puts(path);
+	 // fflush(NULL);
+	 // *sys = load_system(path);
 	  *sys = load_system("../save/save_files/system.txt");
 	  *((int *)(access_htable(draw_list, "mainmenu")->value)) = 1;
 	  p->pos = 0;
-	  ((struct slider *)(access_htable(slider_list, "timelapse")->value))->curlength = 0;   
+	  ((struct slider *)(access_htable(slider_list, "timelapse")->value))->curlength = 0;
+	  set_volumemusic_position(access_htable(slider_list, "music_pausemenu")->value);
+	  set_volumeeffect_position(access_htable(slider_list, "effect_pausemenu")->value);
+      
 	}
       else
 	{
