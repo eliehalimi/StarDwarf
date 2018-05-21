@@ -118,7 +118,7 @@ void update_projections(struct camera *camera)
 {
 	assert(camera != NULL);
 	assert(camera->position.size == 3);
-
+	
 	struct vector *o = clone_vector(&camera->origin);
 	sub_vector(&camera->position, o);
 	scalar_product_vector( 1.0f / magnitude_vector(o), o);

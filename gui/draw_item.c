@@ -2,14 +2,6 @@
 # include "../Camera/camera.h"
 # include "draw_item.h"
 
-
-#define SCR_WDT 1280
-#define SCR_HGT 960
-#define M_PI	3.14159265358979323846264338327950288
-
-const int SCR_CEN_X = SCR_WDT / 2;
-const int SCR_CEN_Y = SCR_HGT / 2;
-
 struct item *init_circle(struct item *item, SDL_Renderer *renderer)
 {
 
@@ -126,19 +118,53 @@ void Draw_from_camera(struct camera *camera, SDL_Renderer *renderer)
   update_projections(camera);
   sort_projections(camera);
 
+
+  struct vector *or = sub_vector(&camera->position, clone_vector(&camera->origin));
+  float dist_or = magnitude_vector(or);
+  free_vector(or);
+  
   for(struct list *l = camera->projections.next; l != NULL; l = l->next)
     {
       struct projection *p = CONTAINER_OF_(struct projection, next, l);
-
-      if(p->shown)
+      
+      if(p->shown && p->distance > dist_or)
 	{
 	  DrawProj(p, renderer, camera->center_X, camera->center_Y);
-	  //Draw_vector(camera, &p->item->position, &p->item->velocity, renderer);
+	  Draw_vector(camera, &p->item->position, &p->item->velocity, renderer);
+	}
+    }
+
+  float x[] = {10, 0, 0};
+  float y[] = {0, 10, 0};
+  float z[] = {0, 0, 10};
+  
+  struct vector *Ux = new_vector(3, x);
+  struct vector *Uy = new_vector(3, y);
+  struct vector *Uz = new_vector(3, z);
+
+  Draw_vector(camera, &camera->origin, Ux, renderer);
+  Draw_vector(camera, &camera->origin, Uy, renderer);
+  Draw_vector(camera, &camera->origin, Uz, renderer);
+  
+  free_vector(Ux);
+  free_vector(Uy);
+  free_vector(Uz);
+
+  
+  
+  for(struct list *l = camera->projections.next; l != NULL; l = l->next)
+    {
+      struct projection *p = CONTAINER_OF_(struct projection, next, l);
+      
+      if(p->shown && p->distance <= dist_or)
+	{
+	  DrawProj(p, renderer, camera->center_X, camera->center_Y);
+	  Draw_vector(camera, &p->item->position, &p->item->velocity, renderer);
 	}
     }
 }
 
-void Draw_vector(struct camera *camera, struct vector *origin, struct vector *relative, SDL_Renderer *renderer)
+void Draw_vector(const struct camera *camera, const struct vector *origin, const struct vector *relative, SDL_Renderer *renderer)
 {
   assert(camera != NULL);
   assert(origin != NULL);
@@ -148,41 +174,47 @@ void Draw_vector(struct camera *camera, struct vector *origin, struct vector *re
   assert(relative->size == 3);
 
   struct vector *or = sub_vector(&camera->position, clone_vector(origin));
-  struct vector *absolue = add_vector(or, clone_vector(relative));
+  struct vector *absolue = add_vector(or, scalar_product_vector(RATIO_SIZE_VECTOR, clone_vector(relative)));
 
-  struct vector *Vx = &camera->Vx;
-  struct vector *Vy = &camera->Vy;
+  const struct vector *Vx = &camera->Vx;
+  const struct vector *Vy = &camera->Vy;
   struct vector *Vz = sub_vector(&camera->position, clone_vector(&camera->origin));
   scalar_product_vector(1.0f / magnitude_vector(Vz), Vz);
-
-  float x1 = inner_product(or, Vx);
-  float y1  = inner_product(or, Vy);
   
-  float x2  = inner_product(absolue, Vx);
-  float y2  = inner_product(absolue, Vy);
-
   struct vector *po = scalar_product_vector(inner_product(or, Vz),
-					    clone_vector(or));
- 
-  // struct vector *pa = scalar_product_vector(inner_product(absolue, Vz), clone_vector(absolue));
- 
-  float distance = magnitude_vector(po);
-  float ratioO = camera->depth / (camera->depth + distance);
-
-  printf("%f\n", ratioO);
-  float ratioA = 0.0f;
+					    clone_vector(Vz));
+  
+  float x1 = inner_product(or, Vx);
+  float y1 = inner_product(or, Vy);
+  
+  float distanceO = magnitude_vector(po);
+  float ratioO = camera->depth / (camera->depth + distanceO);
 
   x1 *= ratioO;
   y1 *= ratioO;
+
+  float x2 = inner_product(absolue, Vx);
+  float y2 = inner_product(absolue, Vy);
   
+  struct vector *pa = scalar_product_vector(-inner_product(absolue, Vz),
+					    clone_vector(Vz));
+  
+  float distanceA = magnitude_vector(pa);
+  float ratioA = camera->depth / (camera->depth + distanceA);
+
   x2 *= ratioA;
   y2 *= ratioA;
   
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-  SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+  SDL_RenderDrawLine(renderer, x1 + camera->center_X, y1 + camera->center_Y, x2 + camera->center_X, y2 + camera->center_Y);
   
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-
+  
+  free_vector(pa);
+  free_vector(po);
+  free_vector(Vz);
+  free_vector(or);
+  free_vector(absolue);
 }
 
