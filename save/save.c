@@ -72,6 +72,8 @@ struct system *load_system(char *path)
 		int color1 = 0;
 		int color2 = 0;
 		int velocity0 = 0;
+		int velocity1 = 0;
+		int velocity2 = 0;
 
 		while(str != NULL)
 		{
@@ -116,6 +118,14 @@ struct system *load_system(char *path)
 					velocity0 = atoi(str);
 					counter++;
 					break;
+				case 10:
+					velocity1 = atoi(str);
+					counter++;
+					break;
+				case 11:
+					velocity2 = atoi(str);
+					counter++;
+					break;
 				
 				default:
 					break;
@@ -124,6 +134,8 @@ struct system *load_system(char *path)
 			str = strtok(NULL, " ");
 		
 		}
+		printf("%f, %f, %f\n%f, %f\n%d, %d, %d\n%d, %d, %d\n",
+				x, y, z, size, mass, color0, color1, color2, velocity0, velocity1, velocity2);
 		position = new_vector(3, val);
 		item = new_item(position);
 		item->size = size;
@@ -133,6 +145,8 @@ struct system *load_system(char *path)
 		item->color[1] = color1;
 		item->color[2] = color2;
 		item->velocity.values[0] = velocity0;
+		item->velocity.values[1] = velocity1;
+		item->velocity.values[2] = velocity2;
 		push_item(sys, item);
 		free_vector(position);
 	}
