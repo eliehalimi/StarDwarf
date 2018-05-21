@@ -16,27 +16,30 @@ void save_system(struct system *system)
 	
 	//char *str;
 	
-	float size;
-	float mass;
-	float nbdimension;
-	struct vector *pos; 
-	struct vector *velocity; //WILL ADD IT TO THE LOAD_SYSTEM function
-
-
+	size_t nb_dimension;
+       	double mass, size;
+	//char label[16];
+	//char color[4];
+	struct vector *pos, *velocity;//, *force;
+	struct list user_force;
+	//struct list list;
+	
 	for (struct list *l = system->items.next; l != NULL; l = l->next)
 	{
 		struct item *i = CONTAINER_OF_(struct item, list, l);
-		size = i->size;
+		nb_dimension = i->nb_dimension;
 		mass = i->mass;
-		nbdimension = i->nb_dimension;
+		size = i->size;
+		//label = i->label;
+		//color = i->color;
 		pos = &i->position;
 		velocity = &i->velocity;
-	
-		printf("%f, %f, %f\n pos = %f %f %f\nvel = %f %f %f", size, mass, nbdimension,
-		       pos->values[0], pos->values[1], pos->values[2],
-		       velocity->values[0], velocity->values[1], velocity->values[2]); 
+		//force = &i->force;
+		user_force = i->user_force;
 		
-		//WILL MAKE IT PRINT INTO FILE DESCRIPTOR (system.txt);
+		//printf("%f, %f, %f\n pos = %f %f %f\nvel = %f %f %f", size, mass, nb_dimension,
+		  //     pos->values[0], pos->values[1], pos->values[2],
+		    //   velocity->values[0], velocity->values[1], velocity->values[2]); 
 	}
 }
 
@@ -46,49 +49,92 @@ struct system *load_system(char *path)
 	FILE *f = fopen(path, "r");
 	assert(f != NULL);
 
-	struct system *s = new_system(2);
-	s->delta_time = 0.1f;
+	struct system *sys = new_system(3);
+	sys->delta_time = 0.1f;
 	char line[255];
-	s->camera = new_camera(WINDOW_W / 2, WINDOW_H / 2);
+	sys->camera = new_camera(WINDOW_W / 2, WINDOW_H / 2);
 	
 	while(fgets(line, sizeof(line), f) != NULL)
 	{
-		char val1[16] ,val2[9], val3[10];
+		char *str;
+		str = strtok(line, " ");
+		int counter = 1;
+		
+		float x = 0;
+		float y = 0;
+		float z = 0;
+		double mass = 0;
+		double size = 0;
+		float val[3] = {0,0,0};
+		struct vector *position = NULL;
+		struct item *item = NULL;
+		int color0 = 0;
+		int color1 = 0;
+		int color2 = 0;
+		int velocity0 = 0;
 
-		char *tok1 = strtok(line, " ");
-		char *tok;
-		int v1 = 1;
-		while ((tok = strtok(NULL, " ")) != NULL)
+		while(str != NULL)
 		{
-			if (v1)
+			switch(counter)
 			{
-				strcpy(val1, tok1);
-				v1 = 0;
+				case 1:
+					x = (float) atoi(str);
+					val[0] = x;
+					counter++;
+					break;
+				case 2:
+					y = (float) atoi(str);
+					val[1] = y;
+					counter++;
+					break;
+				case 3:
+					z = (float) atoi(str);
+					val[2] = z;
+					counter++;
+					break;
+				case 4:
+					size = (double) atol(str);
+					counter++;
+					break;
+				case 5:
+					mass = (double) atol(str);
+					counter++;
+					break;
+				case 6:
+					color0 = atoi(str);
+					counter++;
+					break;
+				case 7:
+					color1 = atoi(str);
+					counter++;
+					break;
+				case 8:
+					color2 = atoi(str);
+					counter++;
+					break;
+				case 9:
+					velocity0 = atoi(str);
+					counter++;
+					break;
+				
+				default:
+					break;
 			}
-			else
-				strcpy(val2, tok1);
-			tok1 = tok;
+			
+			str = strtok(NULL, " ");
+		
 		}
-		if (tok1 != NULL)
-			 strcpy(val3,tok1);
-
-
-		float x = (float) atoi(val1);
-		float y = (float) atoi(val2);
-		int z = atoi(val3);
-	
-		const float val[3] = {x, y, 0};
-		const float *values = (const float *) val;
-
-		const struct vector *position = new_vector(3, values);
-		struct item *item = new_item(position);
-		item->size = z;
-		item->mass = 100000000000.0f; // there is an assertion in the update update to check the mass -> you need to initialize it
-		push_item(s, item);
-		printf("x= %f, y=%f, size=%d\n", x, y, z); 
+		position = new_vector(3, val);
+		item = new_item(position);
+		item->size = size;
+		item->mass = mass;
+		item->rect = NULL;
+		item->color[0] = color0;
+		item->color[1] = color1;
+		item->color[2] = color2;
+		item->velocity.values[0] = velocity0;
+		push_item(sys, item);
+		free_vector(position);
 	}
-	fclose(f);
-	return s;
-	
+	return sys;
 }
-
