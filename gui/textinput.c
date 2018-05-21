@@ -110,7 +110,6 @@ void item_to_input(struct htable *text_list, struct palette *p, struct item *ite
   int sup = p->pos % 255 > 127;
   p->pos = p->pos/255 + sup + add;
 
-  printf("to input : size = %i, pos = %i, r = %i, g = %i, b = %i\n", size, p->pos, item->color[0], item->color[1], item->color[2]);
 }
 
 void input_to_item(struct htable *text_list, struct palette *p, struct item *item)
@@ -137,8 +136,6 @@ void input_to_item(struct htable *text_list, struct palette *p, struct item *ite
   item->color[1] = p->color[p->pos].g;
   item->color[2] = p->color[p->pos].b;
 
-  int size = p->rect_palette.w / 6;
-  printf("to item : size = %i, pos = %i, r = %i, g = %i, b = %i\n", size, p->pos, item->color[0], item->color[1], item->color[2]);
 }
 
 void display_text(SDL_Renderer *renderer, struct htable *text_list, char *name, int x, int h, int rgb, int size)

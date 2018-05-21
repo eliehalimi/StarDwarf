@@ -65,6 +65,8 @@ void rotate_camera(struct camera *camera, float alpha, float beta, float gamma);
 
 void move_camera(struct camera *camera, const struct vector *translation);
 
+void zoom_camera(struct camera *camera, float dist);
+
 void dolly_rotation(struct camera *camera, float rotZ, float rotX);
 
 struct item *selecting_item(struct camera *camera);

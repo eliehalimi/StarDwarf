@@ -243,7 +243,20 @@ void move_camera(struct camera *camera, const struct vector *translation)
 	free_vector(Y);
 }
 
+void zoom_camera(struct camera *camera, float dist)
+{
+  assert(camera != NULL);
 
+  struct vector *v = sub_vector(&camera->origin, clone_vector(&camera->position));
+
+  if(dist < magnitude_vector(v))
+    {
+      scalar_product_vector(dist/magnitude_vector(v), v);
+      add_vector(v, &camera->position);
+    }
+  
+  free_vector(v);
+}
 
 void dolly_rotation(struct camera *camera, float rotZ, float rotX)
 {
