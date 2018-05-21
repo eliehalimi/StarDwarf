@@ -154,7 +154,7 @@ int main()
 		
       SDL_RenderClear(renderer);
       draw(renderer, button_list, window_list, draw_list, text_list, slider_list, p, sys, files);
-
+      
       if(sys != NULL)
 	{
 	  if(reset_sys == sys)

@@ -470,6 +470,7 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
 	 // fflush(NULL);
 	 // *sys = load_system(path);
 	  *sys = load_system("../save/save_files/system.txt");
+	  *reset_sys = NULL;
 	  *((int *)(access_htable(draw_list, "mainmenu")->value)) = 1;
 	  p->pos = 0;
 	  ((struct slider *)(access_htable(slider_list, "timelapse")->value))->curlength = 0;
