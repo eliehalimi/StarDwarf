@@ -29,7 +29,7 @@ void save_system(struct system *system, char *name)
 	int xvelocity = 0, yvelocity = 0, zvelocity = 0;
 	int r = 0, g = 0, b = 0; 
 	
-	char safe[1024];
+	char safe[1048576];
 	int counter = 1;
 	for (struct list *l = system->items.next; l != NULL; l = l->next)
 	{
