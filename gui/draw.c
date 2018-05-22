@@ -401,7 +401,7 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
 		*((int *)(access_htable(draw_list, "startmenu")->value))= 1;
 		*((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
 		free_system(*sys);
-		//*sys = NULL;
+		*sys = NULL;
 		*((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
 	}
 
