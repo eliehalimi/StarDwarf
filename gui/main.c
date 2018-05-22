@@ -139,7 +139,7 @@ int main()
 			slider_event(access_htable(slider_list, "music_pausemenu")->value, &e, access_htable(draw_list, "pausemenu")->value, music);
 			volume_music(access_htable(slider_list, "music_pausemenu")->value);
 			slider_event(access_htable(slider_list, "effect_pausemenu")->value, &e, access_htable(draw_list, "pausemenu")->value, music);
-			volume_effect(access_htable(slider_list, "music_pausemenu")->value);
+			volume_effect(access_htable(slider_list, "effect_pausemenu")->value);
 
 			window_event(access_htable(window_list, "loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value);
 			button_event(access_htable(button_list, "x_loadmenu")->value, &e, access_htable(draw_list, "loadmenu")->value, music);
