@@ -6,7 +6,7 @@
 
 #include "../Physic/physic.h"
 
-//void save_system(struct system *system); 
+void save_system(struct system *system, char* name); 
 
 struct system *load_system(char *path);
 

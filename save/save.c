@@ -12,36 +12,94 @@ void save_system(struct system *system, char *name)
 	assert(system->delta_time > 0.0f);
 	assert(system->nb_dimension == 3);
 
-	char path[255];
-	strcpy(path, "../save_files/");
+	char path[18+strlen(name)+1];
+	strcpy(path, "../save/save_files/");
 	strcat(path, name);
 	strcat(path, ".txt");
 	FILE *f = fopen(path, "w+");
 	assert(f != NULL);
-		
-	size_t nb_dimension;
+	puts(path);
+
        	double mass, size;
-	char label[16];
-	char color[4];
-	struct vector *pos, *velocity;//, *force;
-	//struct list list;
+	//char label[16];
+	unsigned char *color;
+	struct vector *pos, *velocity;
 	
+	int xpos = 0, ypos = 0, zpos = 0;
+	int xvelocity = 0, yvelocity = 0, zvelocity = 0;
+	int r = 0, g = 0, b = 0; 
+	
+	char safe[1024];
+	int counter = 1;
 	for (struct list *l = system->items.next; l != NULL; l = l->next)
 	{
 		struct item *i = CONTAINER_OF_(struct item, list, l);
-		nb_dimension = i->nb_dimension;
+		
 		mass = i->mass;
 		size = i->size;
+		pos = &i->position;
+
 		//label = i->label;
-		//color = i->color;
+		color = &i->color;
 		pos = &i->position;
 		velocity = &i->velocity;
-		//force = &i->force;
+		
+		for (int i = 0; i < 3; i++)
+		{
+			if (i == 0)
+			{
+				xpos = pos->values[i];
+				xvelocity = velocity->values[i];
+				r = color[i];
+			}
+			if (i == 1)
+			{
+				ypos = pos->values[i];
+				yvelocity = velocity->values[i];
+				g = color[i];
+			}
+			if (i == 2)
+			{
+				zpos = pos->values[i];
+				zvelocity = velocity->values[i];
+				b = color[i];
+			}
+		}
+		
+		if ((r == 0 && g != 255) || (r != 255 && g == 0))
+			assert(b == 255);
+		if ((r == 0 && b != 255) || (b == 0 && r != 255))
+			assert(g == 255);
+		if ((b != 255 && g == 0) || (b == 0 && g != 255))
+			assert(r == 255);
 
+		char item[255];
+		fprintf(f, "%d %d %d %f %f %d %d %d %d %d %d\n",
+			xpos, ypos, zpos, size, mass, r, g, b, xvelocity, yvelocity, zvelocity);	
+		
+		sprintf(item, "%d %d %d %f %f %d %d %d %d %d %d\n",
+			xpos, ypos, zpos, size, mass, r, g, b, xvelocity, yvelocity, zvelocity);	
+		if (counter == 1)
+		{
+			strcpy(safe, item);
+			counter = 0;
+		}
+		else
+			strcat(safe, item);	
+		//strcpy(safe, item);
+		puts(item);
+		printf("%d %d %d %f %f %d %d %d %d %d %d\n"
+		,xpos, ypos, zpos, size, mass, r, g, b, xvelocity, yvelocity, zvelocity);	
+
+		//char *charitem = 
 		//printf("%f, %f, %f\n pos = %f %f %f\nvel = %f %f %f", size, mass, nb_dimension,
 		  //     pos->values[0], pos->values[1], pos->values[2],
 		    //   velocity->values[0], velocity->values[1], velocity->values[2]); 
 	}
+	//fprintf(f,"%s",safe);
+
+	fclose(f);
+	puts("closed");
 }
 
 
@@ -157,7 +215,7 @@ struct system *load_system(char *path)
 		item->velocity.values[0] = velocity0;
 		item->velocity.values[1] = velocity1;
 		item->velocity.values[2] = velocity2;
-		item->label = label;
+		strcpy(item->label, label);
 		push_item(sys, item);
 		free_vector(position);
 	}

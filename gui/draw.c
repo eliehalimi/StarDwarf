@@ -1,6 +1,7 @@
 # include "gui.h"
 # include "../save/save.h"
 
+int counter = 1;
 
 int window_draw(struct window *window, SDL_Renderer *renderer)
 {
@@ -407,6 +408,8 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
 
 	else if (((struct button *)(access_htable(button_list, "saveandquit")->value))->active)
 	{
+		((struct button *)(access_htable(button_list, "saveandquit")->value))->active = 0;
+		((struct button *)(access_htable(button_list, "saveandquit")->value))->prelight = 0;
 		((struct button *)(access_htable(button_list, "quit_mainmenu")->value))->active = 0;
 		((struct button *)(access_htable(button_list, "quit_mainmenu")->value))->prelight = 0;
 		((struct window *)(access_htable(window_list, "pausemenu")->value))->visible = 0;
@@ -423,12 +426,15 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
 		*((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
 		*((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
 		//save here
-		/*int counter = 1;
+		//counter = 1;
 		if (counter)
-		{		//save_system((char*) access_htable(button_list, "load")->value);
-			save_system(*sys,"thisistest");
+		{	
+			struct text *t = (struct text*) (access_htable(text_list, "name")->value);
+			char *name = t->text;
+			save_system(*sys, name);
+			//save_system(*sys,"thisistest");
 			counter =0;
-		}*/
+		}
 		if(*sys == NULL)
 			return;
 		free_system(*sys);
