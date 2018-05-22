@@ -75,6 +75,7 @@ struct system *load_system(char *path)
 		int velocity0 = 0;
 		int velocity1 = 0;
 		int velocity2 = 0;
+		char *label = "";
 
 		while(str != NULL)
 		{
@@ -128,6 +129,9 @@ struct system *load_system(char *path)
 					counter++;
 					break;
 				
+				case 12:
+					label = str;
+					break;
 				default:
 					break;
 			}
@@ -153,6 +157,7 @@ struct system *load_system(char *path)
 		item->velocity.values[0] = velocity0;
 		item->velocity.values[1] = velocity1;
 		item->velocity.values[2] = velocity2;
+		item->label = label;
 		push_item(sys, item);
 		free_vector(position);
 	}
