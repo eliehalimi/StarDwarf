@@ -402,6 +402,7 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
 		*((int *)(access_htable(draw_list, "mainmenu")->value)) = 0;
 		free_system(*sys);
 		*sys = NULL;
+		*state = SIMULATION_EDIT;
 		*((int *)(access_htable(draw_list, "pausemenu")->value)) = 0;
 	}
 
@@ -439,6 +440,7 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
 			return;
 		free_system(*sys);
 		*sys = NULL;
+		*state = SIMULATION_EDIT;
 	}
 
 	else if (((struct button *)(access_htable(button_list, "load")->value))->active)
@@ -488,6 +490,7 @@ void button_active(int w, int h, int *quit, struct system **sys, struct system *
 			puts(path);
 			*sys = load_system(path);
 			*reset_sys = NULL;
+			*state = SIMULATION_EDIT;
 			*((int *)(access_htable(draw_list, "mainmenu")->value)) = 1;
 			p->pos = 0;
 			((struct slider *)(access_htable(slider_list, "timelapse")->value))->curlength = 0;
