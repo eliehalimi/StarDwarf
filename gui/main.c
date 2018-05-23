@@ -190,11 +190,25 @@ int main()
 				{
 					struct item *i = new_item(v);
 					free_vector(v);
+					
+					float x = i->position.values[0];
+					float y = i->position.values[1];
+					float z = i->position.values[2];
+					
+					input_to_item(text_list, p, i);
 
-					i->size = 100;
-					i->mass  = 100000000000000.0f;
+					i->position.values[0] = x;
+					i->position.values[1] = y;
+					i->position.values[2] = z;
+					
+					if(i->size <= 1)
+					  i->size = 100;
+					if(i->mass <= 1)
+					  i->mass  = 100000000000000.0f;
 
 					push_item(sys, i);
+
+					//sys->selected = i;
 				}
 			}
 		}

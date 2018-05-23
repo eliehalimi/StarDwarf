@@ -118,7 +118,13 @@ void input_to_item(struct htable *text_list, struct palette *p, struct item *ite
   
   item->mass = atof(get_text(text_list, "item_mass")->text);
   item->size = atof(get_text(text_list, "item_radius")->text);
- 
+
+  if(item->mass < 0)
+    item->mass = 1;
+  
+  if(item->size < 0)
+    item->size = 1;
+  
   float x = atof(get_text(text_list, "item_x") -> text);
   float y = atof(get_text(text_list, "item_y") -> text);
   float z = atof(get_text(text_list, "item_z") -> text);
