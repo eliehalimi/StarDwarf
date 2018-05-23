@@ -21,7 +21,7 @@ void save_system(struct system *system, char *name)
 	puts(path);
 
        	double mass, size;
-	//char label[16];
+	char label[16];
 	unsigned char *color;
 	struct vector *pos, *velocity;
 	
@@ -39,7 +39,7 @@ void save_system(struct system *system, char *name)
 		size = i->size;
 		pos = &i->position;
 
-		//label = i->label;
+		strcpy(label, i->label);
 		color = i->color;
 		pos = &i->position;
 		velocity = &i->velocity;
@@ -74,11 +74,11 @@ void save_system(struct system *system, char *name)
 			assert(r == 255);
 
 		char item[255];
-		fprintf(f, "%d %d %d %f %f %d %d %d %d %d %d\n",
-			xpos, ypos, zpos, size, mass, r, g, b, xvelocity, yvelocity, zvelocity);	
+		fprintf(f, "%d %d %d %f %f %d %d %d %d %d %d %s\n",
+			xpos, ypos, zpos, size, mass, r, g, b, xvelocity, yvelocity, zvelocity,  label);	
 		
-		sprintf(item, "%d %d %d %f %f %d %d %d %d %d %d\n",
-			xpos, ypos, zpos, size, mass, r, g, b, xvelocity, yvelocity, zvelocity);	
+		sprintf(item, "%d %d %d %f %f %d %d %d %d %d %d %s\n",
+			xpos, ypos, zpos, size, mass, r, g, b, xvelocity, yvelocity, zvelocity, label);	
 		if (counter == 1)
 		{
 			strcpy(safe, item);
@@ -99,7 +99,6 @@ void save_system(struct system *system, char *name)
 	//fprintf(f,"%s",safe);
 
 	fclose(f);
-	puts("closed");
 }
 
 
