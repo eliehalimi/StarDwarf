@@ -26,6 +26,7 @@
 # define SIMULATION_PROGRESS 1
 # define SIMULATION_PAUSE 2
 
+
 //extern struct system *sys;
 struct image{
   SDL_Texture *texture;

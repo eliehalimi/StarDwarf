@@ -1,6 +1,7 @@
 # include "SDL.h"
 # include "../Camera/camera.h"
 # include "draw_item.h"
+# include <math.h>
 
 struct item *init_circle(struct item *item, SDL_Renderer *renderer)
 {
@@ -37,35 +38,70 @@ int DrawCircle(struct item *item, SDL_Renderer *renderer)
   int x = position->values[0];
   int y = position->values[1];
 
+  float size = item->size;
+  
+  if(size > MAXSIZEITEM)
+    size = MAXSIZEITEM;
+
+  
   int new_x = 0;
   int new_y = 0;
-  int old_x = x + item->size / 2;
+  int old_x = x + size / 2;
   int old_y = y;
 
   /* SETS COLOR*/
 
+  
   SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
-  float square = item->size * item->size / 4;
-	
-  for(int i = -item->size / 2; i < item->size / 2; i++)
+
+  if(size < SIZESIMPLE)
     {
-      for(int j = -item->size / 2; j < item->size / 2; j++)
+      float square = size * size / 4;
+      
+      for(int i = -size / 2; i < size / 2; i++)
 	{
-	  if(i * i + j * j <= square)
+	  for(int j = -size / 2; j < size / 2; j++)
 	    {
-	      new_x = x + i;
-	      new_y = y +j;
-	      SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
-	      old_x = new_x;
-	      old_y = new_y;		
+	      if(i * i + j * j <= square)
+		{
+		  new_x = x + i;
+		  new_y = y +j;
+		  SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+		  old_x = new_x;
+		  old_y = new_y;		
+		}
 	    }
 	}
-    }
 	
-  new_x = x + (item->size / 2 * cos(0));
-  new_y = y - (item->size / 2 * sin(0));
+      new_x = x + (item->size / 2 * cos(0));
+      new_y = y - (item->size / 2 * sin(0));
 
-  SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+      SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+    }
+  else
+    { 
+      for(int i = -size / 2; i < size / 2; i++)
+	{
+	  for(int j = -size / 2; j < size / 2; j++)
+	    {
+	      if(abs(i + j) < size / 2)
+		{
+		  new_x = x + i;
+		  new_y = y +j;
+		  SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+		  old_x = new_x;
+		  old_y = new_y;		
+		}
+	    }
+	}
+	
+      new_x = x + (item->size / 2 * cos(0));
+      new_y = y - (item->size / 2 * sin(0));
+
+      SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+    }
+
+  
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
   return old_x;
@@ -78,38 +114,64 @@ void DrawProj(struct projection *proj, SDL_Renderer *renderer, float offset_X, f
   int x = proj->position.values[0] + offset_X;
   int y = proj->position.values[1]  + offset_Y;
 
-  int new_x = 0;
-  int new_y = 0;
-  int old_x = x + proj->size / 2;
-  int old_y = y;
-
   struct item *item = proj->item;
 
   // SETS COLOR
 
 	
-  SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
-  float square = proj->size * proj->size / 4;
+  float size = proj->size;
+ 
+  if(size > MAXSIZEITEM)
+    size = MAXSIZEITEM;
 
-  for(int i = -proj->size / 2; i < proj->size / 2; i++)
+  
+  int new_x = x;
+  int new_y = y;
+  int old_x = x + size / 2;
+  int old_y = y;
+
+  /* SETS COLOR*/
+
+  
+  SDL_SetRenderDrawColor(renderer, item->color[0], item->color[1], item->color[2],item->color[3]);
+
+  if(size < SIZESIMPLE)
     {
-      for(int j = -proj->size / 2; j < proj->size / 2; j++)
+      float square = size * size / 4;
+      
+      for(int i = -size / 2; i < size / 2; i++)
 	{
-	  if(i * i + j * j <= square)
+	  for(int j = -size / 2; j < size / 2; j++)
 	    {
 	      new_x = x + i;
 	      new_y = y +j;
-	      SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+	      if(i * i + j * j <= square)
+		{
+		  SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+		}
 	      old_x = new_x;
-	      old_y = new_y;
+	      old_y = new_y;	        
 	    }
 	}
+	
+      new_x = x + (item->size / 2 * cos(0));
+      new_y = y - (item->size / 2 * sin(0));
+
+      //SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
+    }
+  else
+    { 
+      for(int i = -size / 2; i < size / 2; i++)
+	{
+	  SDL_RenderDrawLine(renderer, -size/2 + x, y + i, size/2 + x, y + i);
+	}
+	
+      new_x = x + (item->size / 2 * cos(0));
+      new_y = y - (item->size / 2 * sin(0));
+
+      //SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
     }
 
-  new_x = x + (proj->size / 2 * cos(0));
-  new_y = y - (proj->size / 2 * sin(0));
-	
-  SDL_RenderDrawLine(renderer, old_x, old_y, new_x, new_y);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
 
