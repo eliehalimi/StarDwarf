@@ -14,6 +14,9 @@
 # define SCR_CEN_X SCR_WDT / 2
 # define SCR_CEN_Y SCR_HGT / 2
 
+# define MAXSIZEITEM 10000
+# define SIZESIMPLE 500
+
 
 
 int DrawCircle(struct item *item, SDL_Renderer *renderer);
