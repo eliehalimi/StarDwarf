@@ -32,8 +32,8 @@ struct camera
 	struct list projections;
 	float center_X;
 	float center_Y;
-  float mouse_x, mouse_y;
-  int event_type;
+        float mouse_x, mouse_y;
+        int event_type;
 };
 
 struct projection

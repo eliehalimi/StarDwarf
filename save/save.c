@@ -40,7 +40,7 @@ void save_system(struct system *system, char *name)
 		pos = &i->position;
 
 		//label = i->label;
-		color = &i->color;
+		color = i->color;
 		pos = &i->position;
 		velocity = &i->velocity;
 		
